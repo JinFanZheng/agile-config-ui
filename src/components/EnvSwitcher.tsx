@@ -4,7 +4,8 @@ import { layoutStr } from '../strings/layout'
 
 /**
  * 全局环境切换器（UX #1）：顶栏常驻，所有配置相关页面跟随；
- * 环境语义色 DEV 绿 / TEST 橙 / PROD 红（设计令牌 §7.1）。
+ * 环境语义色 DEV 绿 / TEST 橙 / PROD 红（设计令牌 §7.1，跨主题不变）。
+ * 与顶栏其他控件严格同高（h-7，border-box）。
  */
 const ENVS: { id: EnvId; dotClass: string }[] = [
   { id: 'DEV', dotClass: 'bg-env-dev' },
@@ -18,7 +19,7 @@ export function EnvSwitcher() {
 
   return (
     <div
-      className="inline-flex items-center gap-0.5 rounded-md border border-border bg-panel p-0.5"
+      className="inline-flex h-7 items-stretch overflow-hidden rounded-md border border-border bg-panel"
       role="radiogroup"
       aria-label="环境切换"
     >
@@ -32,7 +33,8 @@ export function EnvSwitcher() {
             aria-checked={active}
             onClick={() => setEnv(id)}
             className={cn(
-              'flex h-6 items-center gap-1.5 rounded px-2 font-mono text-xs transition-colors duration-150 ease-out',
+              'flex items-center gap-1.5 px-2.5 font-mono text-xs transition-colors duration-150 ease-out',
+              id !== 'DEV' && 'border-l border-border',
               active
                 ? 'bg-elevated font-medium text-foreground'
                 : 'text-muted-foreground hover:text-foreground'

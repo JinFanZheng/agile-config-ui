@@ -1,0 +1,144 @@
+[
+  {
+    "where": "topbar-children",
+    "headerH": 48
+  },
+  {
+    "child": "flex.items-center",
+    "h": 24,
+    "top": 11.5,
+    "bottom": 35.5,
+    "radius": "0px",
+    "fontSize": "13px"
+  },
+  {
+    "child": "flex-1",
+    "h": 0,
+    "top": 23.5,
+    "bottom": 23.5,
+    "radius": "0px",
+    "fontSize": "13px"
+  },
+  {
+    "child": "relative",
+    "h": 28,
+    "top": 9.5,
+    "bottom": 37.5,
+    "radius": "0px",
+    "fontSize": "13px"
+  },
+  {
+    "child": "inline-flex.h-7",
+    "h": 28,
+    "top": 9.5,
+    "bottom": 37.5,
+    "radius": "5px",
+    "fontSize": "13px"
+  },
+  {
+    "child": "mx-1.h-4",
+    "h": 16,
+    "top": 15.5,
+    "bottom": 31.5,
+    "radius": "0px",
+    "fontSize": "13px"
+  },
+  {
+    "child": "relative",
+    "h": 28,
+    "top": 9.5,
+    "bottom": 37.5,
+    "radius": "0px",
+    "fontSize": "13px"
+  },
+  {
+    "where": "topbar-button-heights",
+    "heights": [
+      28,
+      26
+    ]
+  },
+  {
+    "where": "sidebar-items",
+    "items": [
+      {
+        "h": 28,
+        "top": 56,
+        "bottom": 84,
+        "radius": "5px",
+        "fontSize": "12px"
+      },
+      {
+        "h": 28,
+        "top": 86,
+        "bottom": 114,
+        "radius": "5px",
+        "fontSize": "12px"
+      }
+    ]
+  },
+  {
+    "where": "home-cards",
+    "cards": [
+      {
+        "h": 146,
+        "top": 134,
+        "bottom": 280,
+        "radius": "6px",
+        "fontSize": "13px"
+      },
+      {
+        "h": 146,
+        "top": 134,
+        "bottom": 280,
+        "radius": "6px",
+        "fontSize": "13px"
+      },
+      {
+        "h": 146,
+        "top": 134,
+        "bottom": 280,
+        "radius": "6px",
+        "fontSize": "13px"
+      }
+    ]
+  },
+  {
+    "where": "home-card-headers",
+    "titles": [
+      {
+        "h": 42,
+        "top": 135,
+        "bottom": 177,
+        "radius": "0px",
+        "fontSize": "13px"
+      },
+      {
+        "h": 42,
+        "top": 135,
+        "bottom": 177,
+        "radius": "0px",
+        "fontSize": "13px"
+      },
+      {
+        "h": 42,
+        "top": 135,
+        "bottom": 177,
+        "radius": "0px",
+        "fontSize": "13px"
+      }
+    ]
+  },
+  {
+    "where": "inline-align header .relative button",
+    "textH": 28,
+    "iconCenter": 14,
+    "expectCenter": 14
+  },
+  {
+    "where": "inline-align header [role=\"radiogroup\"] button:first-child",
+    "textH": 26,
+    "iconCenter": 13,
+    "expectCenter": 13
+  }
+]

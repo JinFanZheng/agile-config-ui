@@ -1,9 +1,9 @@
 # 迭代卡 ITER-02 - 主题系统与通用基建
 
-> 状态：验收中（EVIDENCE_READY，等待用户验收 T-06）
+> 状态：验收中（对齐反馈已修复，等待用户复验 T-08）
 > 变更分类：中改（全站视觉基建，不动业务功能与信息架构）
 > 方案出处：ITER-01 用户选型结论（五主题可切、默认石墨、布局定稿）
-> 日期：2026-09-04 开始 / 2026-09-04 实现完成
+> 日期：2026-09-04 开始 / 2026-09-04 实现完成；同日验收反馈修复
 > Goal 审查：PASS（见 1.3）
 > 当前授权边界：允许——改 `src/`（令牌/主题引擎/通用组件/既有页面适配）、新增 e2e 与脚本、提交；禁止——发布、对外通知、改服务端
 > 复审触发：令牌契约变化 / 新增主题 / 布局或密度被要求随主题变化（违反 §7.1 契约）
@@ -43,7 +43,7 @@
 
 | Goal | 状态 | Baseline / 当前差距 | Closure rule | Evidence | Next ready task | Blocker / Owner |
 |---|---|---|---|---|---|---|
-| G0 | EVIDENCE_READY | 实现与自动化门全绿（见 §6），仅剩用户验收 | 同 §1.1 | `docs/evidence/ITER-02/` | T-06 用户验收（owner: 用户） | 等待用户反馈 / Codex |
+| G0 | EVIDENCE_READY | 实现与自动化门全绿（见 §6），仅剩用户验收 | 同 §1.1 | `docs/evidence/ITER-02/` | T-08 用户复验（owner: 用户） | 等待用户复验 / Codex |
 
 ## 2. 任务与依赖
 
@@ -54,7 +54,9 @@
 | T-03 | G0 / 主题 store + 防闪屏 boot + ThemeSwitcher | T-02 | `stores/theme.ts`、`lib/themes.ts`、`hooks/useDropdown.ts`、`index.html` boot 脚本、顶栏切换器 | unit + e2e(theme.spec) | T-02 | Codex / DONE |
 | T-04 | G0 / 组件去硬编码（input 底/弹层阴影/滚动条） | T-01 令牌 | input/UserMenu/AppLayout 适配 | typecheck/lint + 截图 | T-01 | Codex / DONE |
 | T-05 | G0 / 全量回归 + 5 主题截图证据 | T-03/T-04 | 门禁输出 + 截图 ×10 | `docs/evidence/ITER-02/` | T-03,T-04 | Codex / DONE |
-| T-06 | G0 / 用户验收 | T-05 | 验收结论回填本卡 | 聊天记录 | T-05 | 用户 / 等待中 |
+| T-06 | G0 / 用户验收 | T-05 | 验收结论回填本卡 | 聊天记录 | T-05 | 用户 / 反馈：顶栏不对齐 |
+| T-07 | G0 / 对齐修复 | 用户反馈「貌似不是很对齐」+ 测量取证 | EnvSwitcher 重构为单描边分段控件（30→28px 与邻控件同高）；全页面测量审计 | `alignment-measure.json` + 门禁全绿 | T-06 | Codex / DONE |
+| T-08 | G0 / 用户复验 | T-07 | 复验结论回填（通过则本卡 VERIFIED） | 聊天记录 | T-07 | 用户 / 等待中 |
 
 ## 3. 测试与验收计划
 
@@ -93,6 +95,8 @@
 - L-Real：e2e 断言默认 graphite、切换即时生效（fresh-mint body=rgb(245,250,248)）、刷新持久；截图 10 张（5 主题 × 登录/概览，`theme-shots.txt`）；石墨白底+墨色主按钮经像素采样确认
 - 时序修复：auth e2e 偶发 evaluate 撞导航（401 retry 触发二次 assign）→ `waitForLoadState('networkidle')`，两轮全绿
 - 副作用：新增 localStorage 键 `agile-config-ui.theme`；无服务端交互变化
+- 验收反馈（2026-09-04）：用户报「貌似不是很对齐」→ 测量取证（`scripts/align-measure.mjs`）：EnvSwitcher 容器 30px vs ThemeSwitcher/UserMenu 28px，垂直中心虽统一但分段控件上下各突出 1px；其余（三卡片 top/bottom、侧栏项、登录居中、菜单项高）均对齐
+- 对齐修复（T-07）：EnvSwitcher 改单描边分段控件，严格 h-7=28px（border-box），按钮 h-full、项间 border-l 分隔；复测顶栏容器高度集合 {28}、垂直中心统一 23.5；门禁复跑全绿（typecheck/lint/23 unit/5 e2e）
 
 ## 7. 文档同步
 
