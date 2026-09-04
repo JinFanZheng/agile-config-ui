@@ -1,0 +1,47 @@
+# 迭代卡 ITER-07 - 权限体系（M5）
+
+> 状态：PLANNED（开工时完成 GR 复审与 baseline 冻结）
+> 变更分类：大改（安全面：权限/凭证）
+> 方案出处：handoff §6 P1 + §10 M5 + UX #9；API 见 [../API_INVENTORY.md](../API_INVENTORY.md)
+> 日期：2026-09-04 建卡 / 未开始
+> Goal 审查：PENDING（开工复审；安全修复级审查）
+> 依赖：ITER-03..06（按钮级权限作用于既有功能位）
+
+## 1. 目标与范围
+
+- 做什么：用户管理（建/改/删/重置密码/搜索）；角色管理（建/改/删 + 权限码勾选，数据源 SupportedPermissions）；应用授权（哪些用户可管理哪些应用）；**按钮级权限**（currentFunctions 驱动隐藏/禁用，落地到既有全部页面）；修改自己密码（顶栏入口启用）
+- 不做什么：SSO（ITER-08）
+- 完成定义：受权限账号登录后无权按钮不可用（E2E 用受限角色验证）；管理员可完成授权闭环
+
+### 1.1 Goal 定义
+
+| Goal | 用户/系统结果 | Baseline / 当前差距 | Closure rule | Owner |
+|---|---|---|---|---|
+| G0 | 权限模型全量落地：管理员可管理用户/角色/应用授权，无权用户看不见做不了 | 仅登录时有权限码数据，无控制落地 | 受限账号 E2E（看不到/调不了）+ 用户验收 | Codex |
+
+### 1.2 API 覆盖（13 端点，详见 API_INVENTORY）
+
+- User：`Search`、`Add`、`Edit`、`ResetPassword`、`Delete`、`AdminUsers`、`AllUsers`
+- Role：`List`、`SupportedPermissions`、`Add`、`Edit`、`Delete`
+- App 授权：`SaveAppAuth`、`GetUserAppAuth`
+- Admin：`ChangePassword`（顶栏"修改密码"启用）
+
+## 2. 任务草案
+
+| Task | 内容 | Verify |
+|---|---|---|
+| T-01 | `usePermission(code)` hook + 全站按钮位接入清单（逐页登记） | 清单评审 + 单测 |
+| T-02 | 用户管理页 + 重置密码（敏感操作审计到日志） | E2E |
+| T-03 | 角色管理页（权限码矩阵勾选） | E2E |
+| T-04 | 应用授权（应用详情内嵌，复用 AllUsers） | E2E |
+| T-05 | 修改自己密码（弹窗，旧密码校验） | E2E |
+| T-06 | 受限角色 E2E（新建只读角色账号：无权按钮隐藏/禁用、直调 API 403/无权提示） | `docs/evidence/ITER-07/` |
+
+## 3. Release Gates（要点，安全修复级）
+
+RG-4 Security：越权场景（无权账号直调受保护端点）negative tests；fail-closed（权限码缺失=不可用，而非默认放开）；RG-5 L-Real（真实实例建受限账号）；RG-7 全量回归
+
+## 4. 风险
+
+- 权限码与页面功能的映射表需要完整梳理（SupportedPermissions 返回清单为准），避免漏控
+- 前端隐藏只是体验，真正的防线在服务端（如实告知用户，不夸大前端权限控制）

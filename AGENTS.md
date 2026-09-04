@@ -42,6 +42,7 @@ AgileConfig 管理前端（独立仓库，对接官方服务端，不修改服�
 | 事实源                       | 路径                                                                                  |
 | ---------------------------- | ------------------------------------------------------------------------------------- |
 | 需求 / API 事实 / 已锁定决策 | `docs/AGENT_HANDOFF.md`                                                               |
+| API 全量清单与迭代映射       | `docs/API_INVENTORY.md`（86 端点；全部适配约束，豁免需用户确认）                      |
 | 迭代总表（WIP / 索引）       | `docs/iterations/INDEX.md`                                                            |
 | 迭代卡                       | `docs/iterations/ITER-*.md`                                                           |
 | Evidence                     | `docs/evidence/<ITER-ID>/`                                                            |

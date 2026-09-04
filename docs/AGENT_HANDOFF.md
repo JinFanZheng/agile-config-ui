@@ -360,7 +360,7 @@ server: {
 
 ## 12. 待核实清单（实施中补齐，完成后更新本文档）
 
-1. 其余控制器（User/Role/ServerNode/Service/SysLog/SSO/Report/Home）的完整端点与参数——M4/M5 前补。
+1. ~~其余控制器（User/Role/ServerNode/Service/SysLog/SSO/Report/Home）的完整端点与参数~~ **已核实（2026-09-04，ITER-02 期间）**：管理面 13 Controller / 86 端点全量清点并逐迭代映射，见 [API_INVENTORY.md](API_INVENTORY.md)（用户要求全部适配；4 项显式豁免待确认；参数级细节在各迭代实施时以源码+实测补齐）。
 2. 管理端是否需要 WebSocket 连接（旧 UI e2e 有 websocket-publish；确认管理界面是否有实时推送，若无则轮询即可）。
 3. 生产镜像替换方案：官方镜像内 UI 静态文件的具体路径（进入容器 `find /app -name 'index.html'` 确认），决定是否提供"替换镜像内 UI"的构建脚本（当前默认独立 nginx 部署，已够用）。
 4. `Config/Publish` 的 `ids` 字段语义（实测空 body 只传 appId+log 即全量发布，ids 是否支持部分发布待验证）——**这不是实现细节而是能力边界**：若支持部分发布，则可设计"分批/灰度发布"UI；若不支持，Route B 下灰度发布明确放弃，不要在 UI 层模拟。
