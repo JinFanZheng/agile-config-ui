@@ -1,6 +1,6 @@
 # 迭代卡 ITER-03 - 应用管理（M1）
 
-> 状态：验收中（EVIDENCE_READY，2026-09-04 实现与自动化门全绿，等待用户验收）
+> 状态：完成（G0 VERIFIED，2026-09-04 用户验收通过「继续下一个模块」）
 > 变更分类：中改
 > 方案出处：handoff §6 P0 + §10 M1；API 见 [../API_INVENTORY.md](../API_INVENTORY.md)
 > 日期：2026-09-04 建卡 / 未开始
@@ -45,7 +45,7 @@ RG-1 baseline 冻结；RG-2 全 task GREEN；RG-4 权限码（App_Add 等隐藏�
 
 | T-06 | G0 / 用户验收 | T-05 | 验收结论回填 | 聊天记录 | T-05 | 用户 / 反馈：内容区与设计稿未对齐 |
 | T-07 | G0 / 布局对齐 + 小屏适配 | 用户反馈（确认属实：限宽居中 vs 全宽流式、顶栏墨线缺失、行高 41 vs 33、表头无底色） | 全宽流式（去 max-w）；--border-header 令牌（石墨墨线）；表格密度 34.5px、表头 bg-elevated、修 bg-input/40 不渲染；<md 抽屉侧栏（汉堡+遮罩+Esc）、顶栏控件收纳、表格横向滚动 | 指标复测 + 375px 验证（见验收记录） | T-06 | Codex / DONE |
-| T-08 | G0 / 用户复验 | T-07+T-09 | 复验结论回填（通过则本卡 VERIFIED） | 聊天记录 | T-09 | 用户 / 等待中 |
+| T-08 | G0 / 用户复验 | T-07+T-09 | 复验结论：通过（2026-09-04，用户确认接口接入并指示继续 ITER-04） | 聊天记录 | T-09 | 用户 / DONE |
 
 | T-09 | G0 / 交互规范与体验优化包 | 用户反馈：要动画（Modal 等）；脏表单点空白即关丢数据；要求沉淀交互规范 | ① 微动效基建（5 个预置动画类 120–150ms ease-out + prefers-reduced-motion 降级）接入 Modal/ConfirmDialog/菜单/抽屉/Toast；② useDirtyGuard 脏表单保护（Esc/遮罩/X/取消→放弃确认）接入 AppDialog；③ Toast 反馈系统（store+容器，变更成功/失败）；④ 空态≠无结果区分、删除后分页回退、继承列表加载态；⑤ docs/INTERACTION_GUIDELINES.md 八章规范 + AGENTS.md 红线挂接 | 单测 +7（toast/dirtyGuard）、E2E +1（脏态保护）全绿；截图 interaction-*.png | T-08 | Codex / DONE |
 

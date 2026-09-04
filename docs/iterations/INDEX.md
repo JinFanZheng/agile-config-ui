@@ -7,7 +7,7 @@
 
 | 迭代                       | 标题           | 状态                     | 最高风险 next ready task                  |
 | -------------------------- | -------------- | ------------------------ | ----------------------------------------- |
-| [ITER-03](ITER-03-apps.md) | 应用管理（M1） | 验收中（EVIDENCE_READY） | T-06 用户验收（浏览器实测应用全生命周期） |
+| [ITER-04](ITER-04-configs.md) | 配置管理（M2） | ACTIVE | T-01 api 层 15 端点（见卡） |
 
 ## 迭代路线图（2026-09-04 与用户约定：逐迭代交付，验收一个再继续；跨模块独立页用子代理并行）
 
@@ -22,7 +22,7 @@
 | ITER-07 | 权限体系（用户/角色/应用授权/按钮级权限）                        | M5         | 13       | PLANNED     | [ITER-07-permissions.md](ITER-07-permissions.md)                       | —                        |
 | ITER-08 | 打磨与交付（导入导出/环境同步/服务注册/SSO/Docker）              | M6         | 12       | PLANNED     | [ITER-08-delivery.md](ITER-08-delivery.md)                             | —                        |
 
-> 覆盖核对：M0 已适配 4 + ITER-03..08 共 78 + 显式豁免 4（`Admin/Logoff`、`Home/IndexAsync`、`Home/Echo`、`Home/GetIP`；另有 `RemoteOP/RegisterNode` 待 ITER-06 定案）= 86 ✓。豁免需用户确认，见 API_INVENTORY 文末。
+> 覆盖核对：M0 已适配 3 + ITER-03..08 共 78（含 Search 归 03、WaitPublishStatus 归 04、发布共用）+ 显式豁免 4（`Admin/Logoff`、`Home/IndexAsync`、`Home/Echo`、`Home/GetIP`；另有 `RemoteOP/RegisterNode` 待 ITER-06 定案）= 86 ✓。豁免需用户确认，见 API_INVENTORY 文末。
 
 ## 历史变更（协议采用前）
 
