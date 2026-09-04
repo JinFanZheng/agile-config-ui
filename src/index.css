@@ -242,3 +242,80 @@
     background: transparent;
   }
 }
+
+/*
+ * 微动效（handoff §7.1：只做 120–160ms ease-out 微过渡，不做花哨动画）
+ * 仅做进入动画（退出瞬时，避免卸载等待）；prefers-reduced-motion 全局降级。
+ */
+@keyframes ag-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes ag-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ag-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ag-drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes ag-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.anim-overlay {
+  animation: ag-overlay-in 120ms ease-out;
+}
+.anim-modal {
+  animation: ag-modal-in 150ms ease-out;
+}
+.anim-menu {
+  animation: ag-menu-in 130ms ease-out;
+}
+.anim-drawer {
+  animation: ag-drawer-in 150ms ease-out;
+}
+.anim-toast {
+  animation: ag-toast-in 150ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -31,7 +31,7 @@ export function UserMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-9 z-50 w-52 rounded-lg border border-border bg-panel p-1 shadow-overlay"
+          className="anim-menu absolute right-0 top-9 z-50 w-52 rounded-lg border border-border bg-panel p-1 shadow-overlay"
         >
           <div className="border-b border-border px-2.5 py-2">
             <p className="font-mono text-xs text-foreground">{user.userName}</p>

@@ -80,7 +80,7 @@ export function AppLayout() {
         <aside
           className={
             navOpen
-              ? 'fixed top-12 bottom-0 left-0 z-50 flex w-48 flex-col border-r border-border bg-panel p-2'
+              ? 'anim-drawer fixed top-12 bottom-0 left-0 z-50 flex w-48 flex-col border-r border-border bg-panel p-2'
               : 'hidden w-48 shrink-0 flex-col border-r border-border bg-panel p-2 md:flex'
           }
         >

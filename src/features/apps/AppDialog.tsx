@@ -8,8 +8,10 @@ import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
 import { Modal } from '../../components/ui/modal'
 import { Spinner } from '../../components/ui/spinner'
+import { useDirtyGuard } from '../../hooks/useDirtyGuard'
 import { generateAppId } from '../../lib/appId'
 import { ApiError } from '../../lib/http'
+import { toast } from '../../stores/toast'
 import { cn } from '../../lib/utils'
 import { appsStr } from '../../strings/apps'
 import { appInputSchema, type AppInputValues } from './schema'
@@ -82,6 +84,11 @@ export function AppDialog({ open, app, onClose }: AppDialogProps) {
     mutationFn: (values: AppInputValues) =>
       isEdit ? editApp({ ...values }) : addApp({ ...values }),
     onSuccess: async () => {
+      toast.success(
+        isEdit
+          ? appsStr.toasts.saved(form.getValues('name'))
+          : appsStr.toasts.created(form.getValues('name'))
+      )
       await queryClient.invalidateQueries({ queryKey: ['apps'] })
       onClose()
     },
@@ -91,12 +98,15 @@ export function AppDialog({ open, app, onClose }: AppDialogProps) {
   const inheritanced = form.watch('inheritanced')
   const selectedInherits = form.watch('inheritancedApps')
 
+  const { requestClose, guardNode } = useDirtyGuard(onClose, form.formState.isDirty)
+
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={requestClose}
       title={isEdit ? appsStr.dialog.editTitle : appsStr.dialog.createTitle}
     >
+      {guardNode}
       <form
         onSubmit={form.handleSubmit((v) => mutation.mutate(v))}
         noValidate
@@ -168,7 +178,9 @@ export function AppDialog({ open, app, onClose }: AppDialogProps) {
               {appsStr.dialog.inheritancedAppsHint}
             </p>
             <div className="max-h-32 overflow-y-auto rounded-md border border-border">
-              {(inheritable.data ?? []).length === 0 ? (
+              {inheritable.isLoading ? (
+                <p className="px-3 py-2 text-xs text-muted-foreground">加载中…</p>
+              ) : (inheritable.data ?? []).length === 0 ? (
                 <p className="px-3 py-2 text-xs text-muted-foreground">
                   {appsStr.dialog.inheritancedAppsEmpty}
                 </p>
@@ -201,7 +213,12 @@ export function AppDialog({ open, app, onClose }: AppDialogProps) {
         )}
 
         <div className="mt-1 flex justify-end gap-2">
-          <Button type="button" variant="ghost" onClick={onClose} disabled={mutation.isPending}>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={requestClose}
+            disabled={mutation.isPending}
+          >
             取消
           </Button>
           <Button type="submit" disabled={mutation.isPending} className={cn()}>

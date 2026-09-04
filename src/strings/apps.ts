@@ -3,6 +3,8 @@ export const appsStr = {
   subtitle: '配置的归属单元，客户端 SDK 凭 AppId 与 Secret 拉取配置',
   searchPlaceholder: '搜索应用名 / AppId…',
   groupAll: '全部分组',
+  noMatchTitle: '没有匹配的应用',
+  clearFilter: '清除筛选',
   create: '新建应用',
   emptyTitle: '还没有应用',
   emptyAction: '创建第一个应用',
@@ -69,5 +71,13 @@ export const appsStr = {
     appNameExists: '应用名已存在',
   },
   secretTitle: '应用凭证',
+  toasts: {
+    created: (name: string) => `应用「${name}」已创建`,
+    saved: (name: string) => `应用「${name}」已保存`,
+    deleted: (name: string) => `应用「${name}」已删除`,
+    disabled: (name: string) => `应用「${name}」已禁用`,
+    enabled: (name: string) => `应用「${name}」已启用`,
+    failed: '操作失败',
+  },
   secretHint: '客户端 SDK 连接串使用，仅管理员可见',
 } as const

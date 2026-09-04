@@ -17,6 +17,7 @@ import { Input } from '../../components/ui/input'
 import { Modal } from '../../components/ui/modal'
 import { Skeleton } from '../../components/ui/spinner'
 import { ApiError } from '../../lib/http'
+import { toast } from '../../stores/toast'
 import { appsStr } from '../../strings/apps'
 import { AppDialog } from './AppDialog'
 
@@ -68,11 +69,26 @@ export function AppsPage() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['apps'] })
   const toggleMutation = useMutation({
     mutationFn: (id: string) => disableOrEnableApp(id),
-    onSuccess: invalidate,
+    onSuccess: (_data, id) => {
+      const app = rows.find((a) => a.id === id)
+      if (app)
+        toast.success(
+          app.enabled ? appsStr.toasts.disabled(app.name) : appsStr.toasts.enabled(app.name)
+        )
+      invalidate()
+    },
+    onError: (e) => toast.error(e instanceof ApiError ? e.message : appsStr.toasts.failed),
   })
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteApp(id),
-    onSuccess: invalidate,
+    onSuccess: (_data, id) => {
+      const app = rows.find((a) => a.id === id)
+      if (app) toast.success(appsStr.toasts.deleted(app.name))
+      // 删除当前页最后一条时回退一页，避免空页
+      if (rows.length === 1 && page > 1) setPage(page - 1)
+      invalidate()
+    },
+    onError: (e) => toast.error(e instanceof ApiError ? e.message : appsStr.toasts.failed),
   })
 
   const secretQuery = useQuery({
@@ -173,17 +189,36 @@ export function AppsPage() {
             ) : rows.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-4 py-12 text-center">
-                  <p className="text-sm text-muted-foreground">{appsStr.emptyTitle}</p>
-                  <Button
-                    size="sm"
-                    className="mt-3"
-                    onClick={() => {
-                      setEditing(null)
-                      setDialogOpen(true)
-                    }}
-                  >
-                    {appsStr.emptyAction}
-                  </Button>
+                  {debounced || group ? (
+                    <>
+                      <p className="text-sm text-muted-foreground">{appsStr.noMatchTitle}</p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="mt-3"
+                        onClick={() => {
+                          setKeyword('')
+                          setGroup('')
+                        }}
+                      >
+                        {appsStr.clearFilter}
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-sm text-muted-foreground">{appsStr.emptyTitle}</p>
+                      <Button
+                        size="sm"
+                        className="mt-3"
+                        onClick={() => {
+                          setEditing(null)
+                          setDialogOpen(true)
+                        }}
+                      >
+                        {appsStr.emptyAction}
+                      </Button>
+                    </>
+                  )}
                 </td>
               </tr>
             ) : (

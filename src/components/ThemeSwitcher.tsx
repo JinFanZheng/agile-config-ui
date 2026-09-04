@@ -29,7 +29,7 @@ export function ThemeSwitcher() {
         <div
           role="menu"
           aria-label={themeStr.switcher.label}
-          className="absolute right-0 top-9 z-50 w-44 rounded-lg border border-border bg-panel p-1 shadow-overlay"
+          className="anim-menu absolute right-0 top-9 z-50 w-44 rounded-lg border border-border bg-panel p-1 shadow-overlay"
         >
           {THEMES.map(({ id, label, swatch }) => {
             const active = theme === id

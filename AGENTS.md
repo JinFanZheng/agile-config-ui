@@ -32,6 +32,7 @@ AgileConfig 管理前端（独立仓库，对接官方服务端，不修改服�
 - 凭证纪律：真实密码只放 gitignore 的 env 文件，文档与测试夹具不落真实密码
 - 渲染安全：全项目禁止 `dangerouslySetInnerHTML`；配置 value/description 按纯文本渲染
 - 界面文案全部收敛到 `src/strings/`，仅中文，不引入 i18n 框架
+- **交互规范**（动效/危险确认/脏表单保护/反馈/空态/键盘/列表/令牌 八章）见 `docs/INTERACTION_GUIDELINES.md`，新页面与组件必须遵守，评审逐条对照
 - 环境语义色（DEV 绿 / TEST 橙 / PROD 红）与状态语义（待发布=warning、已上线=success、删除/回滚=danger）是领域不变量，任何视觉风格下语义不得变（handoff §0/§7.1）
 - 设计令牌唯一事实源：`src/index.css` 的 `:root`；令牌变更必须同步事实源文档
 - 服务端状态一律 TanStack Query；zustand 仅存会话与全局环境

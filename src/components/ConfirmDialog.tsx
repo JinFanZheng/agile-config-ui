@@ -37,7 +37,7 @@ export function ConfirmDialog({
   if (!open) return null
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4"
+      className="anim-overlay fixed inset-0 z-[70] flex items-center justify-center bg-black/40 p-4"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onCancel()
       }}
@@ -46,7 +46,7 @@ export function ConfirmDialog({
         role="alertdialog"
         aria-modal="true"
         aria-label={title}
-        className="w-full max-w-sm rounded-lg border border-border bg-panel p-5 shadow-overlay"
+        className="anim-modal w-full max-w-sm rounded-lg border border-border bg-panel p-5 shadow-overlay"
       >
         <h2 className={`text-sm font-semibold ${danger ? 'text-danger' : 'text-foreground'}`}>
           {title}

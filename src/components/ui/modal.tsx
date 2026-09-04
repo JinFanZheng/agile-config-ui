@@ -27,7 +27,7 @@ export function Modal({
   if (!open) return null
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4"
+      className="anim-overlay fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-4"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}
@@ -36,7 +36,7 @@ export function Modal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`w-full ${width} rounded-lg border border-border bg-panel shadow-overlay`}
+        className={`anim-modal w-full ${width} rounded-lg border border-border bg-panel shadow-overlay`}
       >
         <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
           <h2 className="text-sm font-semibold text-foreground">{title}</h2>
