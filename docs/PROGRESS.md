@@ -2,6 +2,11 @@
 
 > 交接文档见 [AGENT_HANDOFF.md](./AGENT_HANDOFF.md)。每个里程碑完成后回填状态与验收证据。
 
+## 当前迭代（协议制）
+
+- [ITER-01 视觉风格选型](iterations/ITER-01-visual-style-selection.md)：ACTIVE —— 5 份风格静态稿已就绪（`python3 -m http.server 5019 --directory design/previews` 后访问 http://localhost:5019/），等待用户选择；选定后开 ITER-02（src/ 全面换肤）
+- **M1 应用管理暂缓开工**，待风格定稿（避免在将被替换的视觉上堆功能）
+
 ## M0 脚手架 — ✅ 完成（2026-09-04）
 
 DoD 对照：

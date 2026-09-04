@@ -232,7 +232,11 @@ Content-Type: application/json
 | 测试       | Vitest（单元）+ **Playwright（E2E，对本机 5017 实例跑）** | E2E 链路 = 登录→建应用→改配置→发布→回滚                                                |
 | HTTP       | ky 或 axios 薄封装                                        | 统一注入 Bearer、401 跳登录、解包 `{success,message,data}`                             |
 
-### 7.1 设计语言（已锁定）：Linear 式深色专业风
+### 7.1 设计语言：**选型中（原 Linear 暗色已被用户否决）**
+
+> **决策变更（2026-09-04，用户本人重开）**：下述 Linear 式深色方向已被用户否决（M0 实现后反馈"这个风格不太喜欢"）。替代方向经 [ITER-01](iterations/ITER-01-visual-style-selection.md) 静态稿选型确定后回填本节。**不变量保留**：环境语义色（DEV 绿 / TEST 橙 / PROD 红）与状态语义（待发布=warning、已上线=success、删除/回滚=danger）在任何风格下不得变。
+
+以下为已否决的原始记录（留档，勿再实现）：
 
 **视觉基准**：Linear、Raycast、Supabase Dashboard——冷静、快、专业的开发者工具气质。**暗色是主主题（默认）**，亮色主题为后期可选项（P2）。此方向由用户拍板，不要重开讨论。
 
