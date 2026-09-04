@@ -20,7 +20,8 @@ test('无效 token：访问受保护路由被清除会话并重定向登录（�
   await page.goto('/')
 
   await expect(page).toHaveURL(/\/login\?from=%2F/)
-  // 会话已被 401 拦截清空
+  // 等 401 重试与重定向链全部落定（retry 会触发第二次跳转，与 evaluate 竞态）
+  await page.waitForLoadState('networkidle')
   const session = await page.evaluate(() => localStorage.getItem('agile-config-ui.session'))
   expect(JSON.parse(session ?? '{}').state.token).toBeNull()
 })

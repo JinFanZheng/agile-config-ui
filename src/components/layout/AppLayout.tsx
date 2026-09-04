@@ -5,6 +5,7 @@ import { cn } from '../../lib/utils'
 import { S } from '../../strings/common'
 import { layoutStr } from '../../strings/layout'
 import { EnvSwitcher } from '../EnvSwitcher'
+import { ThemeSwitcher } from '../ThemeSwitcher'
 import { UserMenu } from '../UserMenu'
 
 interface NavItem {
@@ -37,6 +38,7 @@ export function AppLayout() {
           <span className="text-sm font-semibold">{S.appName}</span>
         </Link>
         <div className="flex-1" />
+        <ThemeSwitcher />
         <EnvSwitcher />
         <div className="mx-1 h-4 w-px bg-border" />
         <UserMenu />

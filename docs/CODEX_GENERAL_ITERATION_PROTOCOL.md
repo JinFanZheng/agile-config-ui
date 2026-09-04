@@ -45,12 +45,12 @@
 
 一个项目至少维护四类文档。名称可以改变，职责不能混淆。
 
-| 事实源 | 职责 | 不应承载 |
-|---|---|---|
-| `AGENTS.md` | 项目命令、架构红线、授权边界、强制流程 | 单次迭代的动态进度 |
-| 迭代总表 | 当前 WIP、迭代索引、优先级、跨迭代依赖 | 详细实现日志 |
-| 迭代卡 | 单次迭代的 Goal、Task、Gate、Evidence、账本和 next task | 全项目长期路线图 |
-| Evidence 目录 | 测试报告、截图、转录、基线、回退演练和机器可读结果 | 无法复现的口头结论 |
+| 事实源        | 职责                                                    | 不应承载           |
+| ------------- | ------------------------------------------------------- | ------------------ |
+| `AGENTS.md`   | 项目命令、架构红线、授权边界、强制流程                  | 单次迭代的动态进度 |
+| 迭代总表      | 当前 WIP、迭代索引、优先级、跨迭代依赖                  | 详细实现日志       |
+| 迭代卡        | 单次迭代的 Goal、Task、Gate、Evidence、账本和 next task | 全项目长期路线图   |
+| Evidence 目录 | 测试报告、截图、转录、基线、回退演练和机器可读结果      | 无法复现的口头结论 |
 
 按项目需要再增加：
 
@@ -77,12 +77,12 @@ Codex 内置的临时 plan/checklist 可以镜像当前 Task，用来向用户�
 
 Codex 必须先判断用户请求属于哪一种授权：
 
-| 请求类型 | 默认允许 | 默认不允许 |
-|---|---|---|
-| 计划 / 评审 / 分析 | 只读检查、写计划或评审文档 | 改生产代码、重启服务、改真实数据、打包、发布 |
-| 实现 / 修复 / 构建 | 改范围内文件、运行相关验证 | 未要求的发布、外部通知、正式数据迁移 |
-| 验证 / Dogfood | 使用约定的隔离环境执行场景 | 对正式环境产生不可逆副作用 |
-| 发布 / 迁移 / 清理 | 仅执行用户明确授权的对象和范围 | 从“实现完成”推断已授权发布或删除 |
+| 请求类型           | 默认允许                       | 默认不允许                                   |
+| ------------------ | ------------------------------ | -------------------------------------------- |
+| 计划 / 评审 / 分析 | 只读检查、写计划或评审文档     | 改生产代码、重启服务、改真实数据、打包、发布 |
+| 实现 / 修复 / 构建 | 改范围内文件、运行相关验证     | 未要求的发布、外部通知、正式数据迁移         |
+| 验证 / Dogfood     | 使用约定的隔离环境执行场景     | 对正式环境产生不可逆副作用                   |
+| 发布 / 迁移 / 清理 | 仅执行用户明确授权的对象和范围 | 从“实现完成”推断已授权发布或删除             |
 
 计划审查 `PASS` 只表示方案可执行，不等于授权执行。实现完成也不等于授权重启正式服务、切版本、打包、发布、发送消息或修改真实数据。
 
@@ -90,12 +90,12 @@ Codex 必须先判断用户请求属于哪一种授权：
 
 ## 4. 变更分级与流程重量
 
-| 类型 | 判定参考 | 最低要求 |
-|---|---|---|
-| 小改 | 单模块、低风险、不改变公共契约或数据语义 | 结果 Goal、受影响测试、GR-1/3/6/9、验收记录 |
-| 中改 | 跨模块、改变内部接口或关键用户流程 | 完整迭代卡、GR-1..10、分层验证、回退说明 |
-| 大改 | 公共契约、schema、迁移、权限、并发、架构重构、发布链路 | 方案先行、完整审查、契约/失败基线、L-Real、回退演练、全量回归 |
-| 安全修复 | 鉴权、隐私、路径、命令、密钥、数据删除等安全面 | 攻击场景复现、negative tests、fail-closed、修后攻击面复查 |
+| 类型     | 判定参考                                               | 最低要求                                                      |
+| -------- | ------------------------------------------------------ | ------------------------------------------------------------- |
+| 小改     | 单模块、低风险、不改变公共契约或数据语义               | 结果 Goal、受影响测试、GR-1/3/6/9、验收记录                   |
+| 中改     | 跨模块、改变内部接口或关键用户流程                     | 完整迭代卡、GR-1..10、分层验证、回退说明                      |
+| 大改     | 公共契约、schema、迁移、权限、并发、架构重构、发布链路 | 方案先行、完整审查、契约/失败基线、L-Real、回退演练、全量回归 |
+| 安全修复 | 鉴权、隐私、路径、命令、密钥、数据删除等安全面         | 攻击场景复现、negative tests、fail-closed、修后攻击面复查     |
 
 无法判断时按更高一级执行。全项目同时最多推进一个大改；其他工作只保留不干扰它的小改，避免多个事实面同时漂移。
 
@@ -211,15 +211,15 @@ stateDiagram-v2
     VERIFIED --> [*]
 ```
 
-| 状态 | 含义 |
-|---|---|
-| `PLANNED` | Goal、范围和任务已定义，baseline 尚未冻结 |
-| `BASELINED` | 当前事实、失败复现和判定口径已冻结 |
-| `ACTIVE` | 正在产生实现增量 |
-| `EVIDENCE_READY` | 实现和自动化验证完成，只缺真实或发布级证据 |
-| `VERIFIED` | Closure rule 与所有硬门均由证据证明 |
-| `HOLD` | 依赖、授权或资源阻塞；必须写 owner 和解除条件 |
-| `NO_GO` | 安全不变量或主结果不可达，必须停止或重新规划 |
+| 状态             | 含义                                          |
+| ---------------- | --------------------------------------------- |
+| `PLANNED`        | Goal、范围和任务已定义，baseline 尚未冻结     |
+| `BASELINED`      | 当前事实、失败复现和判定口径已冻结            |
+| `ACTIVE`         | 正在产生实现增量                              |
+| `EVIDENCE_READY` | 实现和自动化验证完成，只缺真实或发布级证据    |
+| `VERIFIED`       | Closure rule 与所有硬门均由证据证明           |
+| `HOLD`           | 依赖、授权或资源阻塞；必须写 owner 和解除条件 |
+| `NO_GO`          | 安全不变量或主结果不可达，必须停止或重新规划  |
 
 Task 完成、代码合入、构建通过、单平台通过或 Mock 通过，都不能单独把 Goal 标成 `VERIFIED`。
 
@@ -227,44 +227,44 @@ Task 完成、代码合入、构建通过、单平台通过或 Mock 通过，都
 
 中改和大改必须逐项审查 `GR-1..GR-10`；小改至少审查 `GR-1/3/6/9`。每项只能写 `PASS / HOLD / FAIL`，并附依据。
 
-| Gate | 审查问题 | PASS 条件 |
-|---|---|---|
-| GR-1 结果性 | Goal 是结果还是活动 | 描述可观察状态变化，不以开发或测试动作替代结果 |
-| GR-2 可判定 | Baseline、目标、口径、unknown 是否明确 | 指标口径固定；定性 Goal 有场景和 oracle |
-| GR-3 可追踪 | Goal、Task、Gate、Evidence 是否双向闭环 | 无孤立 Goal、无无主 Task、证据位置明确 |
-| GR-4 可推进 | 原子增量和下一步是否明确 | 非终态 Goal 有 ready task、owner 和真实依赖 |
-| GR-5 依赖真实 | 关键路径是否符合实现事实 | 无人为串行；硬阻塞与可并行项分开 |
-| GR-6 安全不变量 | 安全、隐私、兼容、保留是否 fail-closed | 有 negative tests 和不可被平均抵消的 No-Go 门 |
-| GR-7 证据充分 | 分层验证能否证明 Goal | 每层写资源、场景、oracle、证据路径；Mock 不冒充真实 |
-| GR-8 回退可执行 | 回退是否保护数据与旧 reader | 有顺序、触发条件、不可逆点和回退后验证 |
-| GR-9 状态诚实 | Task 与 Goal 完成是否分离 | 存在 PENDING/HOLD/FAIL 时迭代不标完成 |
-| GR-10 治理一致 | 契约、Changelog、总表、遗留是否同步 | owner、时点、Backlog 去向明确 |
+| Gate            | 审查问题                                | PASS 条件                                           |
+| --------------- | --------------------------------------- | --------------------------------------------------- |
+| GR-1 结果性     | Goal 是结果还是活动                     | 描述可观察状态变化，不以开发或测试动作替代结果      |
+| GR-2 可判定     | Baseline、目标、口径、unknown 是否明确  | 指标口径固定；定性 Goal 有场景和 oracle             |
+| GR-3 可追踪     | Goal、Task、Gate、Evidence 是否双向闭环 | 无孤立 Goal、无无主 Task、证据位置明确              |
+| GR-4 可推进     | 原子增量和下一步是否明确                | 非终态 Goal 有 ready task、owner 和真实依赖         |
+| GR-5 依赖真实   | 关键路径是否符合实现事实                | 无人为串行；硬阻塞与可并行项分开                    |
+| GR-6 安全不变量 | 安全、隐私、兼容、保留是否 fail-closed  | 有 negative tests 和不可被平均抵消的 No-Go 门       |
+| GR-7 证据充分   | 分层验证能否证明 Goal                   | 每层写资源、场景、oracle、证据路径；Mock 不冒充真实 |
+| GR-8 回退可执行 | 回退是否保护数据与旧 reader             | 有顺序、触发条件、不可逆点和回退后验证              |
+| GR-9 状态诚实   | Task 与 Goal 完成是否分离               | 存在 PENDING/HOLD/FAIL 时迭代不标完成               |
+| GR-10 治理一致  | 契约、Changelog、总表、遗留是否同步     | owner、时点、Backlog 去向明确                       |
 
 任何安全门 `FAIL` 都直接进入 `NO_GO`，不能用其他门的通过数量抵消。审查 `PASS` 后若 scope、依赖、冻结面、迁移策略或授权边界变化，必须重新审查受影响项。
 
 审查发现按严重度记录，不能只写“已审查”：
 
-| 级别 | 含义 | 处理 |
-|---|---|---|
-| P0 | 数据泄漏、破坏性操作或目标自相矛盾 | 立即 `NO_GO` |
-| P1 | Goal 无法证明、关键场景漏验或依赖不可推进 | 修复前 `HOLD` |
-| P2 | 增加实现或验收风险，但不阻断整体开工 | 在对应 Task 前处理 |
-| P3 | 表达、索引或维护性问题 | 文档收口前处理或回流 |
+| 级别 | 含义                                      | 处理                 |
+| ---- | ----------------------------------------- | -------------------- |
+| P0   | 数据泄漏、破坏性操作或目标自相矛盾        | 立即 `NO_GO`         |
+| P1   | Goal 无法证明、关键场景漏验或依赖不可推进 | 修复前 `HOLD`        |
+| P2   | 增加实现或验收风险，但不阻断整体开工      | 在对应 Task 前处理   |
+| P3   | 表达、索引或维护性问题                    | 文档收口前处理或回流 |
 
 ## 8. Task 设计与执行循环
 
 ### 8.1 原子 Task 格式
 
-| 字段 | 必填内容 |
-|---|---|
-| ID | 稳定编号，例如 `F12-03b` 或 `ITER-07` |
+| 字段              | 必填内容                                |
+| ----------------- | --------------------------------------- |
+| ID                | 稳定编号，例如 `F12-03b` 或 `ITER-07`   |
 | Goal / Goal Delta | 推进哪个 Goal；结束后出现什么可观察变化 |
-| Input | 已满足的依赖、基线、决策和文件范围 |
-| Output | 代码、测试、文档或数据产物 |
-| Verify | 命令、场景、oracle 和预期结果 |
-| Evidence | 预定路径，完成后回填实际结果 |
-| Depends on | 真实依赖，不按文档顺序虚构串行关系 |
-| Owner / Status | 责任人和当前状态 |
+| Input             | 已满足的依赖、基线、决策和文件范围      |
+| Output            | 代码、测试、文档或数据产物              |
+| Verify            | 命令、场景、oracle 和预期结果           |
+| Evidence          | 预定路径，完成后回填实际结果            |
+| Depends on        | 真实依赖，不按文档顺序虚构串行关系      |
+| Owner / Status    | 责任人和当前状态                        |
 
 只产出 baseline 的 Task，其 Goal Delta 应写“推进到 `BASELINED`”，不能写成能力已完成。
 
@@ -290,15 +290,15 @@ Task 完成、代码合入、构建通过、单平台通过或 Mock 通过，都
 
 每个项目应在 `AGENTS.md` 中把下表替换为真实命令。迭代卡只引用并补充本轮场景。
 
-| 层 | 目的 | 典型内容 |
-|---|---|---|
-| L0 静态 / Build | 证明可编译、格式与静态约束成立 | build、type-check、lint、format、schema 校验 |
-| L1 Unit | 证明局部规则和边界 | 正例、反例、错误路径、属性测试 |
-| L2 Integration | 证明模块组合和进程内契约 | 数据库、队列、HTTP、事件、重启模拟 |
-| L3 Contract | 证明公共面和兼容性 | API/schema/golden/cross-version/old-reader |
-| L-Real | 证明真实 binary、环境、账号或模型下的用户结果 | 真服务、真客户端、真实 provider、真实文件系统 |
-| L-Rollback | 证明失败后能恢复且不丢数据 | 故障注入、回退、重启、re-apply |
-| L-Full | 证明没有扩大回归 | 受影响产品和下游全量测试 |
+| 层              | 目的                                          | 典型内容                                      |
+| --------------- | --------------------------------------------- | --------------------------------------------- |
+| L0 静态 / Build | 证明可编译、格式与静态约束成立                | build、type-check、lint、format、schema 校验  |
+| L1 Unit         | 证明局部规则和边界                            | 正例、反例、错误路径、属性测试                |
+| L2 Integration  | 证明模块组合和进程内契约                      | 数据库、队列、HTTP、事件、重启模拟            |
+| L3 Contract     | 证明公共面和兼容性                            | API/schema/golden/cross-version/old-reader    |
+| L-Real          | 证明真实 binary、环境、账号或模型下的用户结果 | 真服务、真客户端、真实 provider、真实文件系统 |
+| L-Rollback      | 证明失败后能恢复且不丢数据                    | 故障注入、回退、重启、re-apply                |
+| L-Full          | 证明没有扩大回归                              | 受影响产品和下游全量测试                      |
 
 验证范围随风险增加，不能机械要求所有小改跑所有层。但以下情况必须包含 L-Real 或等价真实证据：外部服务、模型行为、桌面壳、浏览器交互、平台文件系统、更新/迁移、凭证、通知投递。
 
@@ -333,16 +333,16 @@ Mock / Stub < Deterministic integration < Isolated real filesystem/process
 
 迭代卡必须预先定义硬门，例如：
 
-| Gate | PASS 条件 | Evidence |
-|---|---|---|
-| RG-1 Baseline | 现状与 RED 可复现，分母冻结 | baseline report |
-| RG-2 Implementation | 原子 Task 全部 GREEN，无未处理 P0/P1 | test reports + diff |
-| RG-3 Compatibility | 新旧 reader/writer/API 行为符合冻结契约 | contract / cross-version report |
-| RG-4 Security | negative、越权、泄漏和 fail-closed 场景通过 | security report |
-| RG-5 L-Real | 真实主场景和失败场景符合 oracle | transcript / screenshot / receipt |
-| RG-6 Rollback | 回退与 re-apply 可执行且数据不丢失 | rollback report |
-| RG-7 Regression | 受影响域和下游回归相对 baseline 无新增失败 | full test report |
-| RG-8 Governance | 契约、Changelog、总表、文档和 Backlog 已同步 | document diff |
+| Gate                | PASS 条件                                    | Evidence                          |
+| ------------------- | -------------------------------------------- | --------------------------------- |
+| RG-1 Baseline       | 现状与 RED 可复现，分母冻结                  | baseline report                   |
+| RG-2 Implementation | 原子 Task 全部 GREEN，无未处理 P0/P1         | test reports + diff               |
+| RG-3 Compatibility  | 新旧 reader/writer/API 行为符合冻结契约      | contract / cross-version report   |
+| RG-4 Security       | negative、越权、泄漏和 fail-closed 场景通过  | security report                   |
+| RG-5 L-Real         | 真实主场景和失败场景符合 oracle              | transcript / screenshot / receipt |
+| RG-6 Rollback       | 回退与 re-apply 可执行且数据不丢失           | rollback report                   |
+| RG-7 Regression     | 受影响域和下游回归相对 baseline 无新增失败   | full test report                  |
+| RG-8 Governance     | 契约、Changelog、总表、文档和 Backlog 已同步 | document diff                     |
 
 `HOLD` 必须写：reason code、blocker、owner、自动或人工重检触发、解除条件、可继续的其他 Goal。资源不可用是 HOLD，不是失败，也不是完成。
 
@@ -430,58 +430,58 @@ Mock / Stub < Deterministic integration < Isolated real filesystem/process
 ### 1.1 Goal 定义
 
 | Goal | 用户/系统结果 | Baseline / 当前差距 | Closure rule | Owner |
-|---|---|---|---|---|
-| G0 |  |  |  |  |
+| ---- | ------------- | ------------------- | ------------ | ----- |
+| G0   |               |                     |              |       |
 
 ### 1.2 Goal -> Task -> Gate -> Evidence
 
-| Goal | Tasks | Closure Gates | Evidence |
-|---|---|---|---|
-| G0 | T-01..T-n | RG-1..RG-n | <path> |
+| Goal | Tasks     | Closure Gates | Evidence |
+| ---- | --------- | ------------- | -------- |
+| G0   | T-01..T-n | RG-1..RG-n    | <path>   |
 
 ### 1.3 Goal 审查
 
-| Review | 日期 | 结论 | 阻断发现 | 处理结果 |
-|---|---|---|---|---|
-| Initial | YYYY-MM-DD | PENDING |  |  |
+| Review  | 日期       | 结论    | 阻断发现 | 处理结果 |
+| ------- | ---------- | ------- | -------- | -------- |
+| Initial | YYYY-MM-DD | PENDING |          |          |
 
-| Gate | GR-1 | GR-2 | GR-3 | GR-4 | GR-5 | GR-6 | GR-7 | GR-8 | GR-9 | GR-10 |
-|---|---|---|---|---|---|---|---|---|---|---|
+| Gate | GR-1    | GR-2    | GR-3    | GR-4    | GR-5    | GR-6    | GR-7    | GR-8    | GR-9    | GR-10   |
+| ---- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- |
 | 结果 | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
 
 ### 1.4 Goal 进度账本
 
-| Goal | 状态 | Baseline / 当前差距 | Closure rule | Evidence | Next ready task | Blocker / Owner |
-|---|---|---|---|---|---|---|
-| G0 | PLANNED |  |  | PENDING | T-01 | 无 / <Owner> |
+| Goal | 状态    | Baseline / 当前差距 | Closure rule | Evidence | Next ready task | Blocker / Owner |
+| ---- | ------- | ------------------- | ------------ | -------- | --------------- | --------------- |
+| G0   | PLANNED |                     |              | PENDING  | T-01            | 无 / <Owner>    |
 
 ## 2. 任务与依赖
 
-| Task | Goal / Goal Delta | Input | Output | Verify / Evidence | Depends on | Owner / 状态 |
-|---|---|---|---|---|---|---|
-| T-01 | G0 / 推进到 BASELINED |  |  |  | 无 |  |
+| Task | Goal / Goal Delta     | Input | Output | Verify / Evidence | Depends on | Owner / 状态 |
+| ---- | --------------------- | ----- | ------ | ----------------- | ---------- | ------------ |
+| T-01 | G0 / 推进到 BASELINED |       |        |                   | 无         |              |
 
 ## 3. 测试与验收计划
 
-| 层 | 场景与 Oracle | 命令 / 资源 | Evidence |
-|---|---|---|---|
-| L0 |  |  |  |
-| L1 |  |  |  |
-| L2 |  |  |  |
-| L3 |  |  |  |
-| L-Real |  |  |  |
-| L-Rollback |  |  |  |
-| L-Full |  |  |  |
+| 层         | 场景与 Oracle | 命令 / 资源 | Evidence |
+| ---------- | ------------- | ----------- | -------- |
+| L0         |               |             |          |
+| L1         |               |             |          |
+| L2         |               |             |          |
+| L3         |               |             |          |
+| L-Real     |               |             |          |
+| L-Rollback |               |             |          |
+| L-Full     |               |             |          |
 
 ## 4. Release Gates 与停止条件
 
-| Gate | PASS 条件 | Evidence | 状态 |
-|---|---|---|---|
-| RG-1 |  |  | PENDING |
+| Gate | PASS 条件 | Evidence | 状态    |
+| ---- | --------- | -------- | ------- |
+| RG-1 |           |          | PENDING |
 
-| 触发条件 | 结论 | 动作 / 解除条件 | Owner |
-|---|---|---|---|
-|  | HOLD / NO_GO |  |  |
+| 触发条件 | 结论         | 动作 / 解除条件 | Owner |
+| -------- | ------------ | --------------- | ----- |
+|          | HOLD / NO_GO |                 |       |
 
 ## 5. 回退计划
 
@@ -512,8 +512,8 @@ Mock / Stub < Deterministic integration < Isolated real filesystem/process
 
 ## 8. 遗留与回流
 
-| ID | 遗留 | 严重度 | 不阻断理由 | Owner / Backlog |
-|---|---|---|---|---|
+| ID  | 遗留 | 严重度 | 不阻断理由 | Owner / Backlog |
+| --- | ---- | ------ | ---------- | --------------- |
 ```
 
 ## 16. 可复制的 `AGENTS.md` 最小约束

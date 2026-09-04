@@ -1,33 +1,15 @@
 import { KeyRound, LogOut } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
 import { logout } from '../api/auth'
+import { useDropdown } from '../hooks/useDropdown'
+import { cn } from '../lib/utils'
 import { useAuthStore } from '../stores/auth'
 import { S } from '../strings/common'
 import { layoutStr } from '../strings/layout'
-import { cn } from '../lib/utils'
 
 /** 顶栏用户菜单：显示当前用户，提供登出（修改密码 M5 提供） */
 export function UserMenu() {
   const user = useAuthStore((s) => s.user)
-  const [open, setOpen] = useState(false)
-  const rootRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!open) return
-    const onDown = (e: MouseEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false)
-    }
-    // Esc 关闭（UX #10）
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false)
-    }
-    document.addEventListener('mousedown', onDown)
-    document.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('mousedown', onDown)
-      document.removeEventListener('keydown', onKey)
-    }
-  }, [open])
+  const { open, setOpen, rootRef } = useDropdown()
 
   if (!user) return null
 
@@ -49,7 +31,7 @@ export function UserMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-9 z-50 w-52 rounded-lg border border-border bg-elevated p-1 shadow-lg shadow-black/30"
+          className="absolute right-0 top-9 z-50 w-52 rounded-lg border border-border bg-elevated p-1 shadow-overlay"
         >
           <div className="border-b border-border px-2.5 py-2">
             <p className="font-mono text-xs text-foreground">{user.userName}</p>

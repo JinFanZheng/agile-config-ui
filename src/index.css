@@ -1,45 +1,177 @@
 @import 'tailwindcss';
 
 /*
- * 设计令牌 — docs/AGENT_HANDOFF.md §7.1（Linear 式深色专业风，暗色为主主题）
- * :root 为令牌唯一事实源；@theme inline 将其映射为 Tailwind 工具类：
- *   bg-page / bg-panel / bg-elevated / border-border / text-foreground /
- *   text-muted-foreground / bg-primary / text-env-dev ...
+ * 主题引擎 —— docs/AGENT_HANDOFF.md §7.1（2026-09-04 选型锁定）
+ *
+ * 契约：主题只改「颜色 / 圆角 / 阴影」三个维度；布局、信息架构、密度、排版全局恒定。
+ * 实现：:root 与 [data-theme] 提供语义令牌（唯一事实源），@theme inline 映射为
+ * Tailwind 工具类（bg-page / bg-panel / bg-input / border-border / text-foreground /
+ * bg-primary / text-info / shadow-card / rounded-md|lg ...）。
+ * 默认主题 graphite（石墨）；切换由 stores/theme.ts 驱动 html[data-theme]。
  */
-:root {
-  --bg-page: #0f1117;
-  --bg-panel: #16181f;
-  --bg-elevated: #1a1d26;
-  --border-default: #262a36;
-  --text-primary: #e6e8ee;
-  --text-secondary: #9aa0b0;
-  --accent: #6e7bf2;
-  --accent-hover: #7f8bf5;
+
+:root,
+[data-theme='graphite'] {
+  color-scheme: light;
+  --bg-page: #ffffff;
+  --bg-panel: #ffffff;
+  --bg-elevated: #fafafa;
+  --bg-input: #ffffff;
+  --border-default: #e4e4e7;
+  --border-strong: #18181b;
+  --text-primary: #09090b;
+  --text-secondary: #71717a;
+  --accent: #18181b;
+  --accent-hover: #000000;
   --accent-foreground: #ffffff;
+  --info: #2563eb;
+  --success: #059669;
+  --warning: #b45309;
+  --danger: #dc2626;
+  --env-dev: #16a34a;
+  --env-test: #d97706;
+  --env-prod: #dc2626;
+  --radius-control: 5px;
+  --radius-card: 6px;
+  --fx-card: none;
+  --fx-overlay: 0 4px 12px rgba(9, 9, 11, 0.08);
+  --scrollbar-thumb: #d4d4d8;
+}
+
+[data-theme='clear-blue'] {
+  color-scheme: light;
+  --bg-page: #f7f9fc;
+  --bg-panel: #ffffff;
+  --bg-elevated: #f2f6fd;
+  --bg-input: #ffffff;
+  --border-default: #e5eaf2;
+  --border-strong: #c7d4ea;
+  --text-primary: #1a2333;
+  --text-secondary: #5f6c85;
+  --accent: #2f6bff;
+  --accent-hover: #2456d6;
+  --accent-foreground: #ffffff;
+  --info: #2456d6;
+  --success: #16804c;
+  --warning: #b25e09;
+  --danger: #c0392b;
+  --env-dev: #16a34a;
+  --env-test: #d97706;
+  --env-prod: #dc2626;
+  --radius-control: 7px;
+  --radius-card: 8px;
+  --fx-card: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --fx-overlay: 0 8px 24px rgba(16, 24, 40, 0.12);
+  --scrollbar-thumb: #d5dde9;
+}
+
+[data-theme='warm-paper'] {
+  color-scheme: light;
+  --bg-page: #f6f4ef;
+  --bg-panel: #fffdf8;
+  --bg-elevated: #f3efe7;
+  --bg-input: #fffdf8;
+  --border-default: #e7e0d2;
+  --border-strong: #cfc4ae;
+  --text-primary: #2b2620;
+  --text-secondary: #8a7f6f;
+  --accent: #2b2620;
+  --accent-hover: #443c33;
+  --accent-foreground: #fffdf8;
+  --info: #2563eb;
+  --success: #4d7c0f;
+  --warning: #a16207;
+  --danger: #b3402e;
+  --env-dev: #5d8a36;
+  --env-test: #c07d10;
+  --env-prod: #c0442e;
+  --radius-control: 9px;
+  --radius-card: 12px;
+  --fx-card: 0 2px 14px rgba(90, 70, 45, 0.07);
+  --fx-overlay: 0 10px 28px rgba(90, 70, 45, 0.16);
+  --scrollbar-thumb: #ddd3c0;
+}
+
+[data-theme='navy-console'] {
+  color-scheme: dark;
+  --bg-page: #0a1424;
+  --bg-panel: #0f1e36;
+  --bg-elevated: #15294a;
+  --bg-input: #0b1930;
+  --border-default: #1d365c;
+  --border-strong: #2b4d7e;
+  --text-primary: #dbe7f8;
+  --text-secondary: #7e95b8;
+  --accent: #38bdf8;
+  --accent-hover: #7dd3fc;
+  --accent-foreground: #062033;
+  --info: #38bdf8;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
   --env-dev: #3fb950;
   --env-test: #d29922;
   --env-prod: #f85149;
-  --success: #3fb950;
-  --warning: #d29922;
-  --danger: #f85149;
+  --radius-control: 5px;
+  --radius-card: 6px;
+  --fx-card: none;
+  --fx-overlay: 0 8px 24px rgba(2, 8, 20, 0.6);
+  --scrollbar-thumb: #27456e;
+}
+
+[data-theme='fresh-mint'] {
+  color-scheme: light;
+  --bg-page: #f5faf8;
+  --bg-panel: #ffffff;
+  --bg-elevated: #eef7f4;
+  --bg-input: #ffffff;
+  --border-default: #d9eae4;
+  --border-strong: #b5d6cc;
+  --text-primary: #17322b;
+  --text-secondary: #6b8a80;
+  --accent: #0d9488;
+  --accent-hover: #0f766e;
+  --accent-foreground: #ffffff;
+  --info: #0369a1;
+  --success: #0f766e;
+  --warning: #b45309;
+  --danger: #be3b2f;
+  --env-dev: #16a34a;
+  --env-test: #d97706;
+  --env-prod: #dc2626;
+  --radius-control: 9px;
+  --radius-card: 12px;
+  --fx-card: 0 4px 18px rgba(13, 148, 136, 0.07);
+  --fx-overlay: 0 10px 28px rgba(13, 148, 136, 0.16);
+  --scrollbar-thumb: #cfe5de;
 }
 
 @theme inline {
   --color-page: var(--bg-page);
   --color-panel: var(--bg-panel);
   --color-elevated: var(--bg-elevated);
+  --color-input: var(--bg-input);
   --color-border: var(--border-default);
+  --color-border-strong: var(--border-strong);
   --color-foreground: var(--text-primary);
   --color-muted-foreground: var(--text-secondary);
   --color-primary: var(--accent);
   --color-primary-hover: var(--accent-hover);
   --color-primary-foreground: var(--accent-foreground);
-  --color-env-dev: var(--env-dev);
-  --color-env-test: var(--env-test);
-  --color-env-prod: var(--env-prod);
+  --color-info: var(--info);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
+  --color-env-dev: var(--env-dev);
+  --color-env-test: var(--env-test);
+  --color-env-prod: var(--env-prod);
+
+  --radius-sm: var(--radius-control);
+  --radius-md: var(--radius-control);
+  --radius-lg: var(--radius-card);
+
+  --shadow-card: var(--fx-card);
+  --shadow-overlay: var(--fx-overlay);
 
   --font-sans:
     'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei',
@@ -49,14 +181,14 @@
 
 @layer base {
   html {
-    color-scheme: dark;
+    background-color: var(--bg-page);
   }
 
   body {
     background-color: var(--color-page);
     color: var(--color-foreground);
     font-family: var(--font-sans);
-    font-size: 13px; /* 基准字号，紧凑密度 */
+    font-size: 13px; /* 基准字号恒定，不随主题变 */
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -68,7 +200,7 @@
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--accent) 40%, transparent);
+    background: color-mix(in srgb, var(--accent) 30%, transparent);
   }
 
   ::-webkit-scrollbar {
@@ -76,11 +208,11 @@
     height: 8px;
   }
   ::-webkit-scrollbar-thumb {
-    background: #2a2f3d;
+    background: var(--scrollbar-thumb);
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #343a4b;
+    background: var(--text-secondary);
   }
   ::-webkit-scrollbar-track {
     background: transparent;

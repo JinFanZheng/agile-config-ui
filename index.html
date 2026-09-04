@@ -1,9 +1,28 @@
 <!doctype html>
-<html lang="zh-CN" style="background-color: #0f1117">
+<html lang="zh-CN" style="background-color: #ffffff">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AgileConfig 控制台</title>
+    <script>
+      // 防闪屏：渲染前同步应用持久化主题（与 stores/theme.ts 的存储键一致）
+      try {
+        var t = 'graphite'
+        var raw = localStorage.getItem('agile-config-ui.theme')
+        if (raw) {
+          var saved = JSON.parse(raw).state.theme
+          if (
+            ['graphite', 'clear-blue', 'warm-paper', 'navy-console', 'fresh-mint'].indexOf(
+              saved
+            ) !== -1
+          )
+            t = saved
+        }
+        document.documentElement.dataset.theme = t
+      } catch (e) {
+        document.documentElement.dataset.theme = 'graphite'
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

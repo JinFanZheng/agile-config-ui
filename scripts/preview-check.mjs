@@ -5,7 +5,14 @@ import { chromium } from '@playwright/test'
 import { mkdirSync, writeFileSync } from 'node:fs'
 
 const BASE = 'http://localhost:5019'
-const PAGES = ['index.html', 'a-clear-blue.html', 'b-warm-paper.html', 'c-graphite.html', 'd-navy-console.html', 'e-fresh-mint.html']
+const PAGES = [
+  'index.html',
+  'a-clear-blue.html',
+  'b-warm-paper.html',
+  'c-graphite.html',
+  'd-navy-console.html',
+  'e-fresh-mint.html',
+]
 const OUT = 'docs/evidence/ITER-01'
 
 mkdirSync(OUT, { recursive: true })

@@ -1,154 +1,614 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>风格 D · 深蓝中控 — AgileConfig</title>
-<style>
-  :root{
-    --bg:#0a1424; --panel:#0f1e36; --hover:#15294a; --border:#1d365c;
-    --text:#dbe7f8; --sub:#7e95b8; --accent:#38bdf8; --accent-h:#7dd3fc; --accent-bg:#0c2a44;
-    --ok:#34d399; --ok-bg:#0b2b24; --warn:#fbbf24; --warn-bg:#2d2410;
-    --err:#f87171; --err-bg:#331a1c; --add:#38bdf8; --add-bg:#0c2a44;
-    --dev:#3fb950; --test:#d29922; --prod:#f85149;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;border-color:var(--border)}
-  body{font:13px/1.5 -apple-system,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--text)}
-  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
-  .topbar{display:flex;align-items:center;gap:16px;height:50px;padding:0 18px;background:linear-gradient(180deg,#12233e,#0f1e36);border-bottom:1px solid var(--border)}
-  .brand{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700}
-  .logo{display:grid;place-items:center;width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,#38bdf8,#0ea5e9);color:#062033;font-weight:800}
-  .envs{display:inline-flex;border:1px solid var(--border);border-radius:6px;padding:2px;gap:2px;margin-left:12px;background:#0b1930}
-  .envs button{display:flex;align-items:center;gap:6px;border:0;background:transparent;color:var(--sub);font:inherit;font-size:12px;font-family:ui-monospace,Menlo,monospace;padding:3px 11px;border-radius:4px;cursor:pointer}
-  .envs button.on{background:var(--accent-bg);color:var(--accent);font-weight:700;box-shadow:inset 0 0 0 1px rgba(56,189,248,.4)}
-  .dot{width:7px;height:7px;border-radius:50%}
-  .d-dev{background:var(--dev)}.d-test{background:var(--test)}.d-prod{background:var(--prod)}
-  .sp{flex:1}
-  .user{display:flex;align-items:center;gap:8px;font-size:12.5px}
-  .ava{display:grid;place-items:center;width:25px;height:25px;border-radius:6px;background:var(--accent-bg);color:var(--accent);font-weight:800;box-shadow:inset 0 0 0 1px rgba(56,189,248,.35)}
-  .shell{display:flex;min-height:calc(100vh - 50px)}
-  .side{width:196px;flex:none;border-right:1px solid var(--border);padding:12px 9px;display:flex;flex-direction:column;gap:2px;background:#0c1a30}
-  .side a{display:block;padding:7px 12px;border-radius:5px;color:var(--sub);text-decoration:none;font-size:12.5px;border-left:2px solid transparent}
-  .side a:hover{color:var(--text);background:var(--hover)}
-  .side a.on{color:var(--accent);background:var(--accent-bg);border-left-color:var(--accent);font-weight:600}
-  .side .foot{margin-top:auto;padding:10px 12px;font-size:10.5px;color:var(--sub);font-family:ui-monospace,Menlo,monospace;opacity:.7}
-  main{flex:1;min-width:0;padding:22px 26px}
-  .pagehead{display:flex;align-items:flex-start;gap:16px;margin-bottom:15px}
-  h1{font-size:16px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .appid{font-size:11px;font-weight:500;color:var(--sub);border:1px solid var(--border);border-radius:4px;padding:1px 8px}
-  .secret{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--accent);border:1px solid rgba(56,189,248,.35);border-radius:4px;padding:1px 8px;cursor:pointer;background:var(--accent-bg)}
-  .sub2{color:var(--sub);font-size:12px;margin-top:4px}
-  .btn{display:inline-flex;align-items:center;gap:6px;border-radius:5px;border:1px solid var(--border);background:#12233e;color:var(--text);font:inherit;font-size:12.5px;padding:6px 13px;cursor:pointer}
-  .btn:hover{border-color:var(--accent);color:var(--accent-h)}
-  .btn.pri{background:var(--accent);border-color:var(--accent);color:#062033;font-weight:700}
-  .btn.pri:hover{background:var(--accent-h);color:#062033}
-  .actions{margin-left:auto;display:flex;gap:8px}
-  .strip{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,rgba(56,189,248,.06),transparent 55%),var(--panel);border:1px solid var(--border);border-left:2px solid var(--warn);border-radius:6px;padding:10px 15px;margin-bottom:13px}
-  .strip .lab{font-weight:700;font-size:12.5px}
-  .pill{display:inline-flex;align-items:center;font-size:11.5px;border-radius:4px;padding:2px 9px;font-weight:600}
-  .p-add{color:var(--add);background:var(--add-bg);box-shadow:inset 0 0 0 1px rgba(56,189,248,.3)}
-  .p-edit{color:var(--warn);background:var(--warn-bg);box-shadow:inset 0 0 0 1px rgba(251,191,36,.3)}
-  .p-del{color:var(--err);background:var(--err-bg);box-shadow:inset 0 0 0 1px rgba(248,113,113,.3)}
-  .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:9px}
-  .search{flex:1;max-width:330px;border:1px solid var(--border);border-radius:5px;background:#0b1930;padding:6px 12px;font:inherit;color:var(--text)}
-  .search:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,.2)}
-  .search::placeholder{color:var(--sub)}
-  .count{color:var(--sub);font-size:11.5px}
-  .card{background:var(--panel);border:1px solid var(--border);border-radius:6px;overflow:hidden}
-  table{width:100%;border-collapse:collapse;font-size:12.5px}
-  th{text-align:left;font-weight:600;color:var(--sub);font-size:11px;padding:9px 15px;background:#0c1c33;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.5px}
-  td{padding:8px 15px;border-bottom:1px solid #14294a}
-  tr:last-child td{border-bottom:0}
-  tbody tr:hover td{background:var(--hover)}
-  .grow td{background:#0c1c33;color:var(--text);font-weight:600;font-size:12px;cursor:pointer}
-  td.mut{color:var(--sub)}
-  .val{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .old{text-decoration:line-through;color:var(--sub);font-size:11px;margin-right:6px}
-  .badge{display:inline-flex;align-items:center;font-size:11px;border-radius:3px;padding:1px 8px;font-weight:500}
-  .b-ok{color:var(--ok);background:var(--ok-bg)}.b-add{color:var(--add);background:var(--add-bg)}
-  .b-edit{color:var(--warn);background:var(--warn-bg)}.b-del{color:var(--err);background:var(--err-bg)}
-  .iconbtn{border:0;background:transparent;color:var(--sub);cursor:pointer;border-radius:4px;padding:2px 6px}
-  .iconbtn:hover{background:var(--hover);color:var(--accent)}
-  .fab{position:fixed;right:16px;bottom:16px;display:flex;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:12px;color:var(--sub);box-shadow:0 8px 24px rgba(2,8,20,.6)}
-  .fab a{color:var(--accent);text-decoration:none;font-weight:700}
-</style>
-</head>
-<body>
-<header class="topbar">
-  <div class="brand"><span class="logo">A</span>AgileConfig</div>
-  <div class="envs">
-    <button class="on"><span class="dot d-dev"></span>DEV</button>
-    <button><span class="dot d-test"></span>TEST</button>
-    <button><span class="dot d-prod"></span>PROD</button>
-  </div>
-  <div class="sp"></div>
-  <div class="user"><span class="ava">A</span>admin</div>
-</header>
-<div class="shell">
-  <aside class="side">
-    <a href="#">概览</a>
-    <a class="on" href="#">应用</a>
-    <a href="#">发布历史</a>
-    <a href="#">客户端</a>
-    <a href="#">节点</a>
-    <a href="#">用户</a>
-    <a href="#">系统日志</a>
-    <div class="foot">AgileConfig v1.13.2</div>
-  </aside>
-  <main>
-    <div class="pagehead">
-      <div>
-        <h1>demo_app
-          <span class="appid mono">ID · demo_app</span>
-          <span class="secret mono">Secret ····34f2 ⧉ 复制</span>
-        </h1>
-        <p class="sub2">配置管理 · 当前环境 DEV · 共 10 条配置</p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>风格 D · 深蓝中控 — AgileConfig</title>
+    <style>
+      :root {
+        --bg: #0a1424;
+        --panel: #0f1e36;
+        --hover: #15294a;
+        --border: #1d365c;
+        --text: #dbe7f8;
+        --sub: #7e95b8;
+        --accent: #38bdf8;
+        --accent-h: #7dd3fc;
+        --accent-bg: #0c2a44;
+        --ok: #34d399;
+        --ok-bg: #0b2b24;
+        --warn: #fbbf24;
+        --warn-bg: #2d2410;
+        --err: #f87171;
+        --err-bg: #331a1c;
+        --add: #38bdf8;
+        --add-bg: #0c2a44;
+        --dev: #3fb950;
+        --test: #d29922;
+        --prod: #f85149;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        border-color: var(--border);
+      }
+      body {
+        font:
+          13px/1.5 -apple-system,
+          'PingFang SC',
+          'Microsoft YaHei',
+          system-ui,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .mono {
+        font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+      }
+      .topbar {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        height: 50px;
+        padding: 0 18px;
+        background: linear-gradient(180deg, #12233e, #0f1e36);
+        border-bottom: 1px solid var(--border);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .logo {
+        display: grid;
+        place-items: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+        color: #062033;
+        font-weight: 800;
+      }
+      .envs {
+        display: inline-flex;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 2px;
+        gap: 2px;
+        margin-left: 12px;
+        background: #0b1930;
+      }
+      .envs button {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: 0;
+        background: transparent;
+        color: var(--sub);
+        font: inherit;
+        font-size: 12px;
+        font-family: ui-monospace, Menlo, monospace;
+        padding: 3px 11px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .envs button.on {
+        background: var(--accent-bg);
+        color: var(--accent);
+        font-weight: 700;
+        box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.4);
+      }
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+      }
+      .d-dev {
+        background: var(--dev);
+      }
+      .d-test {
+        background: var(--test);
+      }
+      .d-prod {
+        background: var(--prod);
+      }
+      .sp {
+        flex: 1;
+      }
+      .user {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12.5px;
+      }
+      .ava {
+        display: grid;
+        place-items: center;
+        width: 25px;
+        height: 25px;
+        border-radius: 6px;
+        background: var(--accent-bg);
+        color: var(--accent);
+        font-weight: 800;
+        box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.35);
+      }
+      .shell {
+        display: flex;
+        min-height: calc(100vh - 50px);
+      }
+      .side {
+        width: 196px;
+        flex: none;
+        border-right: 1px solid var(--border);
+        padding: 12px 9px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        background: #0c1a30;
+      }
+      .side a {
+        display: block;
+        padding: 7px 12px;
+        border-radius: 5px;
+        color: var(--sub);
+        text-decoration: none;
+        font-size: 12.5px;
+        border-left: 2px solid transparent;
+      }
+      .side a:hover {
+        color: var(--text);
+        background: var(--hover);
+      }
+      .side a.on {
+        color: var(--accent);
+        background: var(--accent-bg);
+        border-left-color: var(--accent);
+        font-weight: 600;
+      }
+      .side .foot {
+        margin-top: auto;
+        padding: 10px 12px;
+        font-size: 10.5px;
+        color: var(--sub);
+        font-family: ui-monospace, Menlo, monospace;
+        opacity: 0.7;
+      }
+      main {
+        flex: 1;
+        min-width: 0;
+        padding: 22px 26px;
+      }
+      .pagehead {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 15px;
+      }
+      h1 {
+        font-size: 16px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .appid {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--sub);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1px 8px;
+      }
+      .secret {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        color: var(--accent);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        border-radius: 4px;
+        padding: 1px 8px;
+        cursor: pointer;
+        background: var(--accent-bg);
+      }
+      .sub2 {
+        color: var(--sub);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 5px;
+        border: 1px solid var(--border);
+        background: #12233e;
+        color: var(--text);
+        font: inherit;
+        font-size: 12.5px;
+        padding: 6px 13px;
+        cursor: pointer;
+      }
+      .btn:hover {
+        border-color: var(--accent);
+        color: var(--accent-h);
+      }
+      .btn.pri {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #062033;
+        font-weight: 700;
+      }
+      .btn.pri:hover {
+        background: var(--accent-h);
+        color: #062033;
+      }
+      .actions {
+        margin-left: auto;
+        display: flex;
+        gap: 8px;
+      }
+      .strip {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(90deg, rgba(56, 189, 248, 0.06), transparent 55%), var(--panel);
+        border: 1px solid var(--border);
+        border-left: 2px solid var(--warn);
+        border-radius: 6px;
+        padding: 10px 15px;
+        margin-bottom: 13px;
+      }
+      .strip .lab {
+        font-weight: 700;
+        font-size: 12.5px;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        font-size: 11.5px;
+        border-radius: 4px;
+        padding: 2px 9px;
+        font-weight: 600;
+      }
+      .p-add {
+        color: var(--add);
+        background: var(--add-bg);
+        box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.3);
+      }
+      .p-edit {
+        color: var(--warn);
+        background: var(--warn-bg);
+        box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.3);
+      }
+      .p-del {
+        color: var(--err);
+        background: var(--err-bg);
+        box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.3);
+      }
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 9px;
+      }
+      .search {
+        flex: 1;
+        max-width: 330px;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        background: #0b1930;
+        padding: 6px 12px;
+        font: inherit;
+        color: var(--text);
+      }
+      .search:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+      }
+      .search::placeholder {
+        color: var(--sub);
+      }
+      .count {
+        color: var(--sub);
+        font-size: 11.5px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+      }
+      th {
+        text-align: left;
+        font-weight: 600;
+        color: var(--sub);
+        font-size: 11px;
+        padding: 9px 15px;
+        background: #0c1c33;
+        border-bottom: 1px solid var(--border);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      td {
+        padding: 8px 15px;
+        border-bottom: 1px solid #14294a;
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      tbody tr:hover td {
+        background: var(--hover);
+      }
+      .grow td {
+        background: #0c1c33;
+        color: var(--text);
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      td.mut {
+        color: var(--sub);
+      }
+      .val {
+        max-width: 280px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .old {
+        text-decoration: line-through;
+        color: var(--sub);
+        font-size: 11px;
+        margin-right: 6px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        font-size: 11px;
+        border-radius: 3px;
+        padding: 1px 8px;
+        font-weight: 500;
+      }
+      .b-ok {
+        color: var(--ok);
+        background: var(--ok-bg);
+      }
+      .b-add {
+        color: var(--add);
+        background: var(--add-bg);
+      }
+      .b-edit {
+        color: var(--warn);
+        background: var(--warn-bg);
+      }
+      .b-del {
+        color: var(--err);
+        background: var(--err-bg);
+      }
+      .iconbtn {
+        border: 0;
+        background: transparent;
+        color: var(--sub);
+        cursor: pointer;
+        border-radius: 4px;
+        padding: 2px 6px;
+      }
+      .iconbtn:hover {
+        background: var(--hover);
+        color: var(--accent);
+      }
+      .fab {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 8px 14px;
+        font-size: 12px;
+        color: var(--sub);
+        box-shadow: 0 8px 24px rgba(2, 8, 20, 0.6);
+      }
+      .fab a {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand"><span class="logo">A</span>AgileConfig</div>
+      <div class="envs">
+        <button class="on"><span class="dot d-dev"></span>DEV</button>
+        <button><span class="dot d-test"></span>TEST</button>
+        <button><span class="dot d-prod"></span>PROD</button>
       </div>
-      <div class="actions">
-        <button class="btn">导入</button>
-        <button class="btn">JSON 视图</button>
-        <button class="btn pri">＋ 新建配置</button>
-      </div>
-    </div>
+      <div class="sp"></div>
+      <div class="user"><span class="ava">A</span>admin</div>
+    </header>
+    <div class="shell">
+      <aside class="side">
+        <a href="#">概览</a>
+        <a class="on" href="#">应用</a>
+        <a href="#">发布历史</a>
+        <a href="#">客户端</a>
+        <a href="#">节点</a>
+        <a href="#">用户</a>
+        <a href="#">系统日志</a>
+        <div class="foot">AgileConfig v1.13.2</div>
+      </aside>
+      <main>
+        <div class="pagehead">
+          <div>
+            <h1>
+              demo_app
+              <span class="appid mono">ID · demo_app</span>
+              <span class="secret mono">Secret ····34f2 ⧉ 复制</span>
+            </h1>
+            <p class="sub2">配置管理 · 当前环境 DEV · 共 10 条配置</p>
+          </div>
+          <div class="actions">
+            <button class="btn">导入</button>
+            <button class="btn">JSON 视图</button>
+            <button class="btn pri">＋ 新建配置</button>
+          </div>
+        </div>
 
-    <div class="strip">
-      <span class="lab">待发布改动</span>
-      <span class="pill p-add">新增 2</span>
-      <span class="pill p-edit">修改 1</span>
-      <span class="pill p-del">删除 1</span>
-      <span class="sp"></span>
-      <button class="btn">取消全部</button>
-      <button class="btn pri">发布…</button>
-    </div>
+        <div class="strip">
+          <span class="lab">待发布改动</span>
+          <span class="pill p-add">新增 2</span>
+          <span class="pill p-edit">修改 1</span>
+          <span class="pill p-del">删除 1</span>
+          <span class="sp"></span>
+          <button class="btn">取消全部</button>
+          <button class="btn pri">发布…</button>
+        </div>
 
-    <div class="toolbar">
-      <input class="search" placeholder="过滤键 / 值 / 描述…">
-      <span class="sp"></span>
-      <span class="count">3 个分组</span>
-    </div>
+        <div class="toolbar">
+          <input class="search" placeholder="过滤键 / 值 / 描述…" />
+          <span class="sp"></span>
+          <span class="count">3 个分组</span>
+        </div>
 
-    <div class="card">
-      <table>
-        <thead><tr><th style="width:110px">分组</th><th style="width:220px">键</th><th>值</th><th style="width:100px">线上状态</th><th style="width:100px">待发布</th><th style="width:120px">更新时间</th><th style="width:60px"></th></tr></thead>
-        <tbody>
-          <tr class="grow"><td colspan="7">▾ app <span style="font-weight:400;color:var(--sub)">4 条</span></td></tr>
-          <tr><td class="mono mut">app</td><td class="mono">timeout_seconds</td><td class="mono val">30</td><td><span class="badge b-ok">已上线</span></td><td class="mut">—</td><td class="mut">09-04 11:02</td><td><button class="iconbtn">⋯</button></td></tr>
-          <tr><td class="mono mut">app</td><td class="mono">max_connections</td><td class="mono val"><span class="old">100</span>150</td><td><span class="badge b-ok">已上线</span></td><td><span class="badge b-edit">修改</span></td><td class="mut">09-04 11:20</td><td><button class="iconbtn">⋯</button></td></tr>
-          <tr><td class="mono mut">app</td><td class="mono">feature_new_pay</td><td class="mono val">true</td><td class="mut">—</td><td><span class="badge b-add">新增</span></td><td class="mut">09-04 11:31</td><td><button class="iconbtn">⋯</button></td></tr>
-          <tr><td class="mono mut">app</td><td class="mono">retry_times</td><td class="mono val">3</td><td><span class="badge b-ok">已上线</span></td><td class="mut">—</td><td class="mut">09-01 14:22</td><td><button class="iconbtn">⋯</button></td></tr>
-          <tr class="grow"><td colspan="7">▾ database <span style="font-weight:400;color:var(--sub)">4 条</span></td></tr>
-          <tr><td class="mono mut">database</td><td class="mono">db_host</td><td class="mono val">10.0.12.34</td><td><span class="badge b-ok">已上线</span></td><td class="mut">—</td><td class="mut">09-01 14:22</td><td><button class="iconbtn">⋯</button></td></tr>
-          <tr><td class="mono mut">database</td><td class="mono">db_port</td><td class="mono val">3306</td><td><span class="badge b-ok">已上线</span></td><td class="mut">—</td><td class="mut">09-01 14:22</td><td><button class="iconbtn">⋯</button></td></tr>
-          <tr><td class="mono mut">database</td><td class="mono">db_pool_size</td><td class="mono val">50</td><td><span class="badge b-ok">已上线</span></td><td class="mut">—</td><td class="mut">09-02 09:47</td><td><button class="iconbtn">⋯</button></td></tr>
-          <tr><td class="mono mut">database</td><td class="mono">db_ssl</td><td class="mono val">true</td><td class="mut">—</td><td><span class="badge b-add">新增</span></td><td class="mut">09-04 11:32</td><td><button class="iconbtn">⋯</button></td></tr>
-          <tr class="grow"><td colspan="7">▾ log <span style="font-weight:400;color:var(--sub)">2 条</span></td></tr>
-          <tr><td class="mono mut">log</td><td class="mono">log_level</td><td class="mono val">INFO</td><td><span class="badge b-ok">已上线</span></td><td class="mut">—</td><td class="mut">09-01 14:22</td><td><button class="iconbtn">⋯</button></td></tr>
-          <tr><td class="mono mut">log</td><td class="mono">log_retain_days</td><td class="mono val"><span class="old">30</span>（删除）</td><td><span class="badge b-ok">已上线</span></td><td><span class="badge b-del">删除</span></td><td class="mut">09-04 11:35</td><td><button class="iconbtn">⋯</button></td></tr>
-        </tbody>
-      </table>
+        <div class="card">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 110px">分组</th>
+                <th style="width: 220px">键</th>
+                <th>值</th>
+                <th style="width: 100px">线上状态</th>
+                <th style="width: 100px">待发布</th>
+                <th style="width: 120px">更新时间</th>
+                <th style="width: 60px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="grow">
+                <td colspan="7">
+                  ▾ app <span style="font-weight: 400; color: var(--sub)">4 条</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="mono mut">app</td>
+                <td class="mono">timeout_seconds</td>
+                <td class="mono val">30</td>
+                <td><span class="badge b-ok">已上线</span></td>
+                <td class="mut">—</td>
+                <td class="mut">09-04 11:02</td>
+                <td><button class="iconbtn">⋯</button></td>
+              </tr>
+              <tr>
+                <td class="mono mut">app</td>
+                <td class="mono">max_connections</td>
+                <td class="mono val"><span class="old">100</span>150</td>
+                <td><span class="badge b-ok">已上线</span></td>
+                <td><span class="badge b-edit">修改</span></td>
+                <td class="mut">09-04 11:20</td>
+                <td><button class="iconbtn">⋯</button></td>
+              </tr>
+              <tr>
+                <td class="mono mut">app</td>
+                <td class="mono">feature_new_pay</td>
+                <td class="mono val">true</td>
+                <td class="mut">—</td>
+                <td><span class="badge b-add">新增</span></td>
+                <td class="mut">09-04 11:31</td>
+                <td><button class="iconbtn">⋯</button></td>
+              </tr>
+              <tr>
+                <td class="mono mut">app</td>
+                <td class="mono">retry_times</td>
+                <td class="mono val">3</td>
+                <td><span class="badge b-ok">已上线</span></td>
+                <td class="mut">—</td>
+                <td class="mut">09-01 14:22</td>
+                <td><button class="iconbtn">⋯</button></td>
+              </tr>
+              <tr class="grow">
+                <td colspan="7">
+                  ▾ database <span style="font-weight: 400; color: var(--sub)">4 条</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="mono mut">database</td>
+                <td class="mono">db_host</td>
+                <td class="mono val">10.0.12.34</td>
+                <td><span class="badge b-ok">已上线</span></td>
+                <td class="mut">—</td>
+                <td class="mut">09-01 14:22</td>
+                <td><button class="iconbtn">⋯</button></td>
+              </tr>
+              <tr>
+                <td class="mono mut">database</td>
+                <td class="mono">db_port</td>
+                <td class="mono val">3306</td>
+                <td><span class="badge b-ok">已上线</span></td>
+                <td class="mut">—</td>
+                <td class="mut">09-01 14:22</td>
+                <td><button class="iconbtn">⋯</button></td>
+              </tr>
+              <tr>
+                <td class="mono mut">database</td>
+                <td class="mono">db_pool_size</td>
+                <td class="mono val">50</td>
+                <td><span class="badge b-ok">已上线</span></td>
+                <td class="mut">—</td>
+                <td class="mut">09-02 09:47</td>
+                <td><button class="iconbtn">⋯</button></td>
+              </tr>
+              <tr>
+                <td class="mono mut">database</td>
+                <td class="mono">db_ssl</td>
+                <td class="mono val">true</td>
+                <td class="mut">—</td>
+                <td><span class="badge b-add">新增</span></td>
+                <td class="mut">09-04 11:32</td>
+                <td><button class="iconbtn">⋯</button></td>
+              </tr>
+              <tr class="grow">
+                <td colspan="7">
+                  ▾ log <span style="font-weight: 400; color: var(--sub)">2 条</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="mono mut">log</td>
+                <td class="mono">log_level</td>
+                <td class="mono val">INFO</td>
+                <td><span class="badge b-ok">已上线</span></td>
+                <td class="mut">—</td>
+                <td class="mut">09-01 14:22</td>
+                <td><button class="iconbtn">⋯</button></td>
+              </tr>
+              <tr>
+                <td class="mono mut">log</td>
+                <td class="mono">log_retain_days</td>
+                <td class="mono val"><span class="old">30</span>（删除）</td>
+                <td><span class="badge b-ok">已上线</span></td>
+                <td><span class="badge b-del">删除</span></td>
+                <td class="mut">09-04 11:35</td>
+                <td><button class="iconbtn">⋯</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
     </div>
-  </main>
-</div>
-<div class="fab">风格 D · 深蓝中控　<a href="index.html">← 返回风格索引</a></div>
-</body>
+    <div class="fab">风格 D · 深蓝中控　<a href="index.html">← 返回风格索引</a></div>
+  </body>
 </html>

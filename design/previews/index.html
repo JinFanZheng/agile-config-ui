@@ -1,76 +1,191 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AgileConfig · 视觉风格选型</title>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:#f4f5f7;color:#1f2430;padding:40px 5vw}
-  h1{font-size:22px;margin-bottom:6px}
-  .lead{color:#5f6880;margin-bottom:28px;font-size:13.5px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
-  a.card{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid #e3e6ec;border-radius:12px;overflow:hidden;transition:box-shadow .15s ease-out,transform .15s ease-out}
-  a.card:hover{box-shadow:0 8px 28px rgba(20,30,60,.12);transform:translateY(-2px)}
-  .swatch{display:flex;height:86px}
-  .swatch i{flex:1}
-  .body{padding:16px 18px 18px}
-  .t{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
-  .t b{font-size:16px}
-  .t span{font-size:12px;color:#8a92a6;font-family:ui-monospace,Menlo,monospace}
-  .desc{font-size:13px;color:#4c556c;margin-bottom:10px}
-  .kw{display:flex;flex-wrap:wrap;gap:6px}
-  .kw i{font-style:normal;font-size:11.5px;background:#f1f3f7;color:#5f6880;border-radius:6px;padding:2px 9px}
-  .note{margin-top:26px;font-size:12.5px;color:#8a92a6}
-</style>
-</head>
-<body>
-<h1>AgileConfig · 视觉风格选型（ITER-01）</h1>
-<p class="lead">同一界面 · 同一数据 · 五种视觉语言。点击卡片查看完整静态稿（1280 宽效果最佳）。环境语义色（DEV 绿 / TEST 橙 / PROD 红）在所有方案中保持不变。</p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AgileConfig · 视觉风格选型</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font:
+          14px/1.6 -apple-system,
+          'PingFang SC',
+          'Microsoft YaHei',
+          system-ui,
+          sans-serif;
+        background: #f4f5f7;
+        color: #1f2430;
+        padding: 40px 5vw;
+      }
+      h1 {
+        font-size: 22px;
+        margin-bottom: 6px;
+      }
+      .lead {
+        color: #5f6880;
+        margin-bottom: 28px;
+        font-size: 13.5px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 18px;
+      }
+      a.card {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        background: #fff;
+        border: 1px solid #e3e6ec;
+        border-radius: 12px;
+        overflow: hidden;
+        transition:
+          box-shadow 0.15s ease-out,
+          transform 0.15s ease-out;
+      }
+      a.card:hover {
+        box-shadow: 0 8px 28px rgba(20, 30, 60, 0.12);
+        transform: translateY(-2px);
+      }
+      .swatch {
+        display: flex;
+        height: 86px;
+      }
+      .swatch i {
+        flex: 1;
+      }
+      .body {
+        padding: 16px 18px 18px;
+      }
+      .t {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+      .t b {
+        font-size: 16px;
+      }
+      .t span {
+        font-size: 12px;
+        color: #8a92a6;
+        font-family: ui-monospace, Menlo, monospace;
+      }
+      .desc {
+        font-size: 13px;
+        color: #4c556c;
+        margin-bottom: 10px;
+      }
+      .kw {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .kw i {
+        font-style: normal;
+        font-size: 11.5px;
+        background: #f1f3f7;
+        color: #5f6880;
+        border-radius: 6px;
+        padding: 2px 9px;
+      }
+      .note {
+        margin-top: 26px;
+        font-size: 12.5px;
+        color: #8a92a6;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>AgileConfig · 视觉风格选型（ITER-01）</h1>
+    <p class="lead">
+      同一界面 · 同一数据 · 五种视觉语言。点击卡片查看完整静态稿（1280 宽效果最佳）。环境语义色（DEV
+      绿 / TEST 橙 / PROD 红）在所有方案中保持不变。
+    </p>
 
-<div class="grid">
-  <a class="card" href="a-clear-blue.html">
-    <div class="swatch"><i style="background:#2f6bff"></i><i style="background:#f7f9fc"></i><i style="background:#ffffff"></i><i style="background:#e5eaf2"></i><i style="background:#1a2333"></i></div>
-    <div class="body">
-      <div class="t"><b>A · 晨雾蓝</b><span>light / enterprise</span></div>
-      <p class="desc">亮色企业风：白卡片 + 蓝主色，边框清晰、阴影极轻。最"标准"的后台审美，团队接受度最高。</p>
-      <div class="kw"><i>亮色</i><i>蓝色主色</i><i>清爽</i><i>中等密度</i></div>
+    <div class="grid">
+      <a class="card" href="a-clear-blue.html">
+        <div class="swatch">
+          <i style="background: #2f6bff"></i><i style="background: #f7f9fc"></i
+          ><i style="background: #ffffff"></i><i style="background: #e5eaf2"></i
+          ><i style="background: #1a2333"></i>
+        </div>
+        <div class="body">
+          <div class="t"><b>A · 晨雾蓝</b><span>light / enterprise</span></div>
+          <p class="desc">
+            亮色企业风：白卡片 + 蓝主色，边框清晰、阴影极轻。最"标准"的后台审美，团队接受度最高。
+          </p>
+          <div class="kw"><i>亮色</i><i>蓝色主色</i><i>清爽</i><i>中等密度</i></div>
+        </div>
+      </a>
+      <a class="card" href="b-warm-paper.html">
+        <div class="swatch">
+          <i style="background: #2b2620"></i><i style="background: #f6f4ef"></i
+          ><i style="background: #fffdf8"></i><i style="background: #e7e0d2"></i
+          ><i style="background: #c2703e"></i>
+        </div>
+        <div class="body">
+          <div class="t"><b>B · 暖纸</b><span>warm / editorial</span></div>
+          <p class="desc">
+            暖色极简：米白纸感底色、墨色主按钮、赤陶点缀，圆角柔和、留白宽松。像 Notion
+            一样安静耐看。
+          </p>
+          <div class="kw"><i>亮色</i><i>暖调</i><i>极简</i><i>松弛低密度</i></div>
+        </div>
+      </a>
+      <a class="card" href="c-graphite.html">
+        <div class="swatch">
+          <i style="background: #18181b"></i><i style="background: #ffffff"></i
+          ><i style="background: #fafafa"></i><i style="background: #e4e4e7"></i
+          ><i style="background: #09090b"></i>
+        </div>
+        <div class="body">
+          <div class="t"><b>C · 石墨</b><span>mono / hacker</span></div>
+          <p class="desc">
+            黑白高对比：纯白底、墨黑主按钮、1px 硬边框、无阴影，状态色只在语义处出现。Vercel
+            式开发者气质。
+          </p>
+          <div class="kw"><i>亮色</i><i>黑白</i><i>高密度</i><i>锐利</i></div>
+        </div>
+      </a>
+      <a class="card" href="d-navy-console.html">
+        <div class="swatch">
+          <i style="background: #38bdf8"></i><i style="background: #0a1424"></i
+          ><i style="background: #0f1e36"></i><i style="background: #1d365c"></i
+          ><i style="background: #dbe7f8"></i>
+        </div>
+        <div class="body">
+          <div class="t"><b>D · 深蓝中控</b><span>dark / ops-console</span></div>
+          <p class="desc">
+            深海军蓝底 +
+            天青色主色：与被否决的近黑+靛紫完全不同，更像运维监控台，数据密度感强。仍想要暗色时的推荐。
+          </p>
+          <div class="kw"><i>暗色</i><i>蓝色主色</i><i>控制台感</i><i>高密度</i></div>
+        </div>
+      </a>
+      <a class="card" href="e-fresh-mint.html">
+        <div class="swatch">
+          <i style="background: #0d9488"></i><i style="background: #f5faf8"></i
+          ><i style="background: #ffffff"></i><i style="background: #d9eae4"></i
+          ><i style="background: #17322b"></i>
+        </div>
+        <div class="body">
+          <div class="t"><b>E · 薄荷</b><span>fresh / friendly SaaS</span></div>
+          <p class="desc">
+            清新亮色：青绿主色、大圆角、胶囊徽标、柔和投影。Supabase 式的友好感，长时间看也轻快。
+          </p>
+          <div class="kw"><i>亮色</i><i>青绿主色</i><i>圆润</i><i>低密度</i></div>
+        </div>
+      </a>
     </div>
-  </a>
-  <a class="card" href="b-warm-paper.html">
-    <div class="swatch"><i style="background:#2b2620"></i><i style="background:#f6f4ef"></i><i style="background:#fffdf8"></i><i style="background:#e7e0d2"></i><i style="background:#c2703e"></i></div>
-    <div class="body">
-      <div class="t"><b>B · 暖纸</b><span>warm / editorial</span></div>
-      <p class="desc">暖色极简：米白纸感底色、墨色主按钮、赤陶点缀，圆角柔和、留白宽松。像 Notion 一样安静耐看。</p>
-      <div class="kw"><i>亮色</i><i>暖调</i><i>极简</i><i>松弛低密度</i></div>
-    </div>
-  </a>
-  <a class="card" href="c-graphite.html">
-    <div class="swatch"><i style="background:#18181b"></i><i style="background:#ffffff"></i><i style="background:#fafafa"></i><i style="background:#e4e4e7"></i><i style="background:#09090b"></i></div>
-    <div class="body">
-      <div class="t"><b>C · 石墨</b><span>mono / hacker</span></div>
-      <p class="desc">黑白高对比：纯白底、墨黑主按钮、1px 硬边框、无阴影，状态色只在语义处出现。Vercel 式开发者气质。</p>
-      <div class="kw"><i>亮色</i><i>黑白</i><i>高密度</i><i>锐利</i></div>
-    </div>
-  </a>
-  <a class="card" href="d-navy-console.html">
-    <div class="swatch"><i style="background:#38bdf8"></i><i style="background:#0a1424"></i><i style="background:#0f1e36"></i><i style="background:#1d365c"></i><i style="background:#dbe7f8"></i></div>
-    <div class="body">
-      <div class="t"><b>D · 深蓝中控</b><span>dark / ops-console</span></div>
-      <p class="desc">深海军蓝底 + 天青色主色：与被否决的近黑+靛紫完全不同，更像运维监控台，数据密度感强。仍想要暗色时的推荐。</p>
-      <div class="kw"><i>暗色</i><i>蓝色主色</i><i>控制台感</i><i>高密度</i></div>
-    </div>
-  </a>
-  <a class="card" href="e-fresh-mint.html">
-    <div class="swatch"><i style="background:#0d9488"></i><i style="background:#f5faf8"></i><i style="background:#ffffff"></i><i style="background:#d9eae4"></i><i style="background:#17322b"></i></div>
-    <div class="body">
-      <div class="t"><b>E · 薄荷</b><span>fresh / friendly SaaS</span></div>
-      <p class="desc">清新亮色：青绿主色、大圆角、胶囊徽标、柔和投影。Supabase 式的友好感，长时间看也轻快。</p>
-      <div class="kw"><i>亮色</i><i>青绿主色</i><i>圆润</i><i>低密度</i></div>
-    </div>
-  </a>
-</div>
 
-<p class="note">静态稿均为 mock 数据（虚构，无真实凭证）· ITER-01 · 2026-09-04 · 选择后可要求混搭微调（如"A 的布局 + B 的配色"）</p>
-</body>
+    <p class="note">
+      静态稿均为 mock 数据（虚构，无真实凭证）· ITER-01 · 2026-09-04 · 选择后可要求混搭微调（如"A
+      的布局 + B 的配色"）
+    </p>
+  </body>
 </html>

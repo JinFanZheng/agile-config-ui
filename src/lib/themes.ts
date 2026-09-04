@@ -1,0 +1,32 @@
+/** 主题注册表 —— 主题清单与默认值的事实源（令牌值在 src/index.css） */
+export const THEME_IDS = [
+  'graphite',
+  'clear-blue',
+  'warm-paper',
+  'navy-console',
+  'fresh-mint',
+] as const
+
+export type ThemeId = (typeof THEME_IDS)[number]
+
+export const DEFAULT_THEME: ThemeId = 'graphite'
+
+export function isThemeId(v: unknown): v is ThemeId {
+  return typeof v === 'string' && (THEME_IDS as readonly string[]).includes(v)
+}
+
+export interface ThemeMeta {
+  id: ThemeId
+  /** 展示名（strings/theme.ts 的 key） */
+  label: string
+  /** 切换器菜单里的三色样条 */
+  swatch: [string, string, string]
+}
+
+export const THEMES: ThemeMeta[] = [
+  { id: 'graphite', label: '石墨', swatch: ['#18181b', '#ffffff', '#e4e4e7'] },
+  { id: 'clear-blue', label: '晨雾蓝', swatch: ['#2f6bff', '#f7f9fc', '#e5eaf2'] },
+  { id: 'warm-paper', label: '暖纸', swatch: ['#2b2620', '#f6f4ef', '#e7e0d2'] },
+  { id: 'navy-console', label: '深蓝中控', swatch: ['#38bdf8', '#0a1424', '#1d365c'] },
+  { id: 'fresh-mint', label: '薄荷', swatch: ['#0d9488', '#f5faf8', '#d9eae4'] },
+]

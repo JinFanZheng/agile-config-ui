@@ -4,8 +4,9 @@
 
 ## 当前迭代（协议制）
 
-- [ITER-01 视觉风格选型](iterations/ITER-01-visual-style-selection.md)：ACTIVE —— 5 份风格静态稿已就绪（`python3 -m http.server 5019 --directory design/previews` 后访问 http://localhost:5019/），等待用户选择；选定后开 ITER-02（src/ 全面换肤）
-- **M1 应用管理暂缓开工**，待风格定稿（避免在将被替换的视觉上堆功能）
+- [ITER-01 视觉风格选型](iterations/ITER-01-visual-style-selection.md)：✅ VERIFIED —— 用户选定：五主题可切换、默认石墨(C)、主布局定稿
+- [ITER-02 主题系统与通用基建](iterations/ITER-02-theme-system.md)：EVIDENCE_READY —— 5 主题引擎/顶栏切换器/防闪屏已实现，门禁全绿（23 unit + 5 e2e×2 + build + 10 截图），**等待用户验收**；验收通过后开 ITER-03 应用管理（M1）
+- 迭代路线图见 [iterations/INDEX.md](iterations/INDEX.md)（功能模块逐迭代交付，验收一个继续下一个）
 
 ## M0 脚手架 — ✅ 完成（2026-09-04）
 

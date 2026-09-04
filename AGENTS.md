@@ -39,14 +39,14 @@ AgileConfig 管理前端（独立仓库，对接官方服务端，不修改服�
 
 ## 事实源清单
 
-| 事实源 | 路径 |
-|---|---|
-| 需求 / API 事实 / 已锁定决策 | `docs/AGENT_HANDOFF.md` |
-| 迭代总表（WIP / 索引） | `docs/iterations/INDEX.md` |
-| 迭代卡 | `docs/iterations/ITER-*.md` |
-| Evidence | `docs/evidence/<ITER-ID>/` |
-| 里程碑进度 | `docs/PROGRESS.md` |
-| 设计风格静态稿 | `design/previews/`（伺服：`python3 -m http.server 5019 --directory design/previews`） |
+| 事实源                       | 路径                                                                                  |
+| ---------------------------- | ------------------------------------------------------------------------------------- |
+| 需求 / API 事实 / 已锁定决策 | `docs/AGENT_HANDOFF.md`                                                               |
+| 迭代总表（WIP / 索引）       | `docs/iterations/INDEX.md`                                                            |
+| 迭代卡                       | `docs/iterations/ITER-*.md`                                                           |
+| Evidence                     | `docs/evidence/<ITER-ID>/`                                                            |
+| 里程碑进度                   | `docs/PROGRESS.md`                                                                    |
+| 设计风格静态稿               | `design/previews/`（伺服：`python3 -m http.server 5019 --directory design/previews`） |
 
 ## 优先级
 
