@@ -36,10 +36,10 @@ describe('LoginPage', () => {
     })
     const { getByRole, getByLabelText } = renderWithProviders(<LoginPage />)
     await userEvent.type(getByLabelText('用户名'), 'admin')
-    await userEvent.type(getByLabelText('密码'), 'ss123456')
+    await userEvent.type(getByLabelText('密码'), 'pass-123456')
     await userEvent.click(getByRole('button', { name: '登录' }))
 
-    expect(loginMock).toHaveBeenCalledWith('admin', 'ss123456')
+    expect(loginMock).toHaveBeenCalledWith('admin', 'pass-123456')
     const s = useAuthStore.getState()
     expect(s.token).toBe('jwt-token')
     expect(s.user?.userName).toBe('admin')

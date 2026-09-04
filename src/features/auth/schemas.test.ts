@@ -3,7 +3,7 @@ import { initPasswordSchema, loginSchema } from './schemas'
 
 describe('loginSchema', () => {
   it('通过：用户名与密码均非空', () => {
-    expect(loginSchema.safeParse({ userName: 'admin', password: 'ss123456' }).success).toBe(true)
+    expect(loginSchema.safeParse({ userName: 'admin', password: 'pass-123456' }).success).toBe(true)
   })
   it('拒绝：用户名为空', () => {
     const r = loginSchema.safeParse({ userName: '', password: 'x' })
@@ -17,7 +17,7 @@ describe('loginSchema', () => {
 
 describe('initPasswordSchema', () => {
   it('通过：两次一致且 ≥6 位', () => {
-    const r = initPasswordSchema.safeParse({ password: 'ss123456', confirmPassword: 'ss123456' })
+    const r = initPasswordSchema.safeParse({ password: 'pass-123456', confirmPassword: 'pass-123456' })
     expect(r.success).toBe(true)
   })
   it('拒绝：密码过短', () => {
@@ -25,7 +25,7 @@ describe('initPasswordSchema', () => {
     expect(r.success).toBe(false)
   })
   it('拒绝：两次输入不一致（错误定位在 confirmPassword）', () => {
-    const r = initPasswordSchema.safeParse({ password: 'ss123456', confirmPassword: 'different' })
+    const r = initPasswordSchema.safeParse({ password: 'pass-123456', confirmPassword: 'different' })
     expect(r.success).toBe(false)
     if (!r.success) {
       expect(r.error.issues[0].path).toContain('confirmPassword')
