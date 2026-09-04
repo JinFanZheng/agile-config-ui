@@ -1,0 +1,14 @@
+node_modules
+dist
+coverage
+playwright-report
+test-results
+.DS_Store
+*.local
+
+# 凭证纪律（docs/AGENT_HANDOFF.md §9）：真实密码只放本地，不入库
+.env.development
+.env.e2e
+
+# TS 构建缓存
+*.tsbuildinfo
