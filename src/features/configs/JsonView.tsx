@@ -1,0 +1,133 @@
+import Editor from '@monaco-editor/react'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
+import { getJson, saveJson } from '../../api/configs'
+import { Button } from '../../components/ui/button'
+import { Spinner } from '../../components/ui/spinner'
+import { ApiError } from '../../lib/http'
+import { applyMonacoTheme } from '../../lib/monaco'
+import { useThemeStore } from '../../stores/theme'
+import { toast } from '../../stores/toast'
+import { configsStr } from '../../strings/configs'
+
+/** JSON 视图（jsonc 含描述注释）；本模块由 ConfigPage 懒加载，monaco 独立分包 */
+export function JsonView({
+  appId,
+  env,
+  onDirtyChange,
+  onSaved,
+  reloadKey,
+}: {
+  appId: string
+  env: string
+  onDirtyChange: (dirty: boolean) => void
+  onSaved?: () => void
+  reloadKey: number
+}) {
+  const theme = useThemeStore((s) => s.theme)
+  const [text, setText] = useState<string | null>(null)
+  const [savedText, setSavedText] = useState('')
+  const [patch, setPatch] = useState(true)
+  const [saving, setSaving] = useState(false)
+
+  const isDark = theme === 'navy-console'
+  useEffect(() => {
+    applyMonacoTheme(isDark)
+  }, [isDark, text])
+
+  const query = useQuery({
+    queryKey: ['configs', 'json', appId, env, reloadKey],
+    queryFn: () => getJson(appId, env),
+  })
+
+  useEffect(() => {
+    if (query.data !== undefined && text === null) {
+      setText(query.data)
+      setSavedText(query.data)
+    }
+  }, [query.data, text])
+
+  useEffect(() => {
+    onDirtyChange(text !== null && text !== savedText)
+  }, [text, savedText, onDirtyChange])
+
+  const save = async () => {
+    if (text === null) return
+    setSaving(true)
+    try {
+      await saveJson(appId, env, text, patch)
+      setSavedText(text)
+      toast.success(configsStr.toasts.jsonSaved)
+      onSaved?.()
+    } catch (e) {
+      toast.error(e instanceof ApiError ? e.message : configsStr.toasts.failed)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (query.isLoading) {
+    return (
+      <div className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-panel text-xs text-muted-foreground">
+        <Spinner /> 加载中…
+      </div>
+    )
+  }
+  if (query.isError) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-2 rounded-lg border border-border bg-panel">
+        <p className="text-xs text-danger">{configsStr.jsonView.loadError}</p>
+        <Button size="sm" variant="outline" onClick={() => query.refetch()}>
+          {configsStr.jsonView.reload}
+        </Button>
+      </div>
+    )
+  }
+
+  const dirty = text !== null && text !== savedText
+
+  return (
+    <div className="flex min-h-0 flex-1 flex-col rounded-lg border border-border bg-panel shadow-card">
+      <div className="flex flex-wrap items-center gap-2 border-b border-border px-3 py-2">
+        <span className="text-xs text-muted-foreground">{configsStr.jsonView.editing}</span>
+        <div className="flex-1" />
+        <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <input type="checkbox" className="accent-primary" checked={patch} onChange={(e) => setPatch(e.target.checked)} />
+          {configsStr.jsonView.patch}
+        </label>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => {
+            setText(query.data ?? '')
+            setSavedText(query.data ?? '')
+          }}
+        >
+          {configsStr.jsonView.reload}
+        </Button>
+        <Button size="sm" onClick={save} disabled={!dirty || saving}>
+          {saving && <Spinner />}
+          {saving ? configsStr.jsonView.saving : configsStr.jsonView.save}
+        </Button>
+      </div>
+      <div className="min-h-0 flex-1" data-testid="json-editor-wrap">
+        <Editor
+          height="100%"
+          language="json"
+          theme="agile"
+          value={text ?? ''}
+          onChange={(v) => setText(v ?? '')}
+          options={{
+            minimap: { enabled: false },
+            fontSize: 12,
+            lineNumbersMinChars: 3,
+            scrollBeyondLastLine: false,
+            tabSize: 2,
+            automaticLayout: true,
+            fontFamily: "'JetBrains Mono Variable', ui-monospace, Menlo, monospace",
+          }}
+        />
+      </div>
+    </div>
+  )
+}

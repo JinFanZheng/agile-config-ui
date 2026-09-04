@@ -3,8 +3,8 @@ import { AppLayout } from '../components/layout/AppLayout'
 import { InitPasswordPage } from '../features/auth/InitPasswordPage'
 import { LoginPage } from '../features/auth/LoginPage'
 import { AppsPage } from '../features/apps/AppsPage'
+import { ConfigPage } from '../features/configs/ConfigPage'
 import { HomePage } from '../features/home/HomePage'
-import { PlaceholderPage } from '../features/PlaceholderPage'
 import { RedirectIfAuthed, RequireAuth } from './guards'
 
 export const router = createBrowserRouter([
@@ -26,12 +26,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <HomePage /> },
           { path: 'apps', element: <AppsPage /> },
-          {
-            path: 'apps/:appId/config',
-            element: (
-              <PlaceholderPage title="配置管理" description="配置管理将在 ITER-04（M2）提供" />
-            ),
-          },
+          { path: 'apps/:appId/config', element: <ConfigPage /> },
           { path: '*', element: <Navigate to="/" replace /> },
         ],
       },
