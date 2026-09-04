@@ -20,7 +20,7 @@ export function UserMenu() {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="flex h-7 items-center gap-2 rounded-md px-1.5 transition-colors duration-150 hover:bg-elevated"
+        className="flex h-7 items-center gap-2 rounded-md px-1.5 transition-colors duration-150 hover:bg-hover"
       >
         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground">
           {user.userName.slice(0, 1).toUpperCase()}
@@ -31,7 +31,7 @@ export function UserMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-9 z-50 w-52 rounded-lg border border-border bg-elevated p-1 shadow-overlay"
+          className="absolute right-0 top-9 z-50 w-52 rounded-lg border border-border bg-panel p-1 shadow-overlay"
         >
           <div className="border-b border-border px-2.5 py-2">
             <p className="font-mono text-xs text-foreground">{user.userName}</p>
@@ -55,7 +55,7 @@ export function UserMenu() {
             onClick={() => logout()}
             className={cn(
               'flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs text-foreground',
-              'transition-colors duration-150 hover:bg-panel'
+              'transition-colors duration-150 hover:bg-hover'
             )}
           >
             <LogOut className="h-3.5 w-3.5" />

@@ -19,7 +19,7 @@ export function ThemeSwitcher() {
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex h-7 items-center gap-1.5 rounded-md px-2 text-xs text-muted-foreground transition-colors duration-150 ease-out hover:bg-elevated hover:text-foreground"
+        className="flex h-7 items-center gap-1.5 rounded-md px-2 text-xs text-muted-foreground transition-colors duration-150 ease-out hover:bg-hover hover:text-foreground"
       >
         <Palette className="h-3.5 w-3.5" />
         {themeStr.themes[theme]}
@@ -29,7 +29,7 @@ export function ThemeSwitcher() {
         <div
           role="menu"
           aria-label={themeStr.switcher.label}
-          className="absolute right-0 top-9 z-50 w-44 rounded-lg border border-border bg-elevated p-1 shadow-overlay"
+          className="absolute right-0 top-9 z-50 w-44 rounded-lg border border-border bg-panel p-1 shadow-overlay"
         >
           {THEMES.map(({ id, label, swatch }) => {
             const active = theme === id
@@ -46,8 +46,8 @@ export function ThemeSwitcher() {
                 className={cn(
                   'flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-xs transition-colors duration-150 ease-out',
                   active
-                    ? 'font-medium text-foreground'
-                    : 'text-muted-foreground hover:bg-panel hover:text-foreground'
+                    ? 'bg-selected font-medium text-selected-foreground'
+                    : 'text-muted-foreground hover:bg-hover hover:text-foreground'
                 )}
               >
                 <span className="flex h-3.5 w-3.5 items-center justify-center">

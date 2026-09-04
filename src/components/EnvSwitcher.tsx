@@ -36,8 +36,8 @@ export function EnvSwitcher() {
               'flex items-center gap-1.5 px-2.5 font-mono text-xs transition-colors duration-150 ease-out',
               id !== 'DEV' && 'border-l border-border',
               active
-                ? 'bg-elevated font-medium text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-selected font-medium text-selected-foreground'
+                : 'text-muted-foreground hover:bg-hover hover:text-foreground'
             )}
           >
             <span className={cn('h-1.5 w-1.5 rounded-full', dotClass)} />

@@ -1,6 +1,6 @@
 # 迭代卡 ITER-02 - 主题系统与通用基建
 
-> 状态：验收中（对齐反馈已修复，等待用户复验 T-08）
+> 状态：验收中（对齐与选中态反馈均已修复，等待用户复验）
 > 变更分类：中改（全站视觉基建，不动业务功能与信息架构）
 > 方案出处：ITER-01 用户选型结论（五主题可切、默认石墨、布局定稿）
 > 日期：2026-09-04 开始 / 2026-09-04 实现完成；同日验收反馈修复
@@ -43,7 +43,7 @@
 
 | Goal | 状态 | Baseline / 当前差距 | Closure rule | Evidence | Next ready task | Blocker / Owner |
 |---|---|---|---|---|---|---|
-| G0 | EVIDENCE_READY | 实现与自动化门全绿（见 §6），仅剩用户验收 | 同 §1.1 | `docs/evidence/ITER-02/` | T-08 用户复验（owner: 用户） | 等待用户复验 / Codex |
+| G0 | EVIDENCE_READY | 实现与自动化门全绿（见 §6），仅剩用户验收 | 同 §1.1 | `docs/evidence/ITER-02/` | T-08 用户复验（含选中态修复确认，owner: 用户） | 等待用户复验 / Codex |
 
 ## 2. 任务与依赖
 
@@ -56,7 +56,8 @@
 | T-05 | G0 / 全量回归 + 5 主题截图证据 | T-03/T-04 | 门禁输出 + 截图 ×10 | `docs/evidence/ITER-02/` | T-03,T-04 | Codex / DONE |
 | T-06 | G0 / 用户验收 | T-05 | 验收结论回填本卡 | 聊天记录 | T-05 | 用户 / 反馈：顶栏不对齐 |
 | T-07 | G0 / 对齐修复 | 用户反馈「貌似不是很对齐」+ 测量取证 | EnvSwitcher 重构为单描边分段控件（30→28px 与邻控件同高）；全页面测量审计 | `alignment-measure.json` + 门禁全绿 | T-06 | Codex / DONE |
-| T-08 | G0 / 用户复验 | T-07 | 复验结论回填（通过则本卡 VERIFIED） | 聊天记录 | T-07 | 用户 / 等待中 |
+| T-08 | G0 / 用户复验 | T-07 | 复验结论回填（通过则本卡 VERIFIED） | 聊天记录 | T-07 | 用户 / 反馈：选中态不可见 |
+| T-09 | G0 / 选中态令牌与接入 | 用户反馈「选中状态的背景色和字体颜色」+ 取证：亮色主题选中底 vs 页面底仅 1.04–1.08（不可见） | 新增 --bg-hover/--bg-selected/--text-selected ×5 主题（还原各静态稿选中语义：石墨=墨底白字、晨雾蓝=蓝晕深蓝字、暖纸=暖沙墨字、深蓝=青底天青字、薄荷=薄荷底深青字）；接入侧栏/EnvSwitcher/ThemeSwitcher/UserMenu/ghost·outline 按钮；弹层容器改 bg-panel | `selected-audit.txt` 5/5 PASS + 门禁全绿 | T-08 | Codex / DONE |
 
 ## 3. 测试与验收计划
 
@@ -96,6 +97,7 @@
 - 时序修复：auth e2e 偶发 evaluate 撞导航（401 retry 触发二次 assign）→ `waitForLoadState('networkidle')`，两轮全绿
 - 副作用：新增 localStorage 键 `agile-config-ui.theme`；无服务端交互变化
 - 验收反馈（2026-09-04）：用户报「貌似不是很对齐」→ 测量取证（`scripts/align-measure.mjs`）：EnvSwitcher 容器 30px vs ThemeSwitcher/UserMenu 28px，垂直中心虽统一但分段控件上下各突出 1px；其余（三卡片 top/bottom、侧栏项、登录居中、菜单项高）均对齐
+- 选中态修复（T-09，2026-09-04）：用户反馈选中态背景/字体颜色缺失对比 → 审计脚本实测旧状态 1.04–1.08:1（不可见）；顺带修出一个 Tailwind 命名陷阱（`--color-selected` 命名空间下 `text-selected` 会解析为背景色，须用 `text-selected-foreground`）；修复后 5 主题 4 项断言全过（graphite 17.72 / clear-blue 5.34 / warm-paper 11.86 / navy 6.85 / mint 4.72）
 - 对齐修复（T-07）：EnvSwitcher 改单描边分段控件，严格 h-7=28px（border-box），按钮 h-full、项间 border-l 分隔；复测顶栏容器高度集合 {28}、垂直中心统一 23.5；门禁复跑全绿（typecheck/lint/23 unit/5 e2e）
 
 ## 7. 文档同步

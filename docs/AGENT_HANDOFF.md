@@ -255,7 +255,7 @@ Content-Type: application/json
 - 密度：基准 13px、紧凑行高；key/value/AppId/Secret/diff 一律等宽字体
 - 动效只做 120–160ms ease-out 微过渡；键盘优先
 
-**令牌契约**（`src/index.css`，语义名跨主题稳定）：`--bg-page/--bg-panel/--bg-elevated/--bg-input`、`--border-default/--border-strong`、`--text-primary/--text-secondary`、`--accent/--accent-hover/--accent-foreground`、`--info/--success/--warning/--danger`、`--env-dev/--env-test/--env-prod`、`--radius-control/--radius-card`、`--fx-card/--fx-overlay`（阴影）、`--scrollbar-thumb`。
+**令牌契约**（`src/index.css`，语义名跨主题稳定）：`--bg-page/--bg-panel/--bg-elevated/--bg-input`、`--border-default/--border-strong`、`--text-primary/--text-secondary`、`--accent/--accent-hover/--accent-foreground`、`--info/--success/--warning/--danger`、`--env-dev/--env-test/--env-prod`、`--bg-hover/--bg-selected/--text-selected`（悬停与选中态，2026-09-04 验收反馈补入：选中底 vs 页面底 ≥1.10、选中字 vs 选中底 ≥4.5，`scripts/selected-audit.mjs` 断言）、`--radius-control/--radius-card`、`--fx-card/--fx-overlay`（阴影）、`--scrollbar-thumb`。
 
 > 以下为历史留档（M0 所用、已被否决的 Linear 暗色方向，勿再实现）：
 
