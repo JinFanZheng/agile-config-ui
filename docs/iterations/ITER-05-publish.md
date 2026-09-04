@@ -1,6 +1,6 @@
 # 迭代卡 ITER-05 - 发布链路（M3，产品本体）
 
-> 状态：ACTIVE（2026-09-04 开工；baseline @a23475b：typecheck/lint/46 unit/11 e2e 全绿）
+> 状态：验收中（EVIDENCE_READY，2026-09-04 实现与自动化门全绿，等待用户验收）
 > GR 复审：PASS（oracle=M3 DoD E2E 全链路+用户验收；GR-6 回滚 danger 二次确认；GR-8 回退=revert；发布/回滚仅自建应用）
 > 变更分类：大改（产品核心价值链：可知/可控/可逆 的落地）
 > 方案出处：handoff §0 北极星 + §10 M3 + UX #3/4/11；API 见 [../API_INVENTORY.md](../API_INVENTORY.md)
@@ -42,3 +42,18 @@ RG-1 baseline；RG-2 GREEN；RG-5 L-Real（真实发布/回滚，自建应用）
 
 - monaco diff 的暗/亮主题适配（navy-console 与 4 个亮色主题都要可读）
 - 回滚是不可逆动作：确认文案必须明示目标版本与当前版本号
+
+
+## 5. 验收记录（2026-09-04）
+
+- Baseline：@a23475b（46 unit + 11 e2e 全绿）
+- 实现：
+  - `api/publish.ts` 5 端点（Publish 支持 ids 部分发布）；`lib/diff.ts` 双 diff 纯函数 + 12 单测
+  - **发布确认弹窗**：强制 diff 预览（新增/修改/删除分组语义色双栏）、发布说明必填、打开时重新拉取（UX #11 防过期）、**发布范围勾选**（部分发布，明示 N/M）
+  - **发布历史时间线**：版本节点（版本号/说明/发布人/时间）、任选两版本对比（快照 diff 弹窗）、最新版本回滚禁用、回滚二次确认明示目标版本与"作为新版本记录"
+  - 单条配置历史（行"历史"→值随版本演变）；应用域页 /apps/:appId/history（面包屑三层）+ 全局 /history 入口（侧栏启用）
+- **重大事实修正（回写 handoff §5.4）**：`EditStatus` 枚举实为 `Add=0/Edit=1/Deleted=2/Commit=10`（原文档 0-3 记载有误）；编辑已上线项会把 onlineStatus 重置为 0，行级判定一律以 editStatus 为准——行徽标、待发布统计、diff 组装、取消/批量判定全部按真实语义重写
+- **待核实 #4 定案（回写 handoff）**：`ids` 支持部分发布（实测：2 项带 ids 发 1 项 → 未勾选保持待发布、快照只含勾选项）；真·按客户端灰度仍不在 API 能力内，明确不做
+- 门禁：typecheck ✓ / lint 0 ✓ / vitest 59（+12 diff）✓ / playwright **13/13**（含 M3 DoD 全链路：改→diff→发布 v1/v2→版本对比→回滚 v1→值恢复；+ 部分发布用例）✓ / build ✓
+- Evidence：`docs/evidence/ITER-05/`（publish-diff-dialog.png、history-timeline.png）
+- 数据纪律：全部 e2e_pub_* 自建自清

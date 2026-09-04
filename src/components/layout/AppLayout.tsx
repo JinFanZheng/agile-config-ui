@@ -19,7 +19,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { to: '/', label: layoutStr.nav.overview, icon: Home },
   { to: '/apps', label: layoutStr.nav.apps, icon: Boxes },
-  { to: '/history', label: layoutStr.nav.publishHistory, icon: Clock, soon: true },
+  { to: '/history', label: layoutStr.nav.publishHistory, icon: Clock },
   { to: '/clients', label: layoutStr.nav.clients, icon: CircleCheck, soon: true },
   { to: '/nodes', label: layoutStr.nav.nodes, icon: Server, soon: true },
   { to: '/users', label: layoutStr.nav.users, icon: Users, soon: true },

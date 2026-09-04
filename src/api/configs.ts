@@ -1,11 +1,13 @@
 import { apiGet, apiGetPage, apiPost, type PageResult, type Params } from '../lib/http'
 
-/** 待发布改动方向（服务端 editStatus） */
+/** 服务端真实枚举（Config.cs 实测定案，修正 handoff §5.4 原记载）：
+ * EditStatus: Add=0 新增 / Edit=1 修改 / Deleted=2 删除方向 / Commit=10 已提交无待发布
+ * OnlineStatus: WaitPublish=0 / Online=1；注意编辑已上线项会把 onlineStatus 重置为 0 */
 export const EditStatus = {
-  None: 0,
-  Added: 1,
-  Edited: 2,
-  Deleted: 3,
+  Added: 0,
+  Edited: 1,
+  Deleted: 2,
+  Commit: 10,
 } as const
 export type EditStatusValue = (typeof EditStatus)[keyof typeof EditStatus]
 

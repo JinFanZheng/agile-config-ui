@@ -4,6 +4,7 @@ import { InitPasswordPage } from '../features/auth/InitPasswordPage'
 import { LoginPage } from '../features/auth/LoginPage'
 import { AppsPage } from '../features/apps/AppsPage'
 import { ConfigPage } from '../features/configs/ConfigPage'
+import { AppHistoryPage, HistoryIndexPage } from '../features/publish/HistoryPages'
 import { HomePage } from '../features/home/HomePage'
 import { RedirectIfAuthed, RequireAuth } from './guards'
 
@@ -27,6 +28,8 @@ export const router = createBrowserRouter([
           { index: true, element: <HomePage /> },
           { path: 'apps', element: <AppsPage /> },
           { path: 'apps/:appId/config', element: <ConfigPage /> },
+          { path: 'apps/:appId/history', element: <AppHistoryPage /> },
+          { path: 'history', element: <HistoryIndexPage /> },
           { path: '*', element: <Navigate to="/" replace /> },
         ],
       },

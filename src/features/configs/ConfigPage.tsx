@@ -12,6 +12,7 @@ import {
   type ConfigItem,
 } from '../../api/configs'
 import { Breadcrumb } from '../../components/Breadcrumb'
+import { Link } from 'react-router'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
@@ -19,8 +20,11 @@ import { Skeleton } from '../../components/ui/spinner'
 import { useEnvStore } from '../../stores/env'
 import { toast } from '../../stores/toast'
 import { configsStr } from '../../strings/configs'
+import { publishStr } from '../../strings/publish'
 import { cn } from '../../lib/utils'
 import { ConfigDialog } from './ConfigDialog'
+import { ConfigHistoryDialog } from '../publish/ConfigHistoryDialog'
+import { PublishDialog } from '../publish/PublishDialog'
 import { ConfigTable } from './ConfigTable'
 import {
   mergeInherited,
@@ -66,6 +70,8 @@ export function ConfigPage() {
   const [editing, setEditing] = useState<(ConfigItem & { inheritedFrom?: string }) | null>(null)
   const [confirm, setConfirm] = useState<Confirm>(null)
   const [reloadKey, setReloadKey] = useState(0)
+  const [publishOpen, setPublishOpen] = useState(false)
+  const [historyItem, setHistoryItem] = useState<ConfigItem | null>(null)
 
   const appInfo = useAppInfo(appId)
   const configsQ = useConfigs(appId, env)
@@ -100,11 +106,8 @@ export function ConfigPage() {
     )
   }, [rows, keyword])
 
-  // 待发布行 = 有改动方向 或 未发布新增（onlineStatus=0，实测语义）
-  const pendingIds = useMemo(
-    () => own.filter((c) => c.editStatus > 0 || c.onlineStatus === 0).map((c) => c.id),
-    [own]
-  )
+  // 待发布行 = editStatus !== Commit(10)（真实枚举：0新增/1修改/2删除）
+  const pendingIds = useMemo(() => own.filter((c) => c.editStatus !== 10).map((c) => c.id), [own])
 
   const refresh = async () => {
     await invalidate(appId, env)
@@ -237,6 +240,12 @@ export function ConfigPage() {
           <span className="text-xs text-muted-foreground">{configsStr.pendingStrip.none}</span>
         )}
         <div className="flex-1" />
+        <Link
+          to={`/apps/${appId}/history`}
+          className="text-xs text-muted-foreground transition-colors hover:text-primary hover:underline"
+        >
+          {publishStr.history.title} →
+        </Link>
         {hasPending && (
           <>
             <Button
@@ -247,7 +256,7 @@ export function ConfigPage() {
             >
               {configsStr.pendingStrip.cancelAll}
             </Button>
-            <Button size="sm" disabled title="发布链路将在 ITER-05 提供">
+            <Button size="sm" onClick={() => setPublishOpen(true)}>
               {configsStr.pendingStrip.publish}
             </Button>
           </>
@@ -290,7 +299,7 @@ export function ConfigPage() {
                   type="button"
                   className="rounded px-1.5 py-0.5 text-muted-foreground hover:bg-hover hover:text-foreground"
                   onClick={() => {
-                    const ids = own.filter((c) => selected.has(c.id) && (c.editStatus > 0 || c.onlineStatus === 0)).map((c) => c.id)
+                    const ids = own.filter((c) => selected.has(c.id) && c.editStatus !== 10).map((c) => c.id)
                     if (ids.length === 0) {
                       toast.info('所选配置没有待发布改动')
                       return
@@ -385,6 +394,7 @@ export function ConfigPage() {
               }}
               onDelete={(item) => setConfirm({ kind: 'delete', item })}
               onCancelEdit={(item) => setConfirm({ kind: 'cancelOne', item })}
+              onHistory={(item) => setHistoryItem(item)}
             />
           )}
         </>
@@ -408,6 +418,18 @@ export function ConfigPage() {
           refresh()
         }}
       />
+
+      <PublishDialog
+        open={publishOpen}
+        appId={appId}
+        env={env}
+        onDone={() => {
+          setPublishOpen(false)
+          refresh()
+        }}
+      />
+
+      <ConfigHistoryDialog config={historyItem} env={env} onClose={() => setHistoryItem(null)} />
 
       {/* 确认流 */}
       {confirm?.kind === 'delete' && (

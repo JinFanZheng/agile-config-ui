@@ -156,7 +156,7 @@ Content-Type: application/json
 
 ### 5.4 配置管理 `/Config/*`（来源：ConfigController.cs；✅ Add/Search/WaitPublishStatus/Publish/PublishHistory 实测）
 
-**ConfigVM 字段**（实测返回）：`id, appId, group, key, value, description, env, status, onlineStatus, editStatus, createTime, updateTime`。核心状态语义：`onlineStatus`=当前线上版本，`editStatus`=待发布改动（0 无 / 1 新增 / 2 编辑 / 3 删除方向），`env` 默认 `DEV`。
+**ConfigVM 字段**（实测返回）：`id, appId, group, key, value, description, env, status, onlineStatus, editStatus, createTime, updateTime`。核心状态语义（**2026-09-04 源码+实测定案，修正原记载**）：`EditStatus` 枚举 `Add=0 / Edit=1 / Deleted=2 / Commit=10`（10=已提交无待发布）；`OnlineStatus` `WaitPublish=0 / Online=1`；**编辑已上线项会把该行 onlineStatus 重置为 0**，故行级判定一律以 editStatus 为准（已上线= editStatus≠0）。
 
 | 动作           | 方法+路径                            | 参数                                                                           | 备注                                                                                                                     |
 | -------------- | ------------------------------------ | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
@@ -363,7 +363,7 @@ server: {
 1. ~~其余控制器（User/Role/ServerNode/Service/SysLog/SSO/Report/Home）的完整端点与参数~~ **已核实（2026-09-04，ITER-02 期间）**：管理面 13 Controller / 86 端点全量清点并逐迭代映射，见 [API_INVENTORY.md](API_INVENTORY.md)（用户要求全部适配；4 项显式豁免待确认；参数级细节在各迭代实施时以源码+实测补齐）。
 2. 管理端是否需要 WebSocket 连接（旧 UI e2e 有 websocket-publish；确认管理界面是否有实时推送，若无则轮询即可）。
 3. 生产镜像替换方案：官方镜像内 UI 静态文件的具体路径（进入容器 `find /app -name 'index.html'` 确认），决定是否提供"替换镜像内 UI"的构建脚本（当前默认独立 nginx 部署，已够用）。
-4. `Config/Publish` 的 `ids` 字段语义（实测空 body 只传 appId+log 即全量发布，ids 是否支持部分发布待验证）——**这不是实现细节而是能力边界**：若支持部分发布，则可设计"分批/灰度发布"UI；若不支持，Route B 下灰度发布明确放弃，不要在 UI 层模拟。
+4. ~~`Config/Publish` 的 `ids` 字段语义~~ **已核实（2026-09-04，ITER-05 实测）**：**支持部分发布**。实验：2 条待发布配置带 `ids=[id1]` 发布 → 成功，`not_me` 仍处待发布（addCount=1），v1 快照仅含 `only_me`。⇒ Route B 下可做"选择发布范围"UI（已落地于发布弹窗条目勾选）；真·灰度分批（按客户端分批推送）仍不在 API 能力内，不做。
 5. 多环境的完整列表来源（环境是内置 DEV/TEST/PROD 还是可配置——读 `SettingController`/系统设置相关源码）。
 6. ~~JWT 的 TTL~~ **已核实（2026-09-04，M0）**：登录返回的 JWT `exp - nbf = 86400s`，即 **24 小时**，无刷新机制。会话过期提醒可按"登录后 23h 左右"设计；过期由全局 401 拦截兜底。
 7. ~~继承应用合并视图的实现方式~~ **已核实（2026-09-04，ITER-04）**：旧 UI Configs 页**没有**合并视图（仅查本应用）；服务端无专用合并端点。定案=**前端组合**：本应用 `Config/Search`（pageSize 传大值一次拉全，服务端内存分页仅校验 ≤0）+ 各继承应用 `Config/Search`，按 `group+key` 合并、本应用覆盖优先、继承行只读并标注来源应用。

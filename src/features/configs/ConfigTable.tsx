@@ -15,13 +15,13 @@ const GRID =
 
 const badgeCls = 'rounded px-1.5 py-0.5 text-[10px]'
 
-/** 行级待发布态（实测语义）：editStatus 2=修改 3=删除；未发布新增由 onlineStatus=0 表达 */
+/** 行级待发布态（真实枚举）：0=新增 1=修改 2=删除方向 10=无待发布 */
 function EditStatusBadge({ item }: { item: ConfigItem }) {
-  if (item.editStatus === 3)
-    return <span className={`${badgeCls} bg-danger/10 text-danger`}>{configsStr.badges.deleted}</span>
   if (item.editStatus === 2)
+    return <span className={`${badgeCls} bg-danger/10 text-danger`}>{configsStr.badges.deleted}</span>
+  if (item.editStatus === 1)
     return <span className={`${badgeCls} bg-warning/10 text-warning`}>{configsStr.badges.edited}</span>
-  if (item.onlineStatus === 0)
+  if (item.editStatus === 0)
     return <span className={`${badgeCls} bg-info/10 text-info`}>{configsStr.badges.added}</span>
   return <span className="text-muted-foreground">—</span>
 }
@@ -39,6 +39,7 @@ interface ConfigTableProps {
   onEdit: (item: ConfigItem) => void
   onDelete: (item: ConfigItem) => void
   onCancelEdit: (item: ConfigItem) => void
+  onHistory: (item: ConfigItem) => void
   toolbar?: ReactNode
 }
 
@@ -55,6 +56,7 @@ export function ConfigTable({
   onEdit,
   onDelete,
   onCancelEdit,
+  onHistory,
 }: ConfigTableProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [editing, setEditing] = useState<{ id: string; value: string } | null>(null)
@@ -156,7 +158,7 @@ export function ConfigTable({
 
             const item = rows[row.index]
             const isInherited = !!item.inheritedFrom
-            const isDeleting = item.editStatus === 3
+            const isDeleting = item.editStatus === 2
             return (
               <div
                 key={item.id + v.key}
@@ -218,7 +220,8 @@ export function ConfigTable({
                   </button>
                 )}
                 <span>
-                  {item.onlineStatus === 1 ? (
+                  {/* 已上线判定：editStatus!==0（修改/删除方向/已提交都存在线上旧版） */}
+                  {item.editStatus !== 0 ? (
                     <span className={`${badgeCls} bg-success/10 text-success`}>{configsStr.badges.online}</span>
                   ) : (
                     <span className={`${badgeCls} bg-input text-muted-foreground`}>{configsStr.badges.offline}</span>
@@ -233,6 +236,15 @@ export function ConfigTable({
                 <span className="flex items-center justify-end gap-1 pr-1">
                   {!isInherited && (
                     <>
+                      {item.editStatus !== 0 && (
+                        <button
+                          type="button"
+                          className="rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-hover hover:text-foreground"
+                          onClick={() => onHistory(item)}
+                        >
+                          {configsStr.actions.history}
+                        </button>
+                      )}
                       <button
                         type="button"
                         className="rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-hover hover:text-foreground"
@@ -240,7 +252,7 @@ export function ConfigTable({
                       >
                         {configsStr.actions.edit}
                       </button>
-                      {(item.editStatus > 0 || item.onlineStatus === 0) && (
+                      {item.editStatus !== 10 && (
                         <button
                           type="button"
                           className="rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-hover hover:text-foreground"
