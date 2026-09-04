@@ -11,6 +11,7 @@ import {
   getConfig,
   type ConfigItem,
 } from '../../api/configs'
+import { Breadcrumb } from '../../components/Breadcrumb'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
@@ -171,9 +172,15 @@ export function ConfigPage() {
 
   return (
     <div className="flex h-[calc(100vh-5rem)] flex-col gap-3">
-      {/* 页头 */}
+      {/* 页头：面包屑（交互规范：≥2 级页面） */}
       <div className="flex flex-wrap items-center gap-3">
-        <h1 className="text-base font-semibold">{configsStr.title(appInfo.data?.name ?? appId)}</h1>
+        <Breadcrumb
+          asHeading
+          items={[
+            { label: '应用', to: '/apps' },
+            { label: appInfo.data?.name ?? appId, mono: true },
+          ]}
+        />
         <span className="flex items-center gap-1.5 rounded-md border border-border bg-panel px-2 py-0.5 font-mono text-xs">
           <span className={cn('h-1.5 w-1.5 rounded-full', ENV_DOT[env] ?? 'bg-muted-foreground')} />
           {env}

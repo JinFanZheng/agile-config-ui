@@ -13,6 +13,13 @@ self.MonacoEnvironment = {
 
 loader.config({ monaco })
 
+// AgileConfig 的 JSON 视图是 jsonc：注释承载 description 字段，保存时服务端解析回写。
+// 放开 monaco 的 JSON 诊断对注释的报错。
+monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+  allowComments: true,
+  schemaValidation: 'error',
+})
+
 /** 从当前主题令牌生成 monaco 主题（亮/暗两套，随 html[data-theme] 变化重新定义） */
 export function applyMonacoTheme(dark: boolean) {
   const cs = getComputedStyle(document.documentElement)

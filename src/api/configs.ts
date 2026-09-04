@@ -85,9 +85,11 @@ export function cancelEdits(ids: string[], env: string) {
   return apiPost<void>('/Config/CancelSomeEdit', ids, { env })
 }
 
-/** KV 文本视图 */
+/** KV 文本视图：服务端返回 [{key:'group:key', value}] 数组，转为 'k=v' 行文本 */
 export function getKvList(appId: string, env: string) {
-  return apiGet<string>('/Config/GetKvList', { appId, env })
+  return apiGet<{ key: string; value: string }[]>('/Config/GetKvList', { appId, env }).then((list) =>
+    (list ?? []).map((kv) => `${kv.key}=${kv.value}`).join('\n')
+  )
 }
 
 /** JSON 视图（jsonc，含描述注释） */

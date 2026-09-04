@@ -52,7 +52,8 @@ test.afterAll(async ({ request }) => {
 test('配置 CRUD 与待发布计数', async ({ page }) => {
   await login(page)
   await page.goto(`/apps/${CHILD_ID}/config`)
-  await expect(page.getByRole('heading', { name: 'e2e子应用 · 配置管理' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'e2e子应用' })).toBeVisible()
+  await expect(page.getByRole('navigation', { name: '面包屑' }).getByRole('link', { name: '应用' })).toBeVisible()
 
   // 新建
   await page.getByRole('button', { name: '新建配置' }).click()
