@@ -53,10 +53,7 @@
   },
   {
     "where": "topbar-button-heights",
-    "heights": [
-      28,
-      26
-    ]
+    "heights": [28, 26]
   },
   {
     "where": "sidebar-items",

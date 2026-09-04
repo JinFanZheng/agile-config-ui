@@ -40,7 +40,9 @@ const report = await page.evaluate(() => {
     })
   }
   // 顶栏内所有按钮/切换器高度差
-  const btns = [...header.querySelectorAll('button')].map((b) => +b.getBoundingClientRect().height.toFixed(1))
+  const btns = [...header.querySelectorAll('button')].map(
+    (b) => +b.getBoundingClientRect().height.toFixed(1)
+  )
   r.push({ where: 'topbar-button-heights', heights: [...new Set(btns)] })
 
   // 侧栏导航项
@@ -52,7 +54,9 @@ const report = await page.evaluate(() => {
   r.push({ where: 'home-cards', cards })
 
   // 卡片标题基线（CardTitle 与内容首行）
-  const titles = [...document.querySelectorAll('main .grid > div > div:first-child')].map((c) => box(c))
+  const titles = [...document.querySelectorAll('main .grid > div > div:first-child')].map((c) =>
+    box(c)
+  )
   r.push({ where: 'home-card-headers', titles })
 
   // 顶栏图标与文字的行内对齐（ThemeSwitcher/UserMenu/EnvSwitcher 内部）
@@ -78,6 +82,9 @@ writeFileSync(`${OUT}/alignment-measure.json`, JSON.stringify(report, null, 2))
 
 // 顶栏特写截图（整页 + 顶栏裁切）
 await page.screenshot({ path: `${OUT}/align-home-full.png` })
-await page.screenshot({ path: `${OUT}/align-topbar-crop.png`, clip: { x: 0, y: 0, width: 1280, height: 48 } })
+await page.screenshot({
+  path: `${OUT}/align-topbar-crop.png`,
+  clip: { x: 0, y: 0, width: 1280, height: 48 },
+})
 await browser.close()
 console.log('shots saved')

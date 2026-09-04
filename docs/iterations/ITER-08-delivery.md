@@ -15,9 +15,9 @@
 
 ### 1.1 Goal 定义
 
-| Goal | 用户/系统结果 | Baseline / 当前差距 | Closure rule | Owner |
-|---|---|---|---|---|
-| G0 | P2 能力补齐 + 可交付：一条命令跑起完整演示，全部 86 端点处置闭环 | 无导入导出/服务注册/SSO/镜像 | compose 演示 transcript + 全量 E2E + 用户验收 | Codex |
+| Goal | 用户/系统结果                                                    | Baseline / 当前差距          | Closure rule                                  | Owner |
+| ---- | ---------------------------------------------------------------- | ---------------------------- | --------------------------------------------- | ----- |
+| G0   | P2 能力补齐 + 可交付：一条命令跑起完整演示，全部 86 端点处置闭环 | 无导入导出/服务注册/SSO/镜像 | compose 演示 transcript + 全量 E2E + 用户验收 | Codex |
 
 ### 1.2 API 覆盖（12 端点，详见 API_INVENTORY）
 
@@ -30,14 +30,14 @@
 
 ## 2. 任务草案
 
-| Task | 内容 | Verify |
-|---|---|---|
-| T-01 | 导入导出三件套（应用 json / 配置 json，预览校验 UI） | E2E（导出→导入 round-trip） |
-| T-02 | 环境间同步（选择目标环境 → diff 预览 → 确认同步） | E2E |
-| T-03 | 服务注册中心页 | 截图 + E2E |
-| T-04 | SSO 入口（LoginUrl 探测显隐；回调路由落地） | 有 OIDC 环境实测或文档化降级 |
-| T-05 | Dockerfile（nginx:alpine + 反代配置，前缀清单同 vite 代理）+ compose 演示 | compose up transcript |
-| T-06 | README 终稿 + 全量 E2E + 收口审计（对照 API_INVENTORY 逐项回填） | `docs/evidence/ITER-08/` |
+| Task | 内容                                                                      | Verify                       |
+| ---- | ------------------------------------------------------------------------- | ---------------------------- |
+| T-01 | 导入导出三件套（应用 json / 配置 json，预览校验 UI）                      | E2E（导出→导入 round-trip）  |
+| T-02 | 环境间同步（选择目标环境 → diff 预览 → 确认同步）                         | E2E                          |
+| T-03 | 服务注册中心页                                                            | 截图 + E2E                   |
+| T-04 | SSO 入口（LoginUrl 探测显隐；回调路由落地）                               | 有 OIDC 环境实测或文档化降级 |
+| T-05 | Dockerfile（nginx:alpine + 反代配置，前缀清单同 vite 代理）+ compose 演示 | compose up transcript        |
+| T-06 | README 终稿 + 全量 E2E + 收口审计（对照 API_INVENTORY 逐项回填）          | `docs/evidence/ITER-08/`     |
 
 ## 3. Release Gates（要点）
 

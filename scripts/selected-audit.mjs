@@ -9,7 +9,10 @@ const OUT = 'docs/evidence/ITER-02'
 mkdirSync(OUT, { recursive: true })
 
 const browser = await chromium.launch()
-const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, baseURL: 'http://localhost:5173' })
+const page = await browser.newPage({
+  viewport: { width: 1280, height: 800 },
+  baseURL: 'http://localhost:5173',
+})
 
 await page.goto('/login')
 await page.getByLabel('用户名').fill(process.env.E2E_ADMIN_USER || 'admin')
@@ -77,7 +80,10 @@ for (const t of THEMES) {
   if (!ok) failed++
   lines.push(`${ok ? 'PASS' : 'FAIL'}  ${t}`)
   for (const [name, v, min] of checks) lines.push(`      ${name}: ${v}（阈值 ≥${min}）`)
-  await page.screenshot({ path: `${OUT}/selected-${t}.png`, clip: { x: 0, y: 0, width: 420, height: 400 } })
+  await page.screenshot({
+    path: `${OUT}/selected-${t}.png`,
+    clip: { x: 0, y: 0, width: 420, height: 400 },
+  })
 }
 
 await browser.close()

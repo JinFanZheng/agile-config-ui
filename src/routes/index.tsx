@@ -2,9 +2,9 @@ import { createBrowserRouter, Navigate } from 'react-router'
 import { AppLayout } from '../components/layout/AppLayout'
 import { InitPasswordPage } from '../features/auth/InitPasswordPage'
 import { LoginPage } from '../features/auth/LoginPage'
+import { AppsPage } from '../features/apps/AppsPage'
 import { HomePage } from '../features/home/HomePage'
 import { PlaceholderPage } from '../features/PlaceholderPage'
-import { homeStr } from '../strings/layout'
 import { RedirectIfAuthed, RequireAuth } from './guards'
 
 export const router = createBrowserRouter([
@@ -25,10 +25,11 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           { index: true, element: <HomePage /> },
+          { path: 'apps', element: <AppsPage /> },
           {
-            path: 'apps',
+            path: 'apps/:appId/config',
             element: (
-              <PlaceholderPage title={homeStr.appsCard} description={homeStr.appsComingSoon} />
+              <PlaceholderPage title="配置管理" description="配置管理将在 ITER-04（M2）提供" />
             ),
           },
           { path: '*', element: <Navigate to="/" replace /> },
