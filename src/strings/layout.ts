@@ -7,6 +7,7 @@ export const layoutStr = {
     nodes: '节点',
     users: '用户',
     logs: '系统日志',
+    openMenu: '打开导航菜单',
   },
   env: {
     DEV: 'DEV',

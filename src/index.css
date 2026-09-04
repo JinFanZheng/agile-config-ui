@@ -39,6 +39,7 @@
   --bg-hover: #f4f4f5;
   --bg-selected: #18181b;
   --text-selected: #ffffff;
+  --border-header: #18181b;
 }
 
 [data-theme='clear-blue'] {
@@ -69,6 +70,7 @@
   --bg-hover: #f2f6fd;
   --bg-selected: #e6eeff;
   --text-selected: #2456d6;
+  --border-header: #e5eaf2;
 }
 
 [data-theme='warm-paper'] {
@@ -99,6 +101,7 @@
   --bg-hover: #f3efe7;
   --bg-selected: #ece4d4;
   --text-selected: #2b2620;
+  --border-header: #e7e0d2;
 }
 
 [data-theme='navy-console'] {
@@ -129,6 +132,7 @@
   --bg-hover: #15294a;
   --bg-selected: #0c2a44;
   --text-selected: #38bdf8;
+  --border-header: #1d365c;
 }
 
 [data-theme='fresh-mint'] {
@@ -159,6 +163,7 @@
   --bg-hover: #eef7f4;
   --bg-selected: #def0ea;
   --text-selected: #07756b;
+  --border-header: #d9eae4;
 }
 
 @theme inline {
@@ -167,6 +172,7 @@
   --color-elevated: var(--bg-elevated);
   --color-input: var(--bg-input);
   --color-border: var(--border-default);
+  --color-header: var(--border-header);
   --color-border-strong: var(--border-strong);
   --color-foreground: var(--text-primary);
   --color-muted-foreground: var(--text-secondary);

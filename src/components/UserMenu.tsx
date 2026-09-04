@@ -25,7 +25,7 @@ export function UserMenu() {
         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[11px] font-semibold text-primary-foreground">
           {user.userName.slice(0, 1).toUpperCase()}
         </span>
-        <span className="text-xs text-foreground">{user.userName}</span>
+        <span className="hidden text-xs text-foreground md:inline">{user.userName}</span>
       </button>
 
       {open && (

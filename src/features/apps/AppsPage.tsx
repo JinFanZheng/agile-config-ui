@@ -87,8 +87,8 @@ export function AppsPage() {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
   return (
-    <div className="mx-auto max-w-5xl">
-      <div className="mb-5 flex items-start gap-4">
+    <div>
+      <div className="mb-5 flex flex-wrap items-start gap-3">
         <div>
           <h1 className="text-base font-semibold">{appsStr.title}</h1>
           <p className="mt-0.5 text-xs text-muted-foreground">{appsStr.subtitle}</p>
@@ -106,9 +106,9 @@ export function AppsPage() {
         </div>
       </div>
 
-      <div className="mb-3 flex items-center gap-2">
+      <div className="mb-3 flex flex-wrap items-center gap-2">
         <Input
-          className="max-w-xs"
+          className="w-full max-w-xs sm:w-auto"
           placeholder={appsStr.searchPlaceholder}
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
@@ -132,17 +132,17 @@ export function AppsPage() {
         <div className="ml-auto text-xs text-muted-foreground">{appsStr.count(total)}</div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-border bg-panel shadow-card">
-        <table className="w-full border-collapse text-[13px]">
+      <div className="overflow-x-auto rounded-lg border border-border bg-panel shadow-card">
+        <table className="w-full min-w-[760px] border-collapse text-[13px]">
           <thead>
-            <tr className="border-b border-border bg-input/40 text-left text-xs text-muted-foreground">
-              <th className="px-4 py-2.5 font-medium">{appsStr.table.name}</th>
-              <th className="px-4 py-2.5 font-medium">{appsStr.table.appId}</th>
-              <th className="px-4 py-2.5 font-medium">{appsStr.table.group}</th>
-              <th className="px-4 py-2.5 font-medium">{appsStr.table.status}</th>
-              <th className="px-4 py-2.5 font-medium">{appsStr.table.inherit}</th>
-              <th className="px-4 py-2.5 font-medium">{appsStr.table.updateTime}</th>
-              <th className="px-4 py-2.5 text-right font-medium">{appsStr.table.actions}</th>
+            <tr className="border-b border-border bg-elevated text-left text-xs text-muted-foreground">
+              <th className="px-4 py-2 font-medium">{appsStr.table.name}</th>
+              <th className="px-4 py-2 font-medium">{appsStr.table.appId}</th>
+              <th className="px-4 py-2 font-medium">{appsStr.table.group}</th>
+              <th className="px-4 py-2 font-medium">{appsStr.table.status}</th>
+              <th className="px-4 py-2 font-medium">{appsStr.table.inherit}</th>
+              <th className="px-4 py-2 font-medium">{appsStr.table.updateTime}</th>
+              <th className="px-4 py-2 text-right font-medium">{appsStr.table.actions}</th>
             </tr>
           </thead>
           <tbody>
@@ -192,7 +192,7 @@ export function AppsPage() {
                   key={app.id}
                   className="border-b border-border transition-colors last:border-b-0 hover:bg-hover"
                 >
-                  <td className="px-4 py-2.5">
+                  <td className="px-4 py-[7px]">
                     <div className="flex items-center gap-2">
                       <Link
                         to={`/apps/${app.id}/config`}
@@ -207,16 +207,16 @@ export function AppsPage() {
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-2.5">
+                  <td className="px-4 py-[7px]">
                     <div className="flex items-center gap-1">
                       <span className="font-mono text-xs">{app.id}</span>
                       <CopyButton value={app.id} label={appsStr.actions.copyAppId} />
                     </div>
                   </td>
-                  <td className="px-4 py-2.5 text-xs text-muted-foreground">
+                  <td className="px-4 py-[7px] text-xs text-muted-foreground">
                     {app.group || appsStr.table.noGroup}
                   </td>
-                  <td className="px-4 py-2.5">
+                  <td className="px-4 py-[7px]">
                     <span
                       className={
                         app.enabled
@@ -227,32 +227,32 @@ export function AppsPage() {
                       {app.enabled ? appsStr.badges.enabled : appsStr.badges.disabled}
                     </span>
                   </td>
-                  <td className="max-w-40 truncate px-4 py-2.5 text-xs text-muted-foreground">
+                  <td className="max-w-40 truncate px-4 py-[7px] text-xs text-muted-foreground">
                     {app.inheritancedAppNames && app.inheritancedAppNames.length > 0
                       ? appsStr.badges.inherits(app.inheritancedAppNames)
                       : '—'}
                   </td>
-                  <td className="px-4 py-2.5 text-xs text-muted-foreground">
+                  <td className="px-4 py-[7px] text-xs text-muted-foreground">
                     {app.updateTime ? app.updateTime.slice(5, 16).replace('T', ' ') : '—'}
                   </td>
-                  <td className="px-4 py-2.5 text-right">
+                  <td className="px-4 py-[7px] text-right">
                     <div className="flex items-center justify-end gap-1">
                       <Link
                         to={`/apps/${app.id}/config`}
-                        className="rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
+                        className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
                       >
                         {appsStr.actions.configs}
                       </Link>
                       <button
                         type="button"
-                        className="rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
+                        className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
                         onClick={() => setSecretApp(app)}
                       >
                         {appsStr.actions.secret}
                       </button>
                       <button
                         type="button"
-                        className="rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
+                        className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
                         onClick={() => {
                           setEditing(app)
                           setDialogOpen(true)
@@ -262,7 +262,7 @@ export function AppsPage() {
                       </button>
                       <button
                         type="button"
-                        className="rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
+                        className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
                         onClick={() =>
                           setConfirm(
                             app.enabled ? { kind: 'disable', app } : { kind: 'enable', app }
@@ -273,7 +273,7 @@ export function AppsPage() {
                       </button>
                       <button
                         type="button"
-                        className="rounded px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-danger"
+                        className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-danger"
                         onClick={() => setConfirm({ kind: 'delete', app })}
                       >
                         {appsStr.actions.delete}

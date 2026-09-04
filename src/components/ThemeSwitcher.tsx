@@ -22,7 +22,7 @@ export function ThemeSwitcher() {
         className="flex h-7 items-center gap-1.5 rounded-md px-2 text-xs text-muted-foreground transition-colors duration-150 ease-out hover:bg-hover hover:text-foreground"
       >
         <Palette className="h-3.5 w-3.5" />
-        {themeStr.themes[theme]}
+        <span className="hidden md:inline">{themeStr.themes[theme]}</span>
       </button>
 
       {open && (

@@ -1,5 +1,5 @@
-import { Boxes, CircleCheck, Clock, Home, ScrollText, Server, Users } from 'lucide-react'
-import type { ComponentType } from 'react'
+import { Boxes, CircleCheck, Clock, Home, Menu, ScrollText, Server, Users } from 'lucide-react'
+import { useEffect, useState, type ComponentType } from 'react'
 import { Link, NavLink, Outlet } from 'react-router'
 import { cn } from '../../lib/utils'
 import { S } from '../../strings/common'
@@ -26,11 +26,34 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/logs', label: layoutStr.nav.logs, icon: ScrollText, soon: true },
 ]
 
-/** 应用布局壳：顶栏（logo + 环境切换 + 用户）+ 侧栏导航 + 内容区 */
+/**
+ * 应用布局壳：顶栏（logo + 环境切换 + 主题 + 用户）+ 侧栏导航 + 全宽流式内容区。
+ * 布局对齐设计稿基准（graphite/C 稿）：<md 侧栏转抽屉，内容区随视口全宽。
+ */
 export function AppLayout() {
+  const [navOpen, setNavOpen] = useState(false)
+
+  useEffect(() => {
+    if (!navOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setNavOpen(false)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [navOpen])
+
   return (
     <div className="flex h-screen flex-col bg-page text-foreground">
-      <header className="flex h-12 shrink-0 items-center gap-3 border-b border-border bg-panel px-4">
+      <header className="flex h-12 shrink-0 items-center gap-2 border-b border-header bg-panel px-3 md:gap-3 md:px-4">
+        <button
+          type="button"
+          aria-label={layoutStr.nav.openMenu}
+          aria-expanded={navOpen}
+          onClick={() => setNavOpen(true)}
+          className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors duration-150 hover:bg-hover hover:text-foreground md:hidden"
+        >
+          <Menu className="h-4 w-4" />
+        </button>
         <Link to="/" className="flex items-center gap-2">
           <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
             A
@@ -38,14 +61,29 @@ export function AppLayout() {
           <span className="text-sm font-semibold">{S.appName}</span>
         </Link>
         <div className="flex-1" />
-        <ThemeSwitcher />
         <EnvSwitcher />
-        <div className="mx-1 h-4 w-px bg-border" />
+        <div className="mx-1 hidden h-4 w-px bg-border sm:block" />
+        <ThemeSwitcher />
         <UserMenu />
       </header>
 
       <div className="flex min-h-0 flex-1">
-        <aside className="hidden w-48 shrink-0 flex-col border-r border-border p-2 md:flex">
+        {/* 小屏抽屉遮罩 */}
+        {navOpen && (
+          <div
+            className="fixed inset-0 z-40 bg-black/40 md:hidden"
+            onMouseDown={(e) => {
+              if (e.target === e.currentTarget) setNavOpen(false)
+            }}
+          />
+        )}
+        <aside
+          className={
+            navOpen
+              ? 'fixed top-12 bottom-0 left-0 z-50 flex w-48 flex-col border-r border-border bg-panel p-2'
+              : 'hidden w-48 shrink-0 flex-col border-r border-border bg-panel p-2 md:flex'
+          }
+        >
           <nav className="flex flex-col gap-0.5">
             {NAV_ITEMS.map(({ to, label, icon: Icon, soon }) =>
               soon ? (
@@ -62,6 +100,7 @@ export function AppLayout() {
                   key={to}
                   to={to}
                   end={to === '/'}
+                  onClick={() => setNavOpen(false)}
                   className={({ isActive }) =>
                     cn(
                       'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs transition-colors duration-150 ease-out',
@@ -83,7 +122,7 @@ export function AppLayout() {
           </p>
         </aside>
 
-        <main className="min-w-0 flex-1 overflow-y-auto p-6">
+        <main className="min-w-0 flex-1 overflow-y-auto p-4 md:p-6">
           <Outlet />
         </main>
       </div>

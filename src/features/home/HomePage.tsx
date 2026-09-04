@@ -21,7 +21,7 @@ export function HomePage() {
   })
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div>
       <div className="mb-5">
         <h1 className="text-base font-semibold">{homeStr.title}</h1>
         <p className="mt-0.5 text-xs text-muted-foreground">{homeStr.subtitle}</p>

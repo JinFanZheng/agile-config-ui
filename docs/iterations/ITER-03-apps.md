@@ -43,6 +43,9 @@ RG-1 baseline 冻结；RG-2 全 task GREEN；RG-4 权限码（App_Add 等隐藏�
 
 无（建卡阶段）
 
+| T-06 | G0 / 用户验收 | T-05 | 验收结论回填 | 聊天记录 | T-05 | 用户 / 反馈：内容区与设计稿未对齐 |
+| T-07 | G0 / 布局对齐 + 小屏适配 | 用户反馈（确认属实：限宽居中 vs 全宽流式、顶栏墨线缺失、行高 41 vs 33、表头无底色） | 全宽流式（去 max-w）；--border-header 令牌（石墨墨线）；表格密度 34.5px、表头 bg-elevated、修 bg-input/40 不渲染；<md 抽屉侧栏（汉堡+遮罩+Esc）、顶栏控件收纳、表格横向滚动 | 指标复测 + 375px 验证（见验收记录） | T-06 | Codex / DONE |
+| T-08 | G0 / 用户复验 | T-07 | 复验结论回填（通过则本卡 VERIFIED） | 聊天记录 | T-07 | 用户 / 等待中 |
 
 ## 5. 验收记录（2026-09-04）
 
@@ -53,3 +56,4 @@ RG-1 baseline 冻结；RG-2 全 task GREEN；RG-4 权限码（App_Add 等隐藏�
 - 数据纪律：E2E 用例自建 `e2e_<ts>_app` 并用例内清理 + afterAll API 兜底；`demo_app` 实测完好（/App/Get 200）
 - Evidence：`docs/evidence/ITER-03/`（apps-page.png、apps-secret-dialog.png）
 - 决策记录：TanStack Table 推迟到 ITER-04（应用列表数据量小，手写表格足够；表格库在配置页的大数据/虚拟滚动场景才发挥价值）——回流 §8
+- 验收反馈与布局对齐（T-07，2026-09-04）：用户指出内容区与设计稿未对齐，实测确认四项差异（限宽居中 vs 全宽流式 / 石墨顶栏墨线缺失 / 行高 41 vs 33 / 表头无底色）。修复：内容区全宽流式（Home/Apps/Placeholder 去 max-w）；新增 --border-header 令牌×5 主题（石墨=墨黑 #18181B，其余=各稿原语义）；表格密度对齐 C 稿（行高 34.5≈33、表头 bg-elevated 灰底、操作钮收紧）；小屏适配（<md 抽屉侧栏+汉堡+遮罩+Esc、主题/用户图标化、Env 收窄、表格横向滚动 min-w 760）。复测指标全部对齐（顶栏 48/墨线 rgb(24,24,25) 一致、卡片 1038≈1042 全宽、表头 rgb(250,250,250)、375px 无横向溢出且抽屉可用）；门禁全绿 39 unit + 6 e2e。证据：apps-aligned-1280.png / apps-375px.png

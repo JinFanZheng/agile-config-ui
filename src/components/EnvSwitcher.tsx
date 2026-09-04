@@ -33,7 +33,7 @@ export function EnvSwitcher() {
             aria-checked={active}
             onClick={() => setEnv(id)}
             className={cn(
-              'flex items-center gap-1.5 px-2.5 font-mono text-xs transition-colors duration-150 ease-out',
+              'flex items-center gap-1.5 px-2 font-mono text-xs transition-colors duration-150 ease-out md:px-2.5',
               id !== 'DEV' && 'border-l border-border',
               active
                 ? 'bg-selected font-medium text-selected-foreground'

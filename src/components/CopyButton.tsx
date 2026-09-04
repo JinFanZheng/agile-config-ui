@@ -40,7 +40,7 @@ export function CopyButton({
       onClick={onCopy}
       title={label}
       className={cn(
-        'inline-flex h-6 items-center gap-1 rounded px-1.5 text-muted-foreground transition-colors duration-150 ease-out',
+        'inline-flex h-5 w-5 items-center gap-1 rounded px-0.5 text-muted-foreground transition-colors duration-150 ease-out',
         'hover:bg-hover hover:text-foreground',
         className
       )}
