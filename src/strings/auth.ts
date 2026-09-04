@@ -1,0 +1,32 @@
+export const authStr = {
+  login: {
+    title: '登录 AgileConfig',
+    subtitle: '配置变更中心',
+    userName: '用户名',
+    userNamePlaceholder: '请输入用户名',
+    password: '密码',
+    passwordPlaceholder: '请输入密码',
+    submit: '登录',
+    submitting: '登录中…',
+    failed: '登录失败',
+    needInit: '该实例尚未初始化管理员密码',
+    goInit: '去初始化',
+  },
+  initPassword: {
+    title: '初始化管理员密码',
+    subtitle: '首次启动，请为超级管理员设置密码',
+    password: '密码',
+    confirmPassword: '确认密码',
+    submit: '初始化',
+    submitting: '初始化中…',
+    success: '初始化成功，即将前往登录…',
+    failed: '初始化失败',
+  },
+  errors: {
+    userNameRequired: '请输入用户名',
+    passwordRequired: '请输入密码',
+    passwordMin: '密码至少 6 位',
+    passwordMismatch: '两次输入的密码不一致',
+    requestFailed: '请求失败',
+  },
+} as const

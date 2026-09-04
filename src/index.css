@@ -1,0 +1,88 @@
+@import 'tailwindcss';
+
+/*
+ * 设计令牌 — docs/AGENT_HANDOFF.md §7.1（Linear 式深色专业风，暗色为主主题）
+ * :root 为令牌唯一事实源；@theme inline 将其映射为 Tailwind 工具类：
+ *   bg-page / bg-panel / bg-elevated / border-border / text-foreground /
+ *   text-muted-foreground / bg-primary / text-env-dev ...
+ */
+:root {
+  --bg-page: #0f1117;
+  --bg-panel: #16181f;
+  --bg-elevated: #1a1d26;
+  --border-default: #262a36;
+  --text-primary: #e6e8ee;
+  --text-secondary: #9aa0b0;
+  --accent: #6e7bf2;
+  --accent-hover: #7f8bf5;
+  --accent-foreground: #ffffff;
+  --env-dev: #3fb950;
+  --env-test: #d29922;
+  --env-prod: #f85149;
+  --success: #3fb950;
+  --warning: #d29922;
+  --danger: #f85149;
+}
+
+@theme inline {
+  --color-page: var(--bg-page);
+  --color-panel: var(--bg-panel);
+  --color-elevated: var(--bg-elevated);
+  --color-border: var(--border-default);
+  --color-foreground: var(--text-primary);
+  --color-muted-foreground: var(--text-secondary);
+  --color-primary: var(--accent);
+  --color-primary-hover: var(--accent-hover);
+  --color-primary-foreground: var(--accent-foreground);
+  --color-env-dev: var(--env-dev);
+  --color-env-test: var(--env-test);
+  --color-env-prod: var(--env-prod);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  --font-sans:
+    'Inter Variable', 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei',
+    sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-page);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: 13px; /* 基准字号，紧凑密度 */
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Tailwind v4 边框默认 currentColor，统一回设为主题边框色 */
+  * {
+    border-color: var(--color-border);
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #2a2f3d;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #343a4b;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
