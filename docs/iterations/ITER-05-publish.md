@@ -1,6 +1,7 @@
 # 迭代卡 ITER-05 - 发布链路（M3，产品本体）
 
-> 状态：PLANNED（开工时完成 GR 复审与 baseline 冻结）
+> 状态：ACTIVE（2026-09-04 开工；baseline @a23475b：typecheck/lint/46 unit/11 e2e 全绿）
+> GR 复审：PASS（oracle=M3 DoD E2E 全链路+用户验收；GR-6 回滚 danger 二次确认；GR-8 回退=revert；发布/回滚仅自建应用）
 > 变更分类：大改（产品核心价值链：可知/可控/可逆 的落地）
 > 方案出处：handoff §0 北极星 + §10 M3 + UX #3/4/11；API 见 [../API_INVENTORY.md](../API_INVENTORY.md)
 > 日期：2026-09-04 建卡 / 未开始
