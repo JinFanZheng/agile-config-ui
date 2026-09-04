@@ -1,0 +1,8 @@
+# ITER-01 静态稿检查 · 2026-09-04T07:45:35.389Z · viewport 1280x800
+PASS  index.html  http=200  横向溢出=false  控制台错误=0  → index.png
+PASS  a-clear-blue.html  http=200  横向溢出=false  控制台错误=0  → a-clear-blue.png
+PASS  b-warm-paper.html  http=200  横向溢出=false  控制台错误=0  → b-warm-paper.png
+PASS  c-graphite.html  http=200  横向溢出=false  控制台错误=0  → c-graphite.png
+PASS  d-navy-console.html  http=200  横向溢出=false  控制台错误=0  → d-navy-console.png
+PASS  e-fresh-mint.html  http=200  横向溢出=false  控制台错误=0  → e-fresh-mint.png
+结果：6/6 PASS
