@@ -41,4 +41,22 @@ export function applyMonacoTheme(dark: boolean) {
   monaco.editor.setTheme('agile')
 }
 
+/** DiffEditor 共享选项：只读、并排、折叠未变更区；关掉概览标尺（diff 标记条会混进滚动条区域，观感像渲染错误） */
+export const DIFF_EDITOR_OPTIONS = {
+  readOnly: true,
+  renderSideBySide: true,
+  renderOverviewRuler: false,
+  fontSize: 12,
+  minimap: { enabled: false },
+  scrollBeyondLastLine: false,
+  automaticLayout: true,
+  hideUnchangedRegions: {
+    enabled: true,
+    contextLineCount: 3,
+    minimumLineCount: 4,
+    revealLineCount: 20,
+  },
+  fontFamily: "'JetBrains Mono Variable', ui-monospace, Menlo, monospace",
+} as const
+
 export { monaco }

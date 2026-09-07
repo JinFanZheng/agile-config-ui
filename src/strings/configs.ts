@@ -92,13 +92,10 @@ export const configsStr = {
     synced: (envs: string) => `已同步到 ${envs}`,
   },
   diffBar: {
-    tabs: { online: '与线上差异', unsaved: '未保存修改' },
+    compare: { saved: '对比已保存', online: '对比线上' },
     summary: (a: number, c: number, r: number) => `+${a} ~${c} -${r}`,
     sortedNote: '已按 key 排序对比',
-    title: '与已保存版本的差异',
     fullWarning: (n: number) => `全量模式：保存后这 ${n} 个键将被标记"待发布删除"`,
-    empty: '与已保存版本一致，没有未保存的修改',
-    kinds: { added: '新增', changed: '修改', removed: '将删除' },
   },
   patchTip: [
     '勾选（补丁）：只改文本里出现的键，其他键保持不变',
