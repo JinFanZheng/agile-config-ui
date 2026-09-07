@@ -92,6 +92,7 @@ export const configsStr = {
     synced: (envs: string) => `已同步到 ${envs}`,
   },
   diffBar: {
+    tabs: { online: '与线上差异', unsaved: '未保存修改' },
     summary: (a: number, c: number, r: number) => `+${a} ~${c} -${r}`,
     title: '与已保存版本的差异',
     fullWarning: (n: number) => `全量模式：保存后这 ${n} 个键将被标记"待发布删除"`,

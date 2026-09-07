@@ -7,7 +7,7 @@ import { Tooltip } from '../../components/ui/tooltip'
 import { Spinner } from '../../components/ui/spinner'
 import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
-import { diffKv, type KvDiff, type KvDiffRow } from '../../lib/kvDiff'
+import { diffKv, diffKvVsMap, type KvDiff, type KvDiffRow } from '../../lib/kvDiff'
 import { cn } from '../../lib/utils'
 import { PERMISSION } from '../../lib/permissions'
 import { toast } from '../../stores/toast'
@@ -20,17 +20,21 @@ export function KvView({
   onDirtyChange,
   onSaved,
   reloadKey,
+  onlineValues,
 }: {
   appId: string
   env: string
   onDirtyChange: (dirty: boolean) => void
   onSaved?: () => void
   reloadKey: number
+  /** 线上最新发布版 key→value 快照（key 格式 group:key）；null=无发布史 */
+  onlineValues: Map<string, string> | null
 }) {
   const [text, setText] = useState<string | null>(null)
   const [savedText, setSavedText] = useState('')
   const [patch, setPatch] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [diffTab, setDiffTab] = useState<'online' | 'unsaved'>('online')
   const { can } = usePermission()
 
   const query = useQuery({
@@ -83,8 +87,11 @@ export function KvView({
   }
 
   const dirty = text !== null && text !== savedText
-  const diff: KvDiff | null =
+  const onlineDiff: KvDiff | null =
+    text !== null && onlineValues ? diffKvVsMap(text, onlineValues) : null
+  const unsavedDiff: KvDiff | null =
     dirty && text !== null ? diffKv(text, savedText, !patch) : null
+  const activeDiff = diffTab === 'online' ? onlineDiff : unsavedDiff
 
   return (
     <div className="flex min-h-0 flex-1 flex-col rounded-lg border border-border bg-panel shadow-card">
@@ -137,46 +144,79 @@ export function KvView({
         aria-label="KV 文本"
       />
 
-      {diff && diff.rows.length > 0 && (
+      {(onlineDiff?.rows.length || 0) + (unsavedDiff?.rows.length || 0) > 0 && (
         <div className="flex min-h-0 flex-[2] flex-col border-t border-border">
           <div className="flex flex-wrap items-center gap-2 px-4 py-1.5">
-            <span className="text-xs font-medium text-muted-foreground">{configsStr.diffBar.title}</span>
-            <span className="rounded-full bg-info/10 px-2 py-0.5 font-mono text-[10px] text-info">
-              {configsStr.diffBar.summary(diff.counts.added, diff.counts.changed, diff.counts.removed)}
-            </span>
-            {!patch && diff.counts.removed > 0 && (
+            <div className="flex items-center gap-0.5 rounded-md border border-border bg-input/40 p-0.5">
+              <button
+                type="button"
+                onClick={() => setDiffTab('online')}
+                className={cn(
+                  'rounded px-2 py-0.5 text-xs transition-colors duration-150',
+                  diffTab === 'online'
+                    ? 'bg-selected font-medium text-selected-foreground'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                {configsStr.diffBar.tabs.online}
+              </button>
+              {dirty && (
+                <button
+                  type="button"
+                  onClick={() => setDiffTab('unsaved')}
+                  className={cn(
+                    'rounded px-2 py-0.5 text-xs transition-colors duration-150',
+                    diffTab === 'unsaved'
+                      ? 'bg-selected font-medium text-selected-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  {configsStr.diffBar.tabs.unsaved}
+                </button>
+              )}
+            </div>
+            {activeDiff && activeDiff.rows.length > 0 && (
+              <span className="rounded-full bg-info/10 px-2 py-0.5 font-mono text-[10px] text-info">
+                {configsStr.diffBar.summary(activeDiff.counts.added, activeDiff.counts.changed, activeDiff.counts.removed)}
+              </span>
+            )}
+            {diffTab === 'unsaved' && !patch && unsavedDiff && unsavedDiff.counts.removed > 0 && (
               <span className="rounded bg-danger/10 px-2 py-0.5 text-[10px] font-medium text-danger">
-                {configsStr.diffBar.fullWarning(diff.counts.removed)}
+                {configsStr.diffBar.fullWarning(unsavedDiff.counts.removed)}
               </span>
             )}
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-2">
-            {diff.rows.map((r: KvDiffRow) => (
-              <div
-                key={r.key}
-                className={cn(
-                  'flex items-baseline gap-2 py-0.5 font-mono text-xs',
-                  r.kind === 'removed' && 'bg-danger/5',
-                  r.kind === 'added' && 'bg-info/5'
-                )}
-              >
-                <span
+            {activeDiff && activeDiff.rows.length > 0 ? (
+              activeDiff.rows.map((r: KvDiffRow) => (
+                <div
+                  key={r.key}
                   className={cn(
-                    'shrink-0 rounded px-1 text-[10px]',
-                    r.kind === 'added' && 'bg-info/10 text-info',
-                    r.kind === 'changed' && 'bg-warning/10 text-warning',
-                    r.kind === 'removed' && 'bg-danger/10 text-danger'
+                    'flex items-baseline gap-2 py-0.5 font-mono text-xs',
+                    r.kind === 'removed' && 'bg-danger/5',
+                    r.kind === 'added' && 'bg-info/5'
                   )}
                 >
-                  {configsStr.diffBar.kinds[r.kind]}
-                </span>
-                <span className="shrink-0 text-foreground">{r.key}</span>
-                {r.old !== undefined && (
-                  <span className="truncate text-muted-foreground line-through opacity-70">{r.old}</span>
-                )}
-                {r.new !== undefined && <span className="truncate text-foreground">{r.new}</span>}
-              </div>
-            ))}
+                  <span
+                    className={cn(
+                      'shrink-0 rounded px-1 text-[10px]',
+                      r.kind === 'added' && 'bg-info/10 text-info',
+                      r.kind === 'changed' && 'bg-warning/10 text-warning',
+                      r.kind === 'removed' && 'bg-danger/10 text-danger'
+                    )}
+                  >
+                    {configsStr.diffBar.kinds[r.kind]}
+                  </span>
+                  <span className="shrink-0 text-foreground">{r.key}</span>
+                  {r.old !== undefined && (
+                    <span className="truncate text-muted-foreground line-through opacity-70">{r.old}</span>
+                  )}
+                  {r.new !== undefined && <span className="truncate text-foreground">{r.new}</span>}
+                </div>
+              ))
+            ) : (
+              <p className="py-3 text-center text-xs text-muted-foreground">{configsStr.diffBar.empty}</p>
+            )}
           </div>
         </div>
       )}

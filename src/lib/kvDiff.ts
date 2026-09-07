@@ -55,3 +55,29 @@ export function diffKv(current: string, saved: string, fullMode: boolean): KvDif
     },
   }
 }
+
+/**
+ * 编辑器 KV 文本 vs 线上发布快照 Map 的 diff。
+ * onlineMap 的 key 格式为 `group:key`（group 可为空串）。
+ * 这是产品本体的 diff——回答"如果我保存并发布，什么会变？"
+ */
+export function diffKvVsMap(kvText: string, onlineMap: Map<string, string>): KvDiff {
+  const cur = parseKv(kvText)
+  const rows: KvDiffRow[] = []
+  for (const [k, v] of cur) {
+    if (!onlineMap.has(k)) rows.push({ key: k, kind: 'added', new: v })
+    else if (onlineMap.get(k) !== v) rows.push({ key: k, kind: 'changed', old: onlineMap.get(k), new: v })
+  }
+  for (const [k, v] of onlineMap) {
+    if (!cur.has(k)) rows.push({ key: k, kind: 'removed', old: v })
+  }
+  rows.sort((a, b) => a.key.localeCompare(b.key))
+  return {
+    rows,
+    counts: {
+      added: rows.filter(r => r.kind === 'added').length,
+      changed: rows.filter(r => r.kind === 'changed').length,
+      removed: rows.filter(r => r.kind === 'removed').length,
+    },
+  }
+}

@@ -102,6 +102,13 @@ export function ConfigPage() {
     enabled: !!appId,
     staleTime: 0,
   })
+
+  // KV 视图用的线上快照：key 从 group\0key 转为 group:key
+  const onlineKvMap = useMemo(() => {
+    const m = new Map<string, string>()
+    latestSnapshot.data?.forEach((v, k) => m.set(k.replace('\u0000', ':'), v))
+    return m
+  }, [latestSnapshot.data])
   const inheritIds = useMemo(() => appInfo.data?.inheritancedApps ?? [], [appInfo.data])
   const inheritedQ = useInheritedConfigs(appId, env, inheritIds, showInherited)
 
@@ -481,6 +488,7 @@ export function ConfigPage() {
             onDirtyChange={setViewDirty}
             onSaved={refresh}
             reloadKey={reloadKey}
+            onlineValues={onlineKvMap}
           />
         </Suspense>
       ) : view === 'json' ? (

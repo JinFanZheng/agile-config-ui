@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { diffKv, parseKv } from './kvDiff'
+import { diffKv, diffKvVsMap, parseKv } from './kvDiff'
 
 describe('parseKv', () => {
   it('按首个 = 分割，保留值中的 =', () => {
@@ -42,5 +42,36 @@ describe('diffKv', () => {
   it('值相同但格式微差（空格）不误报', () => {
     const d = diffKv('a = 1\nb=2\nc=3', saved, false)
     expect(d.rows).toEqual([])
+  })
+})
+
+describe('diffKvVsMap', () => {
+  const online = new Map([
+    ['app:timeout', '30'],
+    ['app:retry', '3'],
+    ['db:conn', 'localhost'],
+    ['legacy:key', 'old'],
+  ])
+
+  it('编辑器内容 vs 线上快照：新增+修改+删除', () => {
+    const d = diffKvVsMap('app:timeout=60\napp:new=true', online)
+    expect(d.counts).toEqual({ added: 1, changed: 1, removed: 3 })
+    expect(d.rows).toEqual([
+      { key: 'app:new', kind: 'added', new: 'true' },
+      { key: 'app:retry', kind: 'removed', old: '3' },
+      { key: 'app:timeout', kind: 'changed', old: '30', new: '60' },
+      { key: 'db:conn', kind: 'removed', old: 'localhost' },
+      { key: 'legacy:key', kind: 'removed', old: 'old' },
+    ])
+  })
+
+  it('完全一致 → 空 diff', () => {
+    const d = diffKvVsMap('app:timeout=30\napp:retry=3\ndb:conn=localhost\nlegacy:key=old', online)
+    expect(d.rows).toEqual([])
+  })
+
+  it('编辑器为空 → 全部标 removed', () => {
+    const d = diffKvVsMap('', online)
+    expect(d.counts.removed).toBe(4)
   })
 })
