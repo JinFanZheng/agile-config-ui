@@ -1,41 +1,19 @@
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router'
-import { getApp, searchApps } from '../../api/apps'
+import { Link, Navigate, useParams } from 'react-router'
+import { searchApps } from '../../api/apps'
 import { getWaitPublishStatus } from '../../api/configs'
 import { getPublishHistory } from '../../api/publish'
-import { Breadcrumb } from '../../components/Breadcrumb'
 import { Input } from '../../components/ui/input'
 import { Skeleton } from '../../components/ui/spinner'
-import { HistoryPanel } from '../publish/HistoryPanel'
 import { cn } from '../../lib/utils'
 import { useEnvStore } from '../../stores/env'
 import { publishStr } from '../../strings/publish'
 
-/** 应用域发布历史页：/apps/:appId/history（面包屑 应用 / 应用名 / 发布历史） */
+/** 应用域发布历史：已合并为配置页「历史」第四视图（北极星：发布链路不出页），此路由仅做兼容跳转 */
 export function AppHistoryPage() {
   const { appId = '' } = useParams()
-  const env = useEnvStore((s) => s.currentEnv)
-  const app = useQuery({ queryKey: ['apps', 'detail', appId], queryFn: () => getApp(appId) })
-
-  return (
-    <div className="flex h-[calc(100vh-5rem)] flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <Breadcrumb
-          asHeading
-          items={[
-            { label: '应用', to: '/apps' },
-            { label: app.data?.name ?? appId, to: `/apps/${appId}/config`, mono: true },
-            { label: publishStr.history.title },
-          ]}
-        />
-        <span className="rounded-md border border-border bg-panel px-2 py-0.5 font-mono text-xs text-muted-foreground">
-          {env}
-        </span>
-      </div>
-      <HistoryPanel appId={appId} env={env} />
-    </div>
-  )
+  return <Navigate to={`/apps/${appId}/config?view=history`} replace />
 }
 
 /** 全局发布历史入口：选择应用查看（侧栏「发布历史」目标页） */
@@ -130,7 +108,7 @@ export function HistoryIndexPage() {
                 return (
                   <tr key={a.id} className="border-b border-border transition-colors last:border-b-0 hover:bg-hover">
                     <td className="px-4 py-[7px]">
-                      <Link to={`/apps/${a.id}/history`} className="font-medium hover:text-primary hover:underline">
+                      <Link to={`/apps/${a.id}/config?view=history`} className="font-medium hover:text-primary hover:underline">
                         {a.name}
                       </Link>
                       <span className="ml-2 font-mono text-xs text-muted-foreground">{a.id}</span>
@@ -169,7 +147,7 @@ export function HistoryIndexPage() {
                     </td>
                     <td className="px-4 py-[7px] text-right">
                       <Link
-                        to={`/apps/${a.id}/history`}
+                        to={`/apps/${a.id}/config?view=history`}
                         className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
                       >
                         {S.viewHistory}

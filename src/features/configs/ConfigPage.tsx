@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
-import { Cloud, Layers, Plus, Table2 } from 'lucide-react'
+import { Clock, Cloud, Layers, Plus, Table2 } from 'lucide-react'
 import { Suspense, lazy, useCallback, useMemo, useState } from 'react'
-import { useParams } from 'react-router'
+import { useSearchParams, useParams } from 'react-router'
 import {
   cancelEdit,
   cancelEdits,
@@ -12,7 +12,6 @@ import {
   type ConfigItem,
 } from '../../api/configs'
 import { Breadcrumb } from '../../components/Breadcrumb'
-import { Link } from 'react-router'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
@@ -26,6 +25,7 @@ import { publishStr } from '../../strings/publish'
 import { cn } from '../../lib/utils'
 import { ConfigDialog } from './ConfigDialog'
 import { ConfigHistoryDialog } from '../publish/ConfigHistoryDialog'
+import { HistoryPanel } from '../publish/HistoryPanel'
 import { PublishDialog } from '../publish/PublishDialog'
 import { ConfigTable } from './ConfigTable'
 import {
@@ -40,7 +40,7 @@ import {
 const KvView = lazy(() => import('./KvView').then((m) => ({ default: m.KvView })))
 const JsonView = lazy(() => import('./JsonView').then((m) => ({ default: m.JsonView })))
 
-type View = 'table' | 'kv' | 'json'
+type View = 'table' | 'kv' | 'json' | 'history'
 
 type Confirm =
   | { kind: 'delete'; item: ConfigItem }
@@ -62,7 +62,12 @@ export function ConfigPage() {
   const env = useEnvStore((s) => s.currentEnv)
   const invalidate = useInvalidateConfigs()
 
-  const [view, setView] = useState<View>('table')
+  const [searchParams] = useSearchParams()
+  const initialViewParam = searchParams.get('view') as View | null
+  const initialView: View = ['table', 'kv', 'json', 'history'].includes(initialViewParam ?? '')
+    ? (initialViewParam as View)
+    : 'table'
+  const [view, setView] = useState<View>(initialView)
   const [viewDirty, setViewDirty] = useState(false)
   const [keyword, setKeyword] = useState('')
   const [showInherited, setShowInherited] = useState(false)
@@ -197,6 +202,7 @@ export function ConfigPage() {
               ['table', configsStr.views.table, Table2],
               ['kv', configsStr.views.kv, Layers],
               ['json', configsStr.views.json, Cloud],
+              ['history', configsStr.views.history, Clock],
             ] as const
           ).map(([id, label, Icon]) => (
             <button
@@ -248,12 +254,13 @@ export function ConfigPage() {
           <span className="text-xs text-muted-foreground">{configsStr.pendingStrip.none}</span>
         )}
         <div className="flex-1" />
-        <Link
-          to={`/apps/${appId}/history`}
+        <button
+          type="button"
+          onClick={() => switchView('history')}
           className="text-xs text-muted-foreground transition-colors hover:text-primary hover:underline"
         >
           {publishStr.history.title} →
-        </Link>
+        </button>
         {hasPending && (
           <>
             <Button
@@ -426,7 +433,7 @@ export function ConfigPage() {
             reloadKey={reloadKey}
           />
         </Suspense>
-      ) : (
+      ) : view === 'json' ? (
         <Suspense fallback={<Skeleton className="flex-1" />}>
           <JsonView
             appId={appId}
@@ -436,6 +443,8 @@ export function ConfigPage() {
             reloadKey={reloadKey}
           />
         </Suspense>
+      ) : (
+        <HistoryPanel appId={appId} env={env} />
       )}
 
       <ConfigDialog

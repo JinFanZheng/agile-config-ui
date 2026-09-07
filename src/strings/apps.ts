@@ -11,6 +11,8 @@ export const appsStr = {
   count: (n: number) => `共 ${n} 个应用`,
   badges: {
     enabled: '已启用',
+    /** 三色待发布计数（UX #2：应用列表常显） */
+    pendingBadge: (a: number, e: number, d: number) => `+${a} ~${e} -${d}`,
     disabled: '已禁用',
     shared: '公共应用',
     inherits: (names: string[]) => `继承 ${names.join('、')}`,
@@ -20,6 +22,7 @@ export const appsStr = {
     appId: 'AppId',
     group: '分组',
     status: '状态',
+    pending: '待发布',
     inherit: '继承关系',
     updateTime: '更新时间',
     actions: '操作',

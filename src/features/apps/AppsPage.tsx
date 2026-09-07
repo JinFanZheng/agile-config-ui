@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, useQueries } from '@tanstack/react-query'
 import { ChevronLeft, ChevronRight, Plus, ShieldCheck } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
@@ -10,6 +10,7 @@ import {
   searchApps,
   type AppItem,
 } from '../../api/apps'
+import { getWaitPublishStatus } from '../../api/configs'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { CopyButton } from '../../components/CopyButton'
 import { Button } from '../../components/ui/button'
@@ -19,6 +20,7 @@ import { Skeleton } from '../../components/ui/spinner'
 import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
 import { PERMISSION } from '../../lib/permissions'
+import { useEnvStore } from '../../stores/env'
 import { toast } from '../../stores/toast'
 import { appsStr } from '../../strings/apps'
 import { AppAuthDialog } from './AppAuthDialog'
@@ -96,6 +98,18 @@ export function AppsPage() {
     onError: (e) => toast.error(e instanceof ApiError ? e.message : appsStr.toasts.failed),
   })
 
+  const rows = search.data?.data ?? []
+
+  // 待发布徽标（UX #2：应用列表常显三色计数，10s 轮询）
+  const env = useEnvStore((s) => s.currentEnv)
+  const waitQueries = useQueries({
+    queries: rows.map((a) => ({
+      queryKey: ['configs', 'waitPublish', a.id, env],
+      queryFn: () => getWaitPublishStatus(a.id, env),
+      refetchInterval: 10_000,
+    })),
+  })
+
   const secretQuery = useQuery({
     queryKey: ['apps', 'secret', secretApp?.id],
     queryFn: () => getApp(secretApp!.id),
@@ -103,7 +117,6 @@ export function AppsPage() {
     staleTime: 0,
   })
 
-  const rows = search.data?.data ?? []
   const total = search.data?.total ?? 0
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
@@ -156,7 +169,7 @@ export function AppsPage() {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border bg-panel shadow-card">
-        <table className="w-full min-w-[760px] border-collapse text-[13px]">
+        <table className="w-full min-w-[860px] border-collapse text-[13px]">
           <thead>
             <tr className="border-b border-border bg-elevated text-left text-xs text-muted-foreground">
               <th className="px-4 py-2 font-medium">{appsStr.table.name}</th>
@@ -164,6 +177,9 @@ export function AppsPage() {
               <th className="px-4 py-2 font-medium whitespace-nowrap">{appsStr.table.group}</th>
               <th className="w-[80px] px-4 py-2 font-medium whitespace-nowrap">
                 {appsStr.table.status}
+              </th>
+              <th className="w-[110px] px-4 py-2 font-medium whitespace-nowrap">
+                {appsStr.table.pending}
               </th>
               <th className="px-4 py-2 font-medium">{appsStr.table.inherit}</th>
               <th className="px-4 py-2 font-medium whitespace-nowrap">
@@ -233,7 +249,7 @@ export function AppsPage() {
                 </td>
               </tr>
             ) : (
-              rows.map((app) => (
+              rows.map((app, ri) => (
                 <tr
                   key={app.id}
                   className="border-b border-border transition-colors last:border-b-0 hover:bg-hover"
@@ -272,6 +288,26 @@ export function AppsPage() {
                     >
                       {app.enabled ? appsStr.badges.enabled : appsStr.badges.disabled}
                     </span>
+                  </td>
+                  <td className="px-4 py-[7px] whitespace-nowrap">
+                    {(() => {
+                      const wp = waitQueries[ri]?.data
+                      if (!wp) return <span className="text-muted-foreground">—</span>
+                      if (wp.addCount + wp.editCount + wp.deleteCount === 0)
+                        return <span className="text-muted-foreground">—</span>
+                      return (
+                        <span
+                          className={
+                            wp.deleteCount > 0
+                              ? 'rounded-full bg-danger/10 px-2 py-0.5 font-mono text-[10px] text-danger'
+                              : 'rounded-full bg-warning/10 px-2 py-0.5 font-mono text-[10px] text-warning'
+                          }
+                          title={`${wp.addCount} 新增 / ${wp.editCount} 修改 / ${wp.deleteCount} 删除`}
+                        >
+                          {appsStr.badges.pendingBadge(wp.addCount, wp.editCount, wp.deleteCount)}
+                        </span>
+                      )
+                    })()}
                   </td>
                   <td className="max-w-40 truncate px-4 py-[7px] text-xs text-muted-foreground">
                     {app.inheritancedAppNames && app.inheritancedAppNames.length > 0

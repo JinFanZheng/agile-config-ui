@@ -67,3 +67,6 @@ RG-1 baseline；RG-2 GREEN；RG-5 L-Real（真实发布/回滚，自建应用）
 - E2E 同步改造为点击式交互；证据：history-master-detail / history-diff-view / history-375 三张截图
 - 门禁：59 unit + 18 e2e 全绿
 - **/history 全局入口升级为发布总览**（用户指出遗漏）：应用 ×（最新版本徽标 / 最近发布时间 / 发布人 / 待发布三色计数徽标 / 查看历史），**随顶栏环境切换**（DEV 有 v1、TEST 显示"从未发布"实测通过）；搜索防抖 + 空态区分 + 每应用并行拉取（staleTime 抑制）。E2E +1（19/19）；证据 history-index-overview / history-index-test-env
+- **发布历史合并进配置页（北极星对齐，2026-09-07 用户批准方案）**：配置页新增「历史」第四视图（HistoryPanel 复用），待发布条内链接改为切视图——改 → diff → 发布 → 看历史 → 回滚**全程一页**；`/apps/:id/history` 旧路由 301 兼容跳转 `?view=history`；/history 总览"查看历史"链接同步指向
+- **应用列表待发布徽标（UX #2 欠账补齐）**：三色计数（+新增 ~修改 -删除，含删除转红），useQueries 10s 轮询，环境跟随全局切换器；表格 min-w 860
+- E2E 19/19 全绿；证据 apps-pending-badge / config-history-view

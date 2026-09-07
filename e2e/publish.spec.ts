@@ -48,6 +48,11 @@ test('发布总览（/history）：最新版本 + 待发布徽标 + 环境跟随
   const row = page.locator('tr', { hasText: 'demo_app' })
   await expect(row.getByText('v1', { exact: true })).toBeVisible({ timeout: 15_000 })
   await expect(row.getByRole('link', { name: '查看历史' })).toBeVisible()
+  // 查看历史 → 配置页历史视图（?view=history）
+  await row.getByRole('link', { name: '查看历史' }).click()
+  await expect(page).toHaveURL(/\/apps\/demo_app\/config\?view=history/)
+  await expect(page.getByText('点击版本查看详情；点两个版本直接对比')).toBeVisible()
+  await page.goto('/history')
 })
 
 test.afterAll(async ({ request }) => {
@@ -119,9 +124,10 @@ test('发布链路全流程：diff 预览 → 发布 v1/v2 → 版本对比 → 
   await page.getByRole('button', { name: '发布 2 项变更' }).click()
   await expect(page.getByText('当前环境没有待发布改动')).toBeVisible({ timeout: 15_000 })
 
-  // 发布历史（主从双栏）：默认展示最新版详情；点 v1 看单版；再点 v2 直接对比
-  await page.getByRole('link', { name: '发布历史 →' }).click()
-  await expect(page.getByRole('heading', { name: '发布历史' })).toBeVisible()
+  // 发布历史（配置页「历史」第四视图，主从双栏）：点条内链接切视图，不再跳页
+  await expect(page).toHaveURL(new RegExp('/apps/' + APP_ID + '/config'))
+  await page.getByRole('button', { name: '发布历史 →' }).click()
+  await expect(page.getByText('点击版本查看详情；点两个版本直接对比')).toBeVisible()
   await expect(page.getByText('v1 基线')).toBeVisible({ timeout: 15_000 })
   await expect(page.getByRole('button', { name: /v2 调整 conf_a/ })).toBeVisible()
   // 默认右栏为最新版（v2）：快照可见、回滚禁用（当前版本）
@@ -146,8 +152,8 @@ test('发布链路全流程：diff 预览 → 发布 v1/v2 → 版本对比 → 
   await page.getByRole('alertdialog').getByRole('button', { name: '确认回滚' }).click()
   await expect(page.getByText(/已回滚到 v1/)).toBeVisible({ timeout: 15_000 })
 
-  // 值恢复：conf_a=1、conf_c 移除
-  await page.goto(`/apps/${APP_ID}/config`)
+  // 值恢复：conf_a=1、conf_c 移除（切回表格视图）
+  await page.getByRole('button', { name: '表格', exact: true }).click()
   await expect(page.getByRole('button', { name: '1', exact: true })).toBeVisible({
     timeout: 15_000,
   })

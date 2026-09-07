@@ -1,7 +1,7 @@
 export const configsStr = {
   title: (appName: string) => `${appName} · 配置管理`,
   envSuffix: '当前环境',
-  views: { table: '表格', kv: 'KV', json: 'JSON' },
+  views: { table: '表格', kv: 'KV', json: 'JSON', history: '历史' },
   searchPlaceholder: '过滤键 / 值 / 分组…',
   create: '新建配置',
   batchBar: {
