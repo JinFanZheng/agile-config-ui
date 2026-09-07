@@ -108,26 +108,30 @@ test('发布链路全流程：diff 预览 → 发布 v1/v2 → 版本对比 → 
   await page.getByRole('button', { name: '发布 2 项变更' }).click()
   await expect(page.getByText('当前环境没有待发布改动')).toBeVisible({ timeout: 15_000 })
 
-  // 发布历史：两个版本节点；选两个版本对比
+  // 发布历史（主从双栏）：默认展示最新版详情；点 v1 看单版；再点 v2 直接对比
   await page.getByRole('link', { name: '发布历史 →' }).click()
   await expect(page.getByRole('heading', { name: '发布历史' })).toBeVisible()
   await expect(page.getByText('v1 基线')).toBeVisible({ timeout: 15_000 })
-  await expect(page.getByText('v2 调整 conf_a、新增 conf_c')).toBeVisible()
-  // 最新节点不可回滚
-  await expect(page.getByRole('button', { name: '回滚到此版本' })).toHaveCount(1)
+  await expect(page.getByRole('button', { name: /v2 调整 conf_a/ })).toBeVisible()
+  // 默认右栏为最新版（v2）：快照可见、回滚禁用（当前版本）
+  await expect(page.getByText(/本版本配置快照/)).toBeVisible()
+  await expect(page.getByRole('button', { name: '回滚到此版本' })).toBeDisabled()
 
-  await page.getByRole('checkbox').nth(0).check()
-  await page.getByRole('checkbox').nth(1).check()
-  await page.getByRole('button', { name: /对比 v1 ↔ v2/ }).click()
-  const diffModal = page.getByRole('dialog', { name: /版本对比/ })
-  await expect(diffModal).toBeVisible()
-  await expect(diffModal.getByText('conf_a')).toBeVisible()
-  await expect(diffModal.getByText('conf_c')).toBeVisible()
-  await page.keyboard.press('Escape')
+  // 点 v1 → 单版详情（与前版差异提示首版 + 快照）
+  await page.getByRole('button', { name: /v1 基线/ }).click()
+  await expect(page.getByText('这是第一个版本（无前版可对比）')).toBeVisible()
 
-  // 回滚到 v1（二次确认，明示版本）
+  // 再点 v2 → 两版 diff（面板内直接显示，无弹窗）
+  await page.getByRole('button', { name: /v2 调整 conf_a/ }).click()
+  await expect(page.getByText(/版本对比：v1 → v2/)).toBeVisible()
+  await expect(page.getByText('conf_a', { exact: true })).toBeVisible()
+  await expect(page.getByText('conf_c', { exact: true })).toBeVisible()
+
+  // 回滚到 v1：点 v2 取消选择 → v1 详情 → 面板底部回滚（二次确认，明示版本）
+  await page.getByRole('button', { name: /v2 调整 conf_a/ }).click()
+  await expect(page.getByRole('button', { name: '回滚到此版本' })).toBeEnabled()
   await page.getByRole('button', { name: '回滚到此版本' }).click()
-  await expect(page.getByText(/并作为新版本记录/)).toBeVisible()
+  await expect(page.getByRole('alertdialog')).toBeVisible()
   await page.getByRole('alertdialog').getByRole('button', { name: '确认回滚' }).click()
   await expect(page.getByText(/已回滚到 v1/)).toBeVisible({ timeout: 15_000 })
 

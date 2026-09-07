@@ -56,3 +56,13 @@ RG-1 baseline；RG-2 GREEN；RG-5 L-Real（真实发布/回滚，自建应用）
 - 门禁：typecheck ✓ / lint 0 ✓ / vitest 59（+12 diff）✓ / playwright **13/13**（含 M3 DoD 全链路：改→diff→发布 v1/v2→版本对比→回滚 v1→值恢复；+ 部分发布用例）✓ / build ✓
 - Evidence：`docs/evidence/ITER-05/`（publish-diff-dialog.png、history-timeline.png）
 - 数据纪律：全部 e2e_pub_* 自建自清
+
+## 6. 布局升级（2026-09-07，用户指示"直接优化"）
+
+- 发布历史改**主从双栏**：左栏紧凑时间线（每节点两行：v 号+说明 / 人·时间，固定行宽不再拉长行）；右栏详情面板
+  - 默认展示最新版；单选 → 该版本快照（group:key = value）+ 与前版差异（复用 DiffTable/buildVersionDiff，首版提示无前版）
+  - 点第二个版本 → 面板直接显示两版 diff（对比从"勾选×2+按钮+弹窗"五步降为点两下）
+  - 回滚按钮移至面板底部（看清内容再操作；最新版禁用+当前版本提示）
+- 修复实现期引入的首渲染崩溃（diffRows 在判空前计算，groups=[] 时 detail.node=undefined 传入 prevOf）——E2E 抓获后修正守卫顺序
+- E2E 同步改造为点击式交互；证据：history-master-detail / history-diff-view / history-375 三张截图
+- 门禁：59 unit + 18 e2e 全绿
