@@ -83,7 +83,12 @@ export function KvView({
         <span className="font-mono text-xs text-muted-foreground">key=value · 每行一条</span>
         <div className="flex-1" />
         <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <input type="checkbox" className="accent-primary" checked={patch} onChange={(e) => setPatch(e.target.checked)} />
+          <input
+            type="checkbox"
+            className="accent-primary"
+            checked={patch}
+            onChange={(e) => setPatch(e.target.checked)}
+          />
           {configsStr.kv.patch}
         </label>
         <Button

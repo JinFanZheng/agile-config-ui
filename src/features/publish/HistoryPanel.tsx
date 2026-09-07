@@ -63,7 +63,10 @@ export function HistoryPanel({ appId, env }: { appId: string; env: string }) {
         <div className="flex-1" />
         {selected.length === 2 && olderG?.timelineNode && newerG?.timelineNode && (
           <Button size="sm" onClick={() => setDiffOpen(true)}>
-            {publishStr.history.compareBtn(olderG.timelineNode.version, newerG.timelineNode.version)}
+            {publishStr.history.compareBtn(
+              olderG.timelineNode.version,
+              newerG.timelineNode.version
+            )}
           </Button>
         )}
         {selected.length > 0 && (
@@ -130,7 +133,9 @@ export function HistoryPanel({ appId, env }: { appId: string; env: string }) {
                         {publishStr.history.rollback}
                       </button>
                     ) : (
-                      <span className="text-xs text-muted-foreground/50">{publishStr.history.rollbackLatestHint}</span>
+                      <span className="text-xs text-muted-foreground/50">
+                        {publishStr.history.rollbackLatestHint}
+                      </span>
                     )}
                   </div>
                 </li>

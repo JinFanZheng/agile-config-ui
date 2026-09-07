@@ -16,7 +16,10 @@ mkdirSync(OUT, { recursive: true })
 const lines = [`# ITER-04 千条性能实测 · ${new Date().toISOString()}`]
 
 const browser = await chromium.launch()
-const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, baseURL: 'http://localhost:5173' })
+const page = await browser.newPage({
+  viewport: { width: 1280, height: 800 },
+  baseURL: 'http://localhost:5173',
+})
 
 // 登录 + 建应用 + 灌 1000 条（10 组 × 100）
 const loginRes = await page.request.post('/admin/jwt/login', {
@@ -28,7 +31,14 @@ lines.push(`应用：${APP_ID}（结束后删除；不动 demo_app）`)
 
 await page.request.post('/App/Add', {
   headers: auth,
-  data: { id: APP_ID, name: 'perf压测应用', group: '', enabled: true, inheritanced: false, inheritancedApps: [] },
+  data: {
+    id: APP_ID,
+    name: 'perf压测应用',
+    group: '',
+    enabled: true,
+    inheritanced: false,
+    inheritancedApps: [],
+  },
 })
 const t0 = Date.now()
 for (let g = 0; g < 10; g++) {
@@ -38,11 +48,16 @@ for (let g = 0; g < 10; g++) {
     key: `k_${g}_${i}`,
     value: `v_${g}_${i}`,
   }))
-  const res = await page.request.post(`/Config/AddRange?env=DEV`, { headers: { ...auth, 'Content-Type': 'application/json' }, data: list })
+  const res = await page.request.post(`/Config/AddRange?env=DEV`, {
+    headers: { ...auth, 'Content-Type': 'application/json' },
+    data: list,
+  })
   const body = await res.json()
   if (!body.success) throw new Error('AddRange 失败: ' + JSON.stringify(body).slice(0, 200))
 }
-lines.push(`灌入 ${TOTAL} 条：${((Date.now() - t0) / 1000).toFixed(1)}s（${TOTAL / CHUNK} 批 AddRange）`)
+lines.push(
+  `灌入 ${TOTAL} 条：${((Date.now() - t0) / 1000).toFixed(1)}s（${TOTAL / CHUNK} 批 AddRange）`
+)
 
 // 打开配置页
 await page.goto('/login')
@@ -51,7 +66,10 @@ await page.getByLabel('密码').fill(ADMIN_PASSWORD)
 await page.getByRole('button', { name: '登录' }).click()
 await page.waitForURL(/\/$/)
 await page.goto(`/apps/${APP_ID}/config`)
-await page.locator('[data-testid=config-table] .font-mono', { hasText: 'k_0_0' }).first().waitFor({ timeout: 30_000 })
+await page
+  .locator('[data-testid=config-table] .font-mono', { hasText: 'k_0_0' })
+  .first()
+  .waitFor({ timeout: 30_000 })
 await page.waitForTimeout(500)
 
 // Oracle A：虚拟滚动

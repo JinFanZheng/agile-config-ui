@@ -55,7 +55,12 @@ export function ConfigDialog({ open, config, appId, env, onDone }: ConfigDialogP
   const { requestClose, guardNode } = useDirtyGuard(onDone, form.formState.isDirty)
 
   const mutation = useMutation({
-    mutationFn: async (values: { group: string; key: string; value: string; description: string }) => {
+    mutationFn: async (values: {
+      group: string
+      key: string
+      value: string
+      description: string
+    }) => {
       if (isEdit) {
         // 并发保护：保存前比对服务端最新 updateTime（交互规范 §2/UX #11）
         const fresh = await getConfig(config.id, env)
@@ -65,7 +70,14 @@ export function ConfigDialog({ open, config, appId, env, onDone }: ConfigDialogP
           throw new Error('CONCURRENCY')
         }
         return editConfig(
-          { id: config.id, appId, group: values.group, key: values.key, value: values.value, description: values.description },
+          {
+            id: config.id,
+            appId,
+            group: values.group,
+            key: values.key,
+            value: values.value,
+            description: values.description,
+          },
           env
         )
       }
@@ -111,9 +123,16 @@ export function ConfigDialog({ open, config, appId, env, onDone }: ConfigDialogP
         title={isEdit ? configsStr.dialog.editTitle : configsStr.dialog.createTitle}
       >
         {guardNode}
-        <form onSubmit={form.handleSubmit((v) => mutation.mutate(v))} noValidate className="flex flex-col gap-4">
+        <form
+          onSubmit={form.handleSubmit((v) => mutation.mutate(v))}
+          noValidate
+          className="flex flex-col gap-4"
+        >
           {error && (
-            <div role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-3 py-2 text-xs text-danger">
+            <div
+              role="alert"
+              className="rounded-md border border-danger/40 bg-danger/10 px-3 py-2 text-xs text-danger"
+            >
               {error}
             </div>
           )}
@@ -121,7 +140,11 @@ export function ConfigDialog({ open, config, appId, env, onDone }: ConfigDialogP
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="cfg-group">{configsStr.dialog.group}</Label>
-              <Input id="cfg-group" placeholder={configsStr.dialog.groupPlaceholder} {...form.register('group')} />
+              <Input
+                id="cfg-group"
+                placeholder={configsStr.dialog.groupPlaceholder}
+                {...form.register('group')}
+              />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="cfg-key">{configsStr.dialog.key}</Label>
@@ -154,11 +177,20 @@ export function ConfigDialog({ open, config, appId, env, onDone }: ConfigDialogP
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="cfg-desc">{configsStr.dialog.description}</Label>
-            <Input id="cfg-desc" placeholder={configsStr.dialog.descriptionPlaceholder} {...form.register('description')} />
+            <Input
+              id="cfg-desc"
+              placeholder={configsStr.dialog.descriptionPlaceholder}
+              {...form.register('description')}
+            />
           </div>
 
           <div className="mt-1 flex justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={requestClose} disabled={mutation.isPending}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={requestClose}
+              disabled={mutation.isPending}
+            >
               取消
             </Button>
             <Button type="submit" disabled={mutation.isPending}>
@@ -183,7 +215,9 @@ export function ConfigDialog({ open, config, appId, env, onDone }: ConfigDialogP
             aria-modal="true"
             className="anim-modal w-full max-w-sm rounded-lg border border-border bg-panel p-5 shadow-overlay"
           >
-            <h2 className="text-sm font-semibold text-warning">{configsStr.confirm.concurrencyTitle}</h2>
+            <h2 className="text-sm font-semibold text-warning">
+              {configsStr.confirm.concurrencyTitle}
+            </h2>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               {configsStr.confirm.concurrencyBody(config.key)}
             </p>

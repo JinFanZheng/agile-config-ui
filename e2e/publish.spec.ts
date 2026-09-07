@@ -21,19 +21,30 @@ async function login(page: import('@playwright/test').Page) {
 }
 
 test.beforeAll(async ({ request }) => {
-  const { token } = await (await request.post('/admin/jwt/login', {
-    data: { userName: ADMIN_USER, password: ADMIN_PASSWORD },
-  })).json()
+  const { token } = await (
+    await request.post('/admin/jwt/login', {
+      data: { userName: ADMIN_USER, password: ADMIN_PASSWORD },
+    })
+  ).json()
   await request.post('/App/Add', {
     headers: { Authorization: `Bearer ${token}` },
-    data: { id: APP_ID, name: 'e2e发布链路', group: '', enabled: true, inheritanced: false, inheritancedApps: [] },
+    data: {
+      id: APP_ID,
+      name: 'e2e发布链路',
+      group: '',
+      enabled: true,
+      inheritanced: false,
+      inheritancedApps: [],
+    },
   })
 })
 
 test.afterAll(async ({ request }) => {
-  const { token } = await (await request.post('/admin/jwt/login', {
-    data: { userName: ADMIN_USER, password: ADMIN_PASSWORD },
-  })).json()
+  const { token } = await (
+    await request.post('/admin/jwt/login', {
+      data: { userName: ADMIN_USER, password: ADMIN_PASSWORD },
+    })
+  ).json()
   await request.post(`/App/Delete?id=${APP_ID}`, { headers: { Authorization: `Bearer ${token}` } })
 })
 
@@ -42,12 +53,20 @@ test('发布链路全流程：diff 预览 → 发布 v1/v2 → 版本对比 → 
 
   // 准备两条待发布配置（API 建数据，UI 走发布）
   const ctx = page.request
-  const { token } = await (await ctx.post('/admin/jwt/login', {
-    data: { userName: ADMIN_USER, password: ADMIN_PASSWORD },
-  })).json()
+  const { token } = await (
+    await ctx.post('/admin/jwt/login', {
+      data: { userName: ADMIN_USER, password: ADMIN_PASSWORD },
+    })
+  ).json()
   const auth = { Authorization: `Bearer ${token}` }
-  for (const [k, v] of [['conf_a', '1'], ['conf_b', '2']] as const) {
-    await ctx.post('/Config/Add?env=DEV', { headers: auth, data: { appId: APP_ID, group: '', key: k, value: v } })
+  for (const [k, v] of [
+    ['conf_a', '1'],
+    ['conf_b', '2'],
+  ] as const) {
+    await ctx.post('/Config/Add?env=DEV', {
+      headers: auth,
+      data: { appId: APP_ID, group: '', key: k, value: v },
+    })
   }
 
   // 发布 v1：强制 diff 预览 + log 必填
@@ -76,7 +95,9 @@ test('发布链路全流程：diff 预览 → 发布 v1/v2 → 版本对比 → 
   await page.getByLabel('键').fill('conf_c')
   await page.getByLabel('值').fill('3')
   await page.getByRole('button', { name: '创建', exact: true }).click()
-  await expect(page.locator('[data-testid=config-table]').getByText('conf_c')).toBeVisible({ timeout: 15_000 })
+  await expect(page.locator('[data-testid=config-table]').getByText('conf_c')).toBeVisible({
+    timeout: 15_000,
+  })
 
   await page.getByRole('button', { name: '发布…' }).click()
   // v2 diff：修改 1（conf_a 1→10）+ 新增 1（conf_c）
@@ -112,8 +133,12 @@ test('发布链路全流程：diff 预览 → 发布 v1/v2 → 版本对比 → 
 
   // 值恢复：conf_a=1、conf_c 移除
   await page.goto(`/apps/${APP_ID}/config`)
-  await expect(page.getByRole('button', { name: '1', exact: true })).toBeVisible({ timeout: 15_000 })
-  await expect(page.locator('[data-testid=config-table]').getByText('conf_c')).toHaveCount(0, { timeout: 15_000 })
+  await expect(page.getByRole('button', { name: '1', exact: true })).toBeVisible({
+    timeout: 15_000,
+  })
+  await expect(page.locator('[data-testid=config-table]').getByText('conf_c')).toHaveCount(0, {
+    timeout: 15_000,
+  })
 
   // 单条配置历史（conf_a 有两个版本的值记录；按行收窄避免歧义）
   const conf_a_row = page.locator('[data-testid=config-table] div.grid:has-text("conf_a")')
@@ -128,12 +153,20 @@ test('部分发布（ids）：只发勾选项，其余保持待发布', async ({
   await login(page)
 
   const ctx = page.request
-  const { token } = await (await ctx.post('/admin/jwt/login', {
-    data: { userName: ADMIN_USER, password: ADMIN_PASSWORD },
-  })).json()
+  const { token } = await (
+    await ctx.post('/admin/jwt/login', {
+      data: { userName: ADMIN_USER, password: ADMIN_PASSWORD },
+    })
+  ).json()
   const auth = { Authorization: `Bearer ${token}` }
-  for (const [k, v] of [['part_d', '4'], ['part_e', '5']] as const) {
-    await ctx.post('/Config/Add?env=DEV', { headers: auth, data: { appId: APP_ID, group: '', key: k, value: v } })
+  for (const [k, v] of [
+    ['part_d', '4'],
+    ['part_e', '5'],
+  ] as const) {
+    await ctx.post('/Config/Add?env=DEV', {
+      headers: auth,
+      data: { appId: APP_ID, group: '', key: k, value: v },
+    })
   }
 
   await page.goto(`/apps/${APP_ID}/config`)

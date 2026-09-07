@@ -29,7 +29,8 @@ interface SnapshotLike {
 export function sortDiff(rows: DiffRow[]): DiffRow[] {
   const order: Record<DiffKind, number> = { added: 0, changed: 1, removed: 2 }
   return [...rows].sort(
-    (a, b) => a.group.localeCompare(b.group) || a.key.localeCompare(b.key) || order[a.kind] - order[b.kind]
+    (a, b) =>
+      a.group.localeCompare(b.group) || a.key.localeCompare(b.key) || order[a.kind] - order[b.kind]
   )
 }
 
@@ -56,7 +57,8 @@ export function buildPendingDiff(rows: PendingLike[], onlineSnapshot: SnapshotLi
     }
     if (r.editStatus === 1) {
       const old = online.get(id)
-      if (old !== r.value) out.push({ group: r.group, key: r.key, kind: 'changed', old, new: r.value })
+      if (old !== r.value)
+        out.push({ group: r.group, key: r.key, kind: 'changed', old, new: r.value })
     }
   }
   return sortDiff(out)
@@ -74,7 +76,8 @@ export function buildVersionDiff(older: SnapshotLike[], newer: SnapshotLike[]): 
       out.push({ group: c.group, key: c.key, kind: 'changed', old: a.get(id), new: c.value })
   }
   for (const c of older) {
-    if (!b.has(kk(c.group, c.key))) out.push({ group: c.group, key: c.key, kind: 'removed', old: c.value })
+    if (!b.has(kk(c.group, c.key)))
+      out.push({ group: c.group, key: c.key, kind: 'removed', old: c.value })
   }
   return sortDiff(out)
 }

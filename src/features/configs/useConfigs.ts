@@ -39,7 +39,9 @@ export function useInheritedConfigs(
     queryKey: ['configs', 'inherited', appId, env, appInheritIds?.join(',')],
     queryFn: async () => {
       const lists = await Promise.all(
-        (appInheritIds ?? []).map((id) => searchConfigs({ appId: id, env, current: 1, pageSize: FULL_PAGE }))
+        (appInheritIds ?? []).map((id) =>
+          searchConfigs({ appId: id, env, current: 1, pageSize: FULL_PAGE })
+        )
       )
       return lists
     },
@@ -52,7 +54,10 @@ export function useInheritedConfigs(
  * 合并视图：本应用覆盖优先；继承行只读并标注来源。
  * 返回行上的 inheritedFrom = 来源应用 id。
  */
-export function mergeInherited(own: ConfigItem[], inherited: { appId: string; list: ConfigItem[] }[]) {
+export function mergeInherited(
+  own: ConfigItem[],
+  inherited: { appId: string; list: ConfigItem[] }[]
+) {
   const ownKeys = new Set(own.map((c) => `${c.group}\u0000${c.key}`))
   const rows: (ConfigItem & { inheritedFrom?: string })[] = [...own]
   for (const { list } of inherited) {
@@ -94,7 +99,9 @@ export function useGroupedRows(rows: { group: string }[], collapsed: Set<string>
     const groups = new Map<string, number>()
     for (const r of rows) groups.set(r.group, (groups.get(r.group) ?? 0) + 1)
     const sorted = [...groups.keys()].sort((a, b) => groupSortKey(a).localeCompare(groupSortKey(b)))
-    const result: ({ kind: 'group'; group: string; count: number } | { kind: 'row'; index: number })[] = []
+    const result: (
+      { kind: 'group'; group: string; count: number } | { kind: 'row'; index: number }
+    )[] = []
     sorted.forEach((g) => {
       result.push({ kind: 'group', group: g, count: groups.get(g)! })
       if (!collapsed.has(g)) {

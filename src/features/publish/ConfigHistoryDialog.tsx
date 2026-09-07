@@ -32,7 +32,9 @@ export function ConfigHistoryDialog({
       {q.isLoading ? (
         <Skeleton className="h-24 w-full" />
       ) : (q.data ?? []).length === 0 ? (
-        <p className="px-2 py-6 text-center text-sm text-muted-foreground">{publishStr.itemHistory.empty}</p>
+        <p className="px-2 py-6 text-center text-sm text-muted-foreground">
+          {publishStr.itemHistory.empty}
+        </p>
       ) : (
         <div className="max-h-80 overflow-y-auto">
           {(q.data ?? []).map((item, i) => (
@@ -44,7 +46,9 @@ export function ConfigHistoryDialog({
                 <span>{item.timelineNode?.publishUserName ?? '—'}</span>
                 <span>·</span>
                 <span>{item.timelineNode?.publishTime?.slice(0, 19).replace('T', ' ') ?? '—'}</span>
-                {item.timelineNode?.log && <span className="truncate">· {item.timelineNode.log}</span>}
+                {item.timelineNode?.log && (
+                  <span className="truncate">· {item.timelineNode.log}</span>
+                )}
               </div>
               <p className="break-all rounded bg-input/50 px-2 py-1.5 font-mono text-xs text-foreground">
                 {item.config.value}

@@ -58,7 +58,10 @@ export function PublishDialog({
     gcTime: 0,
   })
 
-  const diff: DiffRow[] = preview.data ? buildPendingDiff(preview.data.rows, preview.data.snapshot) : []
+  const diff: DiffRow[] = useMemo(
+    () => (preview.data ? buildPendingDiff(preview.data.rows, preview.data.snapshot) : []),
+    [preview.data]
+  )
   const rowId = (r: DiffRow) => `${r.group}\u0000${r.key}`
 
   const selectedRows = useMemo(() => diff.filter((r) => !excluded.has(rowId(r))), [diff, excluded])
@@ -73,7 +76,9 @@ export function PublishDialog({
     mutationFn: () => {
       // 全选 = 不带 ids 的全量发布（保持服务端语义）；部分勾选 = 按 ids 部分发布
       const ids = isPartial
-        ? selectedRows.map((r) => preview.data!.rows.find((c) => c.group === r.group && c.key === r.key)?.id).filter(Boolean)
+        ? selectedRows
+            .map((r) => preview.data!.rows.find((c) => c.group === r.group && c.key === r.key)?.id)
+            .filter(Boolean)
         : undefined
       return publishConfigs(appId, env, log.trim(), ids as string[] | undefined)
     },
@@ -93,7 +98,10 @@ export function PublishDialog({
     <Modal open={open} onClose={onDone} title={publishStr.dialog.title} width="max-w-2xl">
       <div className="flex flex-col gap-3">
         {error && (
-          <div role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-3 py-2 text-xs text-danger">
+          <div
+            role="alert"
+            className="rounded-md border border-danger/40 bg-danger/10 px-3 py-2 text-xs text-danger"
+          >
             {error}
           </div>
         )}
@@ -103,7 +111,9 @@ export function PublishDialog({
             <Spinner /> 正在拉取最新变更…
           </div>
         ) : diff.length === 0 ? (
-          <p className="px-4 py-8 text-center text-sm text-muted-foreground">{publishStr.dialog.empty}</p>
+          <p className="px-4 py-8 text-center text-sm text-muted-foreground">
+            {publishStr.dialog.empty}
+          </p>
         ) : (
           <>
             <div className="flex flex-wrap items-center gap-2">
@@ -130,7 +140,9 @@ export function PublishDialog({
                     type="checkbox"
                     aria-label="全选发布范围"
                     checked={selectedRows.length === diff.length}
-                    onChange={(e) => setExcluded(e.target.checked ? new Set() : new Set(diff.map(rowId)))}
+                    onChange={(e) =>
+                      setExcluded(e.target.checked ? new Set() : new Set(diff.map(rowId)))
+                    }
                     className="accent-primary"
                   />
                   <span>{publishStr.diff.col.key}</span>
@@ -183,10 +195,10 @@ export function PublishDialog({
                         </span>
                       </span>
                       <span className="min-w-0 break-all font-mono text-muted-foreground">
-                        {r.kind === 'removed' ? r.old : r.old ?? '—'}
+                        {r.kind === 'removed' ? r.old : (r.old ?? '—')}
                       </span>
                       <span className="min-w-0 break-all font-mono text-foreground">
-                        {r.kind === 'removed' ? '（删除）' : r.new ?? '—'}
+                        {r.kind === 'removed' ? '（删除）' : (r.new ?? '—')}
                       </span>
                     </button>
                   )

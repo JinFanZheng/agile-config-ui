@@ -46,7 +46,6 @@ RG-1 baseline；RG-2 GREEN；RG-5 L-Real（真实实例+千条数据）；性能
 - 待核实 #7（继承合并视图数据来源）在 T-04 前定案并回写 handoff §12
 - monaco-editor 体积：按需加载（动态 import），避免拖累首屏
 
-
 | T-07 | G0 / 验收反馈修复：面包屑 + KV 显示 bug + jsonc 注释 | 用户反馈：加面包屑；KV 视图显示 [object Object]；JSON 注释疑问 | ① Breadcrumb 组件（≥2 级页面，交互规范 §6.5，当前段 h1）；② KV bug 根因=服务端返回 KeyValuePair[] 数组，api 层转为 `group:key=value` 行文本（demo_app 实勘通过）；③ jsonc 语义确认：注释=描述字段为上游设计，monaco 诊断放开 allowComments；④ YAML→JSON 评估入 Backlog B-01 | E2E 11/11 复绿；实勘截图 breadcrumb/kv/jsonc ×3 | T-06 | Codex / DONE |
 
 ## 5. 验收记录（2026-09-04）

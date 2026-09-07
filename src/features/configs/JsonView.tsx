@@ -92,7 +92,12 @@ export function JsonView({
         <span className="text-xs text-muted-foreground">{configsStr.jsonView.editing}</span>
         <div className="flex-1" />
         <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <input type="checkbox" className="accent-primary" checked={patch} onChange={(e) => setPatch(e.target.checked)} />
+          <input
+            type="checkbox"
+            className="accent-primary"
+            checked={patch}
+            onChange={(e) => setPatch(e.target.checked)}
+          />
           {configsStr.jsonView.patch}
         </label>
         <Button

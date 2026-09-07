@@ -7,20 +7,22 @@ import { configsStr } from '../../strings/configs'
 import { groupSortKey } from './useConfigs'
 
 export type VirtualRow =
-  | { kind: 'group'; group: string; count: number }
-  | { kind: 'row'; index: number }
+  { kind: 'group'; group: string; count: number } | { kind: 'row'; index: number }
 
-const GRID =
-  'grid grid-cols-[28px_96px_210px_minmax(160px,1fr)_84px_84px_104px_auto] items-center'
+const GRID = 'grid grid-cols-[28px_96px_210px_minmax(160px,1fr)_84px_84px_104px_auto] items-center'
 
 const badgeCls = 'rounded px-1.5 py-0.5 text-[10px]'
 
 /** 行级待发布态（真实枚举）：0=新增 1=修改 2=删除方向 10=无待发布 */
 function EditStatusBadge({ item }: { item: ConfigItem }) {
   if (item.editStatus === 2)
-    return <span className={`${badgeCls} bg-danger/10 text-danger`}>{configsStr.badges.deleted}</span>
+    return (
+      <span className={`${badgeCls} bg-danger/10 text-danger`}>{configsStr.badges.deleted}</span>
+    )
   if (item.editStatus === 1)
-    return <span className={`${badgeCls} bg-warning/10 text-warning`}>{configsStr.badges.edited}</span>
+    return (
+      <span className={`${badgeCls} bg-warning/10 text-warning`}>{configsStr.badges.edited}</span>
+    )
   if (item.editStatus === 0)
     return <span className={`${badgeCls} bg-info/10 text-info`}>{configsStr.badges.added}</span>
   return <span className="text-muted-foreground">—</span>
@@ -144,11 +146,18 @@ export function ConfigTable({
                 <div
                   key={`g-${row.group}-${v.key}`}
                   style={style}
-                  className={cn(GRID, 'cursor-pointer border-b border-border bg-input/50 px-3 text-xs font-medium text-foreground')}
+                  className={cn(
+                    GRID,
+                    'cursor-pointer border-b border-border bg-input/50 px-3 text-xs font-medium text-foreground'
+                  )}
                   onClick={() => onToggleGroup(row.group)}
                 >
                   <span className="col-span-8 flex items-center gap-1.5">
-                    {isCollapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                    {isCollapsed ? (
+                      <ChevronRight className="h-3 w-3" />
+                    ) : (
+                      <ChevronDown className="h-3 w-3" />
+                    )}
                     <span className="font-mono">{row.group || '未分组'}</span>
                     <span className="font-normal text-muted-foreground">{row.count}</span>
                   </span>
@@ -178,7 +187,9 @@ export function ConfigTable({
                   onChange={() => onToggleSelect(item.id)}
                   className="accent-primary"
                 />
-                <span className="truncate font-mono text-xs text-muted-foreground">{item.group || '—'}</span>
+                <span className="truncate font-mono text-xs text-muted-foreground">
+                  {item.group || '—'}
+                </span>
                 <span className="flex items-center gap-1.5 truncate font-mono text-xs">
                   <span className="truncate">{item.key}</span>
                   {isInherited && (
@@ -208,7 +219,11 @@ export function ConfigTable({
                   <button
                     type="button"
                     disabled={isInherited || isDeleting}
-                    title={isInherited ? configsStr.table.inheritedFrom(appNameOf(item.inheritedFrom!)) : configsStr.inline.hint}
+                    title={
+                      isInherited
+                        ? configsStr.table.inheritedFrom(appNameOf(item.inheritedFrom!))
+                        : configsStr.inline.hint
+                    }
                     className={cn(
                       'truncate text-left font-mono text-xs text-foreground',
                       !isInherited && !isDeleting && 'hover:text-primary',
@@ -222,9 +237,13 @@ export function ConfigTable({
                 <span>
                   {/* 已上线判定：editStatus!==0（修改/删除方向/已提交都存在线上旧版） */}
                   {item.editStatus !== 0 ? (
-                    <span className={`${badgeCls} bg-success/10 text-success`}>{configsStr.badges.online}</span>
+                    <span className={`${badgeCls} bg-success/10 text-success`}>
+                      {configsStr.badges.online}
+                    </span>
                   ) : (
-                    <span className={`${badgeCls} bg-input text-muted-foreground`}>{configsStr.badges.offline}</span>
+                    <span className={`${badgeCls} bg-input text-muted-foreground`}>
+                      {configsStr.badges.offline}
+                    </span>
                   )}
                 </span>
                 <span>

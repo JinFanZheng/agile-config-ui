@@ -31,11 +31,25 @@ test.beforeAll(async ({ request }) => {
   // 公共应用 + 子应用（继承公共应用）
   await request.post('/App/Add', {
     headers: auth,
-    data: { id: SHARED_ID, name: 'e2e公共应用', group: '', enabled: true, inheritanced: true, inheritancedApps: [] },
+    data: {
+      id: SHARED_ID,
+      name: 'e2e公共应用',
+      group: '',
+      enabled: true,
+      inheritanced: true,
+      inheritancedApps: [],
+    },
   })
   await request.post('/App/Add', {
     headers: auth,
-    data: { id: CHILD_ID, name: 'e2e子应用', group: '', enabled: true, inheritanced: false, inheritancedApps: [SHARED_ID] },
+    data: {
+      id: CHILD_ID,
+      name: 'e2e子应用',
+      group: '',
+      enabled: true,
+      inheritanced: false,
+      inheritancedApps: [SHARED_ID],
+    },
   })
 })
 
@@ -53,7 +67,9 @@ test('配置 CRUD 与待发布计数', async ({ page }) => {
   await login(page)
   await page.goto(`/apps/${CHILD_ID}/config`)
   await expect(page.getByRole('heading', { name: 'e2e子应用' })).toBeVisible()
-  await expect(page.getByRole('navigation', { name: '面包屑' }).getByRole('link', { name: '应用' })).toBeVisible()
+  await expect(
+    page.getByRole('navigation', { name: '面包屑' }).getByRole('link', { name: '应用' })
+  ).toBeVisible()
 
   // 新建
   await page.getByRole('button', { name: '新建配置' }).click()
@@ -61,7 +77,9 @@ test('配置 CRUD 与待发布计数', async ({ page }) => {
   await page.getByLabel('键').fill('timeout_seconds')
   await page.getByLabel('值').fill('30')
   await page.getByRole('button', { name: '创建', exact: true }).click()
-  await expect(page.locator('[data-testid=config-table]').getByText('timeout_seconds')).toBeVisible()
+  await expect(
+    page.locator('[data-testid=config-table]').getByText('timeout_seconds')
+  ).toBeVisible()
 
   // 待发布条：新增 1
   await expect(page.getByText('新增 1')).toBeVisible({ timeout: 15_000 })
@@ -78,7 +96,10 @@ test('配置 CRUD 与待发布计数', async ({ page }) => {
   // 取消该条改动：未发布新增的取消 = 回到未创建状态
   await page.locator('[data-testid=config-table]').getByRole('button', { name: '取消改动' }).click()
   await page.getByRole('alertdialog').getByRole('button', { name: '取消改动' }).click()
-  await expect(page.locator('[data-testid=config-table]').getByText('timeout_seconds')).toHaveCount(0, { timeout: 15_000 })
+  await expect(page.locator('[data-testid=config-table]').getByText('timeout_seconds')).toHaveCount(
+    0,
+    { timeout: 15_000 }
+  )
   await expect(page.getByText('当前环境没有待发布改动')).toBeVisible({ timeout: 15_000 })
 
   // 再次创建后删除：未发布的删除是直接移除（不产生待发布删除）
@@ -87,8 +108,13 @@ test('配置 CRUD 与待发布计数', async ({ page }) => {
   await page.getByLabel('键').fill('timeout_seconds')
   await page.getByLabel('值').fill('30')
   await page.getByRole('button', { name: '创建', exact: true }).click()
-  await expect(page.locator('[data-testid=config-table]').getByText('timeout_seconds')).toBeVisible({ timeout: 15_000 })
-  await page.locator('[data-testid=config-table]').getByRole('button', { name: '删除', exact: true }).click()
+  await expect(page.locator('[data-testid=config-table]').getByText('timeout_seconds')).toBeVisible(
+    { timeout: 15_000 }
+  )
+  await page
+    .locator('[data-testid=config-table]')
+    .getByRole('button', { name: '删除', exact: true })
+    .click()
   await page.getByRole('alertdialog').getByRole('button', { name: '删除' }).click()
   await expect(page.getByText('当前环境没有待发布改动')).toBeVisible({ timeout: 15_000 })
 })
@@ -103,7 +129,9 @@ test('KV 视图保存往返', async ({ page }) => {
   await expect(page.getByText('KV 已保存')).toBeVisible({ timeout: 15_000 })
   // 表格视图可见新键
   await page.getByRole('button', { name: '表格' }).click()
-  await expect(page.locator('[data-testid=config-table]').getByText('new_key')).toBeVisible({ timeout: 15_000 })
+  await expect(page.locator('[data-testid=config-table]').getByText('new_key')).toBeVisible({
+    timeout: 15_000,
+  })
 })
 
 test('JSON 视图加载与保存', async ({ page }) => {
@@ -113,7 +141,9 @@ test('JSON 视图加载与保存', async ({ page }) => {
   await page.getByRole('button', { name: 'JSON' }).click()
   await expect(page.getByText('保存 JSON')).toBeVisible({ timeout: 30_000 })
   // monaco 就绪后存在可编辑文本
-  await expect(page.locator('[data-testid=json-editor-wrap] textarea')).toBeAttached({ timeout: 30_000 })
+  await expect(page.locator('[data-testid=json-editor-wrap] textarea')).toBeAttached({
+    timeout: 30_000,
+  })
 })
 
 test('继承合并视图：本应用覆盖优先、继承行只读标注', async ({ page }) => {
@@ -124,12 +154,16 @@ test('继承合并视图：本应用覆盖优先、继承行只读标注', async
   await page.getByLabel('键').fill('shared_key')
   await page.getByLabel('值').fill('from_shared')
   await page.getByRole('button', { name: '创建', exact: true }).click()
-  await expect(page.locator('[data-testid=config-table]').getByText('shared_key')).toBeVisible({ timeout: 15_000 })
+  await expect(page.locator('[data-testid=config-table]').getByText('shared_key')).toBeVisible({
+    timeout: 15_000,
+  })
 
   // 子应用开启合并视图 → 看到继承行
   await page.goto(`/apps/${CHILD_ID}/config`)
   await page.getByText('显示继承配置（合并视图）').click()
-  await expect(page.locator('[data-testid=config-table]').getByText('shared_key').first()).toBeVisible({ timeout: 15_000 })
+  await expect(
+    page.locator('[data-testid=config-table]').getByText('shared_key').first()
+  ).toBeVisible({ timeout: 15_000 })
   await expect(page.getByText('继承', { exact: true }).first()).toBeVisible()
 
   // 子应用同名 key 覆盖 → 只显示本应用行（无继承标）

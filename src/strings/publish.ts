@@ -15,7 +15,8 @@ export const publishStr = {
     empty: '当前没有待发布改动',
     refresh: '刷新预览',
     staleHint: '预览数据在打开时重新拉取，发布前若他人有改动以最新为准',
-    partial: (sel: number, total: number) => `部分发布：本次仅发布勾选的 ${sel}/${total} 项，未勾选项保持待发布`,
+    partial: (sel: number, total: number) =>
+      `部分发布：本次仅发布勾选的 ${sel}/${total} 项，未勾选项保持待发布`,
   },
   diff: {
     col: { key: '配置项', old: '旧值（线上）', new: '新值' },

@@ -84,7 +84,8 @@ export const configsStr = {
     deleteBody: (key: string) =>
       `将删除配置「${key}」。若该配置已发布，会先进入"待发布删除"，发布后客户端生效；未发布的直接删除。`,
     batchDeleteTitle: '批量删除配置',
-    batchDeleteBody: (n: number) => `将删除选中的 ${n} 条配置（已发布的进入待发布删除）。确定继续？`,
+    batchDeleteBody: (n: number) =>
+      `将删除选中的 ${n} 条配置（已发布的进入待发布删除）。确定继续？`,
     cancelAllTitle: '取消全部待发布改动',
     cancelAllBody: '将撤销所有未发布的修改，恢复到当前线上版本。确定继续？',
     concurrencyTitle: '配置已被他人修改',

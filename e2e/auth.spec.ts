@@ -17,9 +17,10 @@ test('无效 token：访问受保护路由被清除会话并重定向登录（�
   // 先落登录页拿到同源 localStorage 写入权（不用 addInitScript：它每次导航都会重放，会抵消 401 清除）
   await page.goto('/login')
   await page.evaluate((s) => localStorage.setItem('agile-config-ui.session', s), bogusSession)
-  await page.goto('/')
+  // 概览页端点多匿名（Report/* 面向客户端 SDK），走需鉴权的应用列表触发 401
+  await page.goto('/apps')
 
-  await expect(page).toHaveURL(/\/login\?from=%2F/)
+  await expect(page).toHaveURL(/\/login\?from=%2Fapps/)
   // 等 401 重试与重定向链全部落定（retry 会触发第二次跳转，与 evaluate 竞态）
   await page.waitForLoadState('networkidle')
   const session = await page.evaluate(() => localStorage.getItem('agile-config-ui.session'))

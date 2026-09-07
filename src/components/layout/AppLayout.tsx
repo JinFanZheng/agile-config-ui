@@ -1,6 +1,8 @@
+import { useQuery } from '@tanstack/react-query'
 import { Boxes, CircleCheck, Clock, Home, Menu, ScrollText, Server, Users } from 'lucide-react'
 import { useEffect, useState, type ComponentType } from 'react'
 import { Link, NavLink, Outlet } from 'react-router'
+import { getSys } from '../../api/ops'
 import { cn } from '../../lib/utils'
 import { S } from '../../strings/common'
 import { layoutStr } from '../../strings/layout'
@@ -20,10 +22,10 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/', label: layoutStr.nav.overview, icon: Home },
   { to: '/apps', label: layoutStr.nav.apps, icon: Boxes },
   { to: '/history', label: layoutStr.nav.publishHistory, icon: Clock },
-  { to: '/clients', label: layoutStr.nav.clients, icon: CircleCheck, soon: true },
-  { to: '/nodes', label: layoutStr.nav.nodes, icon: Server, soon: true },
+  { to: '/clients', label: layoutStr.nav.clients, icon: CircleCheck },
+  { to: '/nodes', label: layoutStr.nav.nodes, icon: Server },
   { to: '/users', label: layoutStr.nav.users, icon: Users, soon: true },
-  { to: '/logs', label: layoutStr.nav.logs, icon: ScrollText, soon: true },
+  { to: '/logs', label: layoutStr.nav.logs, icon: ScrollText },
 ]
 
 /**
@@ -32,6 +34,8 @@ const NAV_ITEMS: NavItem[] = [
  */
 export function AppLayout() {
   const [navOpen, setNavOpen] = useState(false)
+  // 侧栏版本号由匿名接口 /Home/Sys 驱动；加载/失败/缺 appVer 时仅显示产品名
+  const sys = useQuery({ queryKey: ['ops', 'sys'], queryFn: getSys, staleTime: 300_000 })
 
   useEffect(() => {
     if (!navOpen) return
@@ -118,7 +122,7 @@ export function AppLayout() {
           </nav>
           <div className="flex-1" />
           <p className="px-2.5 pb-1 font-mono text-[10px] text-muted-foreground/50">
-            AgileConfig 1.13.2
+            {sys.data?.appVer ? `${S.appName} ${sys.data.appVer}` : S.appName}
           </p>
         </aside>
 

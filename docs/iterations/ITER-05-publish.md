@@ -43,7 +43,6 @@ RG-1 baseline；RG-2 GREEN；RG-5 L-Real（真实发布/回滚，自建应用）
 - monaco diff 的暗/亮主题适配（navy-console 与 4 个亮色主题都要可读）
 - 回滚是不可逆动作：确认文案必须明示目标版本与当前版本号
 
-
 ## 5. 验收记录（2026-09-04）
 
 - Baseline：@a23475b（46 unit + 11 e2e 全绿）

@@ -221,7 +221,12 @@ export function ConfigPage() {
           hasPending ? 'border-warning/50 bg-warning/5' : 'border-border bg-panel'
         )}
       >
-        <span className={cn('text-xs font-semibold', hasPending ? 'text-warning' : 'text-muted-foreground')}>
+        <span
+          className={cn(
+            'text-xs font-semibold',
+            hasPending ? 'text-warning' : 'text-muted-foreground'
+          )}
+        >
           {configsStr.pendingStrip.label}
         </span>
         {hasPending ? (
@@ -287,7 +292,9 @@ export function ConfigPage() {
             <div className="flex-1" />
             {selected.size > 0 && (
               <div className="flex items-center gap-2 rounded-md border border-border bg-panel px-2 py-1 text-xs">
-                <span className="text-muted-foreground">{configsStr.batchBar.selected(selected.size)}</span>
+                <span className="text-muted-foreground">
+                  {configsStr.batchBar.selected(selected.size)}
+                </span>
                 <button
                   type="button"
                   className="rounded px-1.5 py-0.5 text-muted-foreground hover:bg-hover hover:text-foreground"
@@ -299,7 +306,9 @@ export function ConfigPage() {
                   type="button"
                   className="rounded px-1.5 py-0.5 text-muted-foreground hover:bg-hover hover:text-foreground"
                   onClick={() => {
-                    const ids = own.filter((c) => selected.has(c.id) && c.editStatus !== 10).map((c) => c.id)
+                    const ids = own
+                      .filter((c) => selected.has(c.id) && c.editStatus !== 10)
+                      .map((c) => c.id)
                     if (ids.length === 0) {
                       toast.info('所选配置没有待发布改动')
                       return
@@ -400,11 +409,23 @@ export function ConfigPage() {
         </>
       ) : view === 'kv' ? (
         <Suspense fallback={<Skeleton className="flex-1" />}>
-          <KvView appId={appId} env={env} onDirtyChange={setViewDirty} onSaved={refresh} reloadKey={reloadKey} />
+          <KvView
+            appId={appId}
+            env={env}
+            onDirtyChange={setViewDirty}
+            onSaved={refresh}
+            reloadKey={reloadKey}
+          />
         </Suspense>
       ) : (
         <Suspense fallback={<Skeleton className="flex-1" />}>
-          <JsonView appId={appId} env={env} onDirtyChange={setViewDirty} onSaved={refresh} reloadKey={reloadKey} />
+          <JsonView
+            appId={appId}
+            env={env}
+            onDirtyChange={setViewDirty}
+            onSaved={refresh}
+            reloadKey={reloadKey}
+          />
         </Suspense>
       )}
 
@@ -441,7 +462,9 @@ export function ConfigPage() {
           confirmText={configsStr.actions.delete}
           busy={delMutation.isPending}
           onCancel={() => setConfirm(null)}
-          onConfirm={() => delMutation.mutate(confirm.item.id, { onSuccess: () => setConfirm(null) })}
+          onConfirm={() =>
+            delMutation.mutate(confirm.item.id, { onSuccess: () => setConfirm(null) })
+          }
         />
       )}
       {confirm?.kind === 'batchDelete' && (
@@ -453,7 +476,9 @@ export function ConfigPage() {
           confirmText={configsStr.batchBar.delete}
           busy={batchDelMutation.isPending}
           onCancel={() => setConfirm(null)}
-          onConfirm={() => batchDelMutation.mutate(confirm.ids, { onSuccess: () => setConfirm(null) })}
+          onConfirm={() =>
+            batchDelMutation.mutate(confirm.ids, { onSuccess: () => setConfirm(null) })
+          }
         />
       )}
       {confirm?.kind === 'cancelOne' && (
@@ -464,7 +489,9 @@ export function ConfigPage() {
           confirmText={configsStr.actions.cancelEdit}
           busy={cancelOneMutation.isPending}
           onCancel={() => setConfirm(null)}
-          onConfirm={() => cancelOneMutation.mutate(confirm.item.id, { onSuccess: () => setConfirm(null) })}
+          onConfirm={() =>
+            cancelOneMutation.mutate(confirm.item.id, { onSuccess: () => setConfirm(null) })
+          }
         />
       )}
       {confirm?.kind === 'cancelAll' && (
@@ -475,7 +502,9 @@ export function ConfigPage() {
           confirmText={configsStr.pendingStrip.cancelAll}
           busy={cancelAllMutation.isPending}
           onCancel={() => setConfirm(null)}
-          onConfirm={() => cancelAllMutation.mutate(confirm.ids, { onSuccess: () => setConfirm(null) })}
+          onConfirm={() =>
+            cancelAllMutation.mutate(confirm.ids, { onSuccess: () => setConfirm(null) })
+          }
         />
       )}
       {confirm?.kind === 'switchView' && (
@@ -495,8 +524,13 @@ export function ConfigPage() {
       )}
       {confirm?.kind === 'inlineConflict' && (
         <div className="anim-overlay fixed inset-0 z-[70] flex items-center justify-center bg-black/40 p-4">
-          <div role="alertdialog" className="anim-modal w-full max-w-sm rounded-lg border border-border bg-panel p-5 shadow-overlay">
-            <h2 className="text-sm font-semibold text-warning">{configsStr.confirm.concurrencyTitle}</h2>
+          <div
+            role="alertdialog"
+            className="anim-modal w-full max-w-sm rounded-lg border border-border bg-panel p-5 shadow-overlay"
+          >
+            <h2 className="text-sm font-semibold text-warning">
+              {configsStr.confirm.concurrencyTitle}
+            </h2>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
               {configsStr.confirm.concurrencyBody(confirm.item.key)}
             </p>

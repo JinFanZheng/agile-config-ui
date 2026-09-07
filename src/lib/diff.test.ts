@@ -60,12 +60,18 @@ describe('buildPendingDiff', () => {
   })
 
   it('异常数据（修改但无快照）：按修改处理、旧值为空', () => {
-    const rows = buildPendingDiff([{ group: '', key: 'a', value: '1', onlineStatus: 0, editStatus: 1 }], [])
+    const rows = buildPendingDiff(
+      [{ group: '', key: 'a', value: '1', onlineStatus: 0, editStatus: 1 }],
+      []
+    )
     expect(rows).toEqual([{ group: '', key: 'a', kind: 'changed', old: undefined, new: '1' }])
   })
 
   it('分组同名 key 互不冲突（group+key 联合定位）', () => {
-    const rows = buildVersionDiff([snap('g1', 'a', '1')], [snap('g2', 'a', '1'), snap('g1', 'a', '2')])
+    const rows = buildVersionDiff(
+      [snap('g1', 'a', '1')],
+      [snap('g2', 'a', '1'), snap('g1', 'a', '2')]
+    )
     expect(rows).toHaveLength(2)
     expect(rows.find((r) => r.group === 'g2')).toMatchObject({ kind: 'added' })
     expect(rows.find((r) => r.group === 'g1')).toMatchObject({ kind: 'changed' })

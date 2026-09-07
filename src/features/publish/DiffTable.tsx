@@ -11,7 +11,11 @@ const KIND_CLS: Record<string, string> = {
 /** 双栏 diff 表（发布预览与版本对比共用）：语义色分 新增/修改/删除 */
 export function DiffTable({ rows, emptyText }: { rows: DiffRow[]; emptyText?: string }) {
   if (rows.length === 0) {
-    return <p className="px-4 py-6 text-center text-xs text-muted-foreground">{emptyText ?? publishStr.diff.empty}</p>
+    return (
+      <p className="px-4 py-6 text-center text-xs text-muted-foreground">
+        {emptyText ?? publishStr.diff.empty}
+      </p>
+    )
   }
   return (
     <div className="overflow-x-auto">
@@ -34,15 +38,13 @@ export function DiffTable({ rows, emptyText }: { rows: DiffRow[]; emptyText?: st
               <span className={cn('shrink-0 rounded px-1 py-0.5 text-[10px]', KIND_CLS[r.kind])}>
                 {publishStr.diff.kinds[r.kind]}
               </span>
-              <span className="truncate font-mono">
-                {r.group ? `${r.group}:${r.key}` : r.key}
-              </span>
+              <span className="truncate font-mono">{r.group ? `${r.group}:${r.key}` : r.key}</span>
             </span>
             <span className="min-w-0 break-all font-mono text-muted-foreground">
-              {r.kind === 'removed' ? r.old : r.old ?? '—'}
+              {r.kind === 'removed' ? r.old : (r.old ?? '—')}
             </span>
             <span className="min-w-0 break-all font-mono text-foreground">
-              {r.kind === 'removed' ? '（删除）' : r.new ?? '—'}
+              {r.kind === 'removed' ? '（删除）' : (r.new ?? '—')}
             </span>
           </div>
         ))}

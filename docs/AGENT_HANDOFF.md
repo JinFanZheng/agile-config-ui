@@ -188,6 +188,8 @@ Content-Type: application/json
 
 `UserController`、`RoleController`、`ServerNodeController`、`ServiceController`（服务注册中心）、`SysLogController`、`SSOController`（OIDC）、`ReportController`（客户端心跳/上报）、`HomeController`（首页统计）、`RemoteOPController`。路径模式同为 `/{Controller}/{Action}`。客户端拉取配置的 API 在 `Controllers/api/`（含 v2），**管理 UI 不用**。
 
+> **安全相关实测（2026-09-07，ITER-06）**：`Report/*`（Clients/ServerNodeClients/SearchServerNodeClients/各 Count/RemoteNodesStatus）与 `Home/Sys` 为**匿名端点**（面向客户端 SDK/实例信息），无 token 可访问；据此概览页在无有效会话时不会触发 401，401 拦截用例需走 `App/Search` 等鉴权端点。
+
 ## 6. 功能范围与页面清单
 
 优先级：P0 = MVP 必须有；P1 = 覆盖 API 的完整管理能力；P2 = 锦上添花。下表是**能力清单**而非页面规格——信息架构按用户任务重新设计（D6），页面怎么组织、合并、拆分由设计决定，旧 UI 路由仅用于确认功能没有遗漏。
@@ -361,71 +363,10 @@ server: {
 ## 12. 待核实清单（实施中补齐，完成后更新本文档）
 
 1. ~~其余控制器（User/Role/ServerNode/Service/SysLog/SSO/Report/Home）的完整端点与参数~~ **已核实（2026-09-04，ITER-02 期间）**：管理面 13 Controller / 86 端点全量清点并逐迭代映射，见 [API_INVENTORY.md](API_INVENTORY.md)（用户要求全部适配；4 项显式豁免待确认；参数级细节在各迭代实施时以源码+实测补齐）。
-2. 管理端是否需要 WebSocket 连接（旧 UI e2e 有 websocket-publish；确认管理界面是否有实时推送，若无则轮询即可）。
+2. ~~管理端是否需要 WebSocket~~ **已核实（2026-09-07，ITER-06）**：旧 UI 前端源码无任何 WebSocket/EventSource 使用（ws 是客户端 SDK 与服务端的通道）；管理端**轮询即可**。
 3. 生产镜像替换方案：官方镜像内 UI 静态文件的具体路径（进入容器 `find /app -name 'index.html'` 确认），决定是否提供"替换镜像内 UI"的构建脚本（当前默认独立 nginx 部署，已够用）。
 4. ~~`Config/Publish` 的 `ids` 字段语义~~ **已核实（2026-09-04，ITER-05 实测）**：**支持部分发布**。实验：2 条待发布配置带 `ids=[id1]` 发布 → 成功，`not_me` 仍处待发布（addCount=1），v1 快照仅含 `only_me`。⇒ Route B 下可做"选择发布范围"UI（已落地于发布弹窗条目勾选）；真·灰度分批（按客户端分批推送）仍不在 API 能力内，不做。
-5. 多环境的完整列表来源（环境是内置 DEV/TEST/PROD 还是可配置——读 `SettingController`/系统设置相关源码）。
+5. ~~多环境列表来源~~ **已核实（2026-09-07）**：`Home/Sys` 返回 `envList`（服务端可配置环境清单）；前端 EnvSwitcher 应以它为准，缺省回退 DEV/TEST/PROD。
 6. ~~JWT 的 TTL~~ **已核实（2026-09-04，M0）**：登录返回的 JWT `exp - nbf = 86400s`，即 **24 小时**，无刷新机制。会话过期提醒可按"登录后 23h 左右"设计；过期由全局 401 拦截兜底。
 7. ~~继承应用合并视图的实现方式~~ **已核实（2026-09-04，ITER-04）**：旧 UI Configs 页**没有**合并视图（仅查本应用）；服务端无专用合并端点。定案=**前端组合**：本应用 `Config/Search`（pageSize 传大值一次拉全，服务端内存分页仅校验 ≤0）+ 各继承应用 `Config/Search`，按 `group+key` 合并、本应用覆盖优先、继承行只读并标注来源应用。
-8. 客户端心跳数据中是否包含其当前配置版本（publishTimelineId / version）——决定能否实现 UX #13 的"服务端最新版本 vs 客户端实际版本"一致性视图。上游 Release Notes 提到过用发布时间线虚拟 ID 对比客户端版本，服务端有此意图，优先核实（读 `ReportController` 与客户端心跳实体）。
-
-## 13. 附录
-
-### 13.1 实测记录（2026-09-04，实例 1.13.2 @ localhost:5017）
-
-```bash
-# 登录（✅）
-curl -s -X POST http://localhost:5017/admin/jwt/login \
-  -H 'Content-Type: application/json' \
-  -d '{"userName":"admin","password":"ss123456"}'
-# → {"status":"ok","token":"eyJ...","type":"Bearer","currentAuthority":[...],"currentFunctions":[...]}
-
-# 无 token 访问（✅ 401）
-curl -s -o /dev/null -w "%{http_code}" "http://localhost:5017/App/Search?current=1"
-# → 401
-
-# 创建应用（✅；注意 id 必须客户端生成）
-curl -s -X POST http://localhost:5017/App/Add -H "$AUTH" -H 'Content-Type: application/json' \
-  -d '{"id":"demo_app","name":"demo-app","group":"demo","enabled":true,"inheritanced":false}'
-# → {"data":{"id":"demo_app","name":"demo-app","group":"demo","creator":"super_admin",...},"success":true}
-
-# 加配置（✅）
-curl -s -X POST http://localhost:5017/Config/Add -H "$AUTH" -H 'Content-Type: application/json' \
-  -d '{"appId":"demo_app","group":"app","key":"timeout_seconds","value":"30","description":"request timeout"}'
-# → {"success":true,"data":{"id":"895c...","env":"DEV","status":1,"onlineStatus":0,"editStatus":0,...}}
-
-# 待发布统计（✅）
-curl -s "http://localhost:5017/Config/WaitPublishStatus?appId=demo_app" -H "$AUTH"
-# → {"success":true,"data":{"addCount":2,"editCount":0,"deleteCount":0}}
-
-# 发布（✅）
-curl -s -X POST http://localhost:5017/Config/Publish -H "$AUTH" -H 'Content-Type: application/json' \
-  -d '{"appId":"demo_app","log":"first publish"}'
-# → {"success":true,"message":""}
-
-# 发布历史（✅）
-curl -s "http://localhost:5017/Config/PublishHistory?appId=demo_app" -H "$AUTH"
-# → {"success":true,"data":[{"key":1,"timelineNode":{"version":1,"log":"first publish","publishUserName":"admin","env":"DEV",...},"list":[<该版本全量配置快照>]}]}
-```
-
-### 13.2 旧 UI 路由表（功能发现清单，非对齐目标）
-
-`/user/login`、`/user/initPassword`、`/oidc/login`、`/home`、`/node`、`/app`、`/app/config/:app_id/:app_name`、`/client`、`/service`、`/users`、`/roles`、`/logs`
-
-### 13.3 服务端 Controller 清单（API 真相之源）
-
-`src/AgileConfig.Server.Apisite/Controllers/` 下：`AdminController`、`AppController`、`ConfigController`、`HomeController`、`RemoteOPController`、`RemoteServerProxyController`、`ReportController`、`RoleController`、`SSOController`、`ServerNodeController`、`ServiceController`、`SysLogController`、`UserController`；子目录 `api/`（客户端拉配置用，管理 UI 不涉及）。
-
-### 13.4 术语表
-
-| 术语                     | 含义                                                                   |
-| ------------------------ | ---------------------------------------------------------------------- |
-| 应用 (App)               | 配置的归属单元，有唯一的 AppId 和 Secret，客户端 SDK 靠它拉配置        |
-| 环境 (Env)               | DEV/TEST/PROD 等，配置与环境正交隔离，同一应用每个环境独立一套配置     |
-| 待发布                   | 已编辑但尚未发布的改动（服务端 editStatus 字段标记），此时客户端看不到 |
-| 发布 (Publish)           | 把所有待发布改动打包成一个版本推给客户端，客户端即时收到               |
-| 时间线 (PublishTimeline) | 每次发布生成的版本节点（publishTimelineId），回滚的锚点                |
-| 回滚 (Rollback)          | 把应用回退到某个历史时间线节点的全量配置                               |
-| 继承应用/公共应用        | 被其他应用继承的应用；子应用自动获得其配置，本应用同名 key 可覆盖      |
-| 节点 (ServerNode)        | AgileConfig 服务端集群的一个实例，节点间平等、共享数据库               |
-| 客户端 (Client)          | 嵌入了 AgileConfig.Client SDK 的业务服务实例，通过心跳上报状态         |
+8. ~~客户端心跳是否含版本字段~~ **已核实（2026-09-07，源码 ClientInfo）**：字段仅 Id/AppId/Address/Tag/Name/Ip/Env/LastHeartbeatTime/LastRefreshTime，**无版本/publishTimelineId**。UX #13 一致性视图降级实现：以「LastRefreshTime vs 最新版本发布时间」推断未跟上的客户端（时间推断，非版本精确比对，UI 上如实标注）。
