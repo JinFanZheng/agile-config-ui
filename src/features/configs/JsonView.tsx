@@ -123,6 +123,20 @@ export function JsonView({
             onChange={(e) => setPatch(e.target.checked)}
           />
           {configsStr.jsonView.patch}
+          <Tooltip
+            placement="bottom"
+            content={
+              <span>
+                {configsStr.patchTip.map((t) => (
+                  <span key={t} className="mb-0.5 block">
+                    · {t}
+                  </span>
+                ))}
+              </span>
+            }
+          >
+            <Info className="h-3.5 w-3.5 cursor-help text-muted-foreground/70 hover:text-foreground" />
+          </Tooltip>
         </label>
         <Button
           size="sm"
