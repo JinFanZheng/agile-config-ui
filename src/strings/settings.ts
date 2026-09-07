@@ -1,0 +1,22 @@
+export const settingsStr = {
+  title: '设置',
+  intro: '个性化偏好仅保存在本浏览器，不落服务端，修改即时生效',
+  appearance: '外观',
+  theme: '主题',
+  themeDesc: '全局配色方案，与顶栏切换器双向同步',
+  uiFontSize: '界面字号',
+  uiFontSizeDesc: '缩放全站文字与布局密度',
+  uiFontSizeOptions: {
+    compact: '紧凑',
+    standard: '标准',
+    large: '大',
+  },
+  motion: '界面动效',
+  motionDesc: '关闭后弹窗、菜单等进入动画与微过渡瞬时完成；默认跟随系统"减少动态"偏好',
+  motionOn: '开启动效',
+  motionOff: '关闭动效',
+  editor: '编辑器',
+  editorFont: '编辑器字号',
+  editorFontDesc: 'JSON / KV 编辑与对比视图的等宽字体字号',
+  editorFontPreview: '"server": "http://localhost:5000"',
+} as const

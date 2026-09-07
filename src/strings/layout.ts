@@ -9,6 +9,8 @@ export const layoutStr = {
     roles: '角色',
     services: '服务注册',
     logs: '系统日志',
+    guide: '接入指南',
+    settings: '设置',
     openMenu: '打开导航菜单',
   },
   env: {

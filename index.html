@@ -1,26 +1,58 @@
 <!doctype html>
-<html lang="zh-CN" style="background-color: #ffffff">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AgileConfig 控制台</title>
     <script>
-      // 防闪屏：渲染前同步应用持久化主题（与 stores/theme.ts 的存储键一致）
+      // 防闪屏引导脚本（ITER-09）：零依赖、同步执行、fail-safe。
+      // 1) CSS 加载前按主题给 <html> 铺背景色，深色主题刷新不再白闪；
+      //    BG 映射的色值 = src/index.css 各主题 --bg-page 令牌（:root 与 [data-theme] 块），
+      //    两处必须同步修改，index.css 侧有互指注释。
+      // 2) 存储键：优先读 agile-config-ui.settings（stores/settings.ts 的 zustand persist 统一键），
+      //    无新键时回退老键 agile-config-ui.theme（老用户无感迁移）。
+      // 3) 同步 data-ui-font / data-motion（src/index.css 字号缩放与动效开关选择器），
+      //    避免应用挂载后字号/动效跳变。
       try {
-        var t = 'graphite'
-        var raw = localStorage.getItem('agile-config-ui.theme')
-        if (raw) {
-          var saved = JSON.parse(raw).state.theme
-          if (
-            ['graphite', 'clear-blue', 'warm-paper', 'navy-console', 'fresh-mint'].indexOf(
-              saved
-            ) !== -1
-          )
-            t = saved
+        var THEMES = ['graphite', 'clear-blue', 'warm-paper', 'navy-console', 'fresh-mint']
+        var BG = {
+          graphite: '#ffffff',
+          'clear-blue': '#f7f9fc',
+          'warm-paper': '#f6f4ef',
+          'navy-console': '#0a1424',
+          'fresh-mint': '#f5faf8',
         }
-        document.documentElement.dataset.theme = t
+        var UI_FONTS = ['compact', 'standard', 'large']
+        var doc = document.documentElement
+        var t = 'graphite'
+        var uiFont = 'standard'
+        var motion = true // 动效默认跟随系统 prefers-reduced-motion
+        try {
+          motion = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        } catch (e2) {}
+
+        var raw = localStorage.getItem('agile-config-ui.settings')
+        if (raw) {
+          var saved = JSON.parse(raw).state
+          if (saved) {
+            if (THEMES.indexOf(saved.theme) !== -1) t = saved.theme
+            if (UI_FONTS.indexOf(saved.uiFontSize) !== -1) uiFont = saved.uiFontSize
+            if (typeof saved.motion === 'boolean') motion = saved.motion
+          }
+        } else {
+          var legacy = localStorage.getItem('agile-config-ui.theme')
+          if (legacy) {
+            var lt = JSON.parse(legacy).state.theme
+            if (THEMES.indexOf(lt) !== -1) t = lt
+          }
+        }
+        doc.dataset.theme = t
+        doc.dataset.uiFont = uiFont
+        doc.dataset.motion = motion ? 'on' : 'off'
+        doc.style.backgroundColor = BG[t]
       } catch (e) {
         document.documentElement.dataset.theme = 'graphite'
+        document.documentElement.style.backgroundColor = '#ffffff'
       }
     </script>
   </head>

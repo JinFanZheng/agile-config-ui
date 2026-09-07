@@ -12,6 +12,8 @@ import { ServicesPage } from '../features/services/ServicesPage'
 import { NodesPage } from '../features/nodes/NodesPage'
 import { AppHistoryPage, HistoryIndexPage } from '../features/publish/HistoryPages'
 import { HomePage } from '../features/home/HomePage'
+import { SettingsPage } from '../features/settings/SettingsPage'
+import { GuidePage } from '../features/guide/GuidePage'
 import { RedirectIfAuthed, RequireAuth } from './guards'
 
 export const router = createBrowserRouter([
@@ -42,6 +44,8 @@ export const router = createBrowserRouter([
           { path: 'users', element: <UsersPage /> },
           { path: 'roles', element: <RolesPage /> },
           { path: 'services', element: <ServicesPage /> },
+          { path: 'guide', element: <GuidePage /> },
+          { path: 'settings', element: <SettingsPage /> },
           { path: '*', element: <Navigate to="/" replace /> },
         ],
       },

@@ -11,7 +11,7 @@ import { ApiError } from '../../lib/http'
 import { diffKv, diffKvVsMap, parseKv, type KvDiff } from '../../lib/kvDiff'
 import { applyMonacoTheme, DIFF_EDITOR_OPTIONS } from '../../lib/monaco'
 import { PERMISSION } from '../../lib/permissions'
-import { useThemeStore } from '../../stores/theme'
+import { useSettingsStore } from '../../stores/settings'
 import { toast } from '../../stores/toast'
 import { configsStr } from '../../strings/configs'
 
@@ -39,7 +39,8 @@ export function KvView({
   const [diffTarget, setDiffTarget] = useState<'saved' | 'online' | null>(null)
   const { can } = usePermission()
 
-  const theme = useThemeStore((s) => s.theme)
+  const theme = useSettingsStore((s) => s.theme)
+  const editorFontSize = useSettingsStore((s) => s.editorFontSize)
   useEffect(() => {
     applyMonacoTheme(theme === 'navy-console')
   }, [theme])
@@ -212,7 +213,7 @@ export function KvView({
             theme="agile"
             original={diffTarget === 'online' ? onlineKvText : savedKvText}
             modified={editorKvText}
-            options={DIFF_EDITOR_OPTIONS}
+            options={{ ...DIFF_EDITOR_OPTIONS, fontSize: editorFontSize }}
           />
         </div>
       ) : (
@@ -220,7 +221,8 @@ export function KvView({
           value={text ?? ''}
           onChange={(e) => setText(e.target.value)}
           spellCheck={false}
-          className="min-h-0 flex-1 resize-none bg-transparent px-4 py-3 font-mono text-xs leading-relaxed text-foreground outline-none"
+          className="min-h-0 flex-1 resize-none bg-transparent px-4 py-3 font-mono leading-relaxed text-foreground outline-none"
+          style={{ fontSize: editorFontSize }}
           aria-label="KV 文本"
         />
       )}

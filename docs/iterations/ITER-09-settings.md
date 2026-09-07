@@ -1,6 +1,6 @@
 # ITER-09 设置中心与防闪屏修复
 
-> 状态：PLANNED（2026-09-08 与用户约定，v1.0.0 后的新迭代）。小体量单卡，两个 Task。
+> 状态：验收中（EVIDENCE_READY，2026-09-08 实现与自动化门全绿 + 逐帧/几何证据，等待用户验收）
 
 ## 1. 目标与范围
 
@@ -46,3 +46,14 @@
 ## 4. Gate 要点
 
 GR-1 baseline（当前 v1.0.0 @95eecfe）；GR-2 L0+L1；GR-6 交互规范八章对照（设置页属表单类）；令牌变更须同步 `src/index.css` 事实源注释；文案全部进 `src/strings/`。
+
+## 5. 验收记录（2026-09-08）
+
+- Baseline：v1.0.0 @1b568f1（typecheck/lint ✓，vitest 88 通过）。
+- 实现（子代理 A + 主会话收口）：
+  - T-01 FOUC：删 `<html>` 内联白底；引导脚本（零依赖/同步/双层 fail-safe）按五主题→`--bg-page` 静态映射铺 `documentElement.style.backgroundColor`，读新键回退老键；运行期 store 用 `getComputedStyle` 读令牌实时值回写（令牌改色自动跟随）。
+  - T-02 设置：`stores/settings.ts`（persist 统一键 `agile-config-ui.settings`；theme/uiFontSize(紧凑/标准/大)/editorFontSize(12-15)/motion(默认跟随 prefers-reduced-motion)；迁移纯函数 `planLegacyThemeMigration` + fail-safe 执行器，迁完删老键；`stores/theme.ts` 删除收敛）；`/settings` 页四项即时生效；`--font-ui-scale` 令牌 + `html[data-ui-font]`；`html[data-motion='off']` 全局动效降级；monaco Editor/DiffEditor/KV textarea 字号联动。
+  - 主会话收口：radio 由 `sr-only` 改为透明输入框铺满 chip（e2e 发现点击被 label 拦截，同时保住键盘可达）。
+- 门禁：vitest **103**（+16 迁移/设置单测）；e2e **29**（+5 设置冒烟，含老键迁移+深色铺底断言）；typecheck/lint/build ✓。
+- 视觉证据（docs/evidence/ITER-09/）：CDP 逐帧 ×3 次刷新（新老键两路径），**导航后首帧即 `#0a1424`，零白帧**；`fouc-navy-console-session.webm` 录屏；chip 几何/分段选中态/monaco 计算字号（15px/12px）三个可复现断言脚本全 PASS。视觉模型两处误报被几何证据推翻。
+- 待用户验收：设置→指南→skill 逐个过；FOUC 以逐帧证据为 VERIFIED 依据。

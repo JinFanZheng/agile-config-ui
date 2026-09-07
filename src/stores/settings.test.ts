@@ -1,0 +1,159 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  DEFAULT_EDITOR_FONT_SIZE,
+  EDITOR_FONT_SIZES,
+  SETTINGS_STORAGE_KEY,
+  LEGACY_THEME_STORAGE_KEY,
+  planLegacyThemeMigration,
+  migrateLegacyTheme,
+  useSettingsStore,
+} from './settings'
+import { DEFAULT_THEME } from '../lib/themes'
+
+function persisted(overrides: Record<string, unknown> = {}) {
+  return JSON.stringify({
+    state: {
+      theme: DEFAULT_THEME,
+      uiFontSize: 'standard',
+      editorFontSize: DEFAULT_EDITOR_FONT_SIZE,
+      motion: true,
+      ...overrides,
+    },
+    version: 0,
+  })
+}
+
+describe('planLegacyThemeMigration（迁移决策纯函数）', () => {
+  it('老键合法主题 → 迁移该主题', () => {
+    expect(
+      planLegacyThemeMigration(null, JSON.stringify({ state: { theme: 'navy-console' }, version: 0 }))
+    ).toBe('navy-console')
+  })
+
+  it('新键已存在 → 不迁移（幂等）', () => {
+    expect(
+      planLegacyThemeMigration(persisted(), JSON.stringify({ state: { theme: 'navy-console' }, version: 0 }))
+    ).toBeNull()
+  })
+
+  it('老键缺失 → 不迁移', () => {
+    expect(planLegacyThemeMigration(null, null)).toBeNull()
+  })
+
+  it('老键主题非法 → 回退默认（null，不迁移）', () => {
+    expect(planLegacyThemeMigration(null, JSON.stringify({ state: { theme: 'hacker-green' }, version: 0 }))).toBeNull()
+  })
+
+  it('老键 JSON 损坏 → 回退默认（null，不迁移）', () => {
+    expect(planLegacyThemeMigration(null, '{oops')).toBeNull()
+  })
+})
+
+describe('migrateLegacyTheme（迁移副作用）', () => {
+  beforeEach(() => localStorage.clear())
+
+  it('写入新键并删除老键', () => {
+    localStorage.setItem(LEGACY_THEME_STORAGE_KEY, JSON.stringify({ state: { theme: 'fresh-mint' }, version: 0 }))
+    expect(migrateLegacyTheme()).toBe(true)
+    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY)
+    expect(JSON.parse(raw!).state.theme).toBe('fresh-mint')
+    expect(localStorage.getItem(LEGACY_THEME_STORAGE_KEY)).toBeNull()
+  })
+
+  it('无老键时不写新键', () => {
+    expect(migrateLegacyTheme()).toBe(false)
+    expect(localStorage.getItem(SETTINGS_STORAGE_KEY)).toBeNull()
+  })
+})
+
+describe('useSettingsStore', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    useSettingsStore.getState().setTheme(DEFAULT_THEME)
+    useSettingsStore.getState().setUiFontSize('standard')
+    useSettingsStore.getState().setEditorFontSize(DEFAULT_EDITOR_FONT_SIZE)
+    useSettingsStore.getState().setMotion(true)
+  })
+
+  it('默认值：graphite / 标准 / 12 / 动效开', () => {
+    const s = useSettingsStore.getState()
+    expect(s.theme).toBe('graphite')
+    expect(s.uiFontSize).toBe('standard')
+    expect(s.editorFontSize).toBe(DEFAULT_EDITOR_FONT_SIZE)
+    expect(s.motion).toBe(true)
+  })
+
+  it('setTheme 更新状态、写入 data-theme 并持久化到统一键', () => {
+    useSettingsStore.getState().setTheme('navy-console')
+    expect(useSettingsStore.getState().theme).toBe('navy-console')
+    expect(document.documentElement.dataset.theme).toBe('navy-console')
+    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY)
+    expect(JSON.parse(raw!).state.theme).toBe('navy-console')
+  })
+
+  it('setUiFontSize / setMotion 同步 html dataset', () => {
+    useSettingsStore.getState().setUiFontSize('compact')
+    useSettingsStore.getState().setMotion(false)
+    expect(document.documentElement.dataset.uiFont).toBe('compact')
+    expect(document.documentElement.dataset.motion).toBe('off')
+  })
+
+  it('setEditorFontSize 只改状态（无 document 副作用）并持久化', () => {
+    useSettingsStore.getState().setEditorFontSize(15)
+    expect(useSettingsStore.getState().editorFontSize).toBe(15)
+    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY)
+    expect(JSON.parse(raw!).state.editorFontSize).toBe(15)
+  })
+
+  it('持久化恢复时把全部设置应用到 document（merge 钩子）', () => {
+    localStorage.setItem(
+      SETTINGS_STORAGE_KEY,
+      persisted({ theme: 'clear-blue', uiFontSize: 'large', motion: false, editorFontSize: 14 })
+    )
+    useSettingsStore.persist.rehydrate()
+    const s = useSettingsStore.getState()
+    expect(s.theme).toBe('clear-blue')
+    expect(s.uiFontSize).toBe('large')
+    expect(s.editorFontSize).toBe(14)
+    expect(s.motion).toBe(false)
+    expect(document.documentElement.dataset.theme).toBe('clear-blue')
+    expect(document.documentElement.dataset.uiFont).toBe('large')
+    expect(document.documentElement.dataset.motion).toBe('off')
+  })
+
+  it('非法持久化值逐字段回退默认', () => {
+    localStorage.setItem(
+      SETTINGS_STORAGE_KEY,
+      persisted({ theme: 'hacker-green', uiFontSize: 'huge', editorFontSize: 99, motion: 'yes' })
+    )
+    useSettingsStore.persist.rehydrate()
+    const s = useSettingsStore.getState()
+    expect(s.theme).toBe('graphite')
+    expect(s.uiFontSize).toBe('standard')
+    expect(s.editorFontSize).toBe(DEFAULT_EDITOR_FONT_SIZE)
+    expect(typeof s.motion).toBe('boolean')
+  })
+
+  it('模块加载即迁移：老键在 store 创建前被收敛进新键', async () => {
+    vi.resetModules()
+    localStorage.clear()
+    localStorage.setItem(LEGACY_THEME_STORAGE_KEY, JSON.stringify({ state: { theme: 'warm-paper' }, version: 0 }))
+    const mod = await import('./settings')
+    expect(mod.useSettingsStore.getState().theme).toBe('warm-paper')
+    expect(JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY)!).state.theme).toBe('warm-paper')
+    expect(localStorage.getItem(LEGACY_THEME_STORAGE_KEY)).toBeNull()
+  })
+
+  it('动效默认跟随系统 prefers-reduced-motion', async () => {
+    vi.resetModules()
+    localStorage.clear()
+    vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
+    const mod = await import('./settings')
+    expect(mod.useSettingsStore.getState().motion).toBe(false)
+    vi.unstubAllGlobals()
+  })
+
+  it('编辑器字号档位枚举为 12/13/14/15', () => {
+    expect([...EDITOR_FONT_SIZES]).toEqual([12, 13, 14, 15])
+  })
+})

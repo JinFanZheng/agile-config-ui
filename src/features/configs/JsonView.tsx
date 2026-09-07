@@ -11,7 +11,7 @@ import { ApiError } from '../../lib/http'
 import { PERMISSION } from '../../lib/permissions'
 import { buildOnlineJsonText, diffJsonCounts, parseJsoncToEntries } from '../../lib/jsonDiff'
 import { applyMonacoTheme, DIFF_EDITOR_OPTIONS } from '../../lib/monaco'
-import { useThemeStore } from '../../stores/theme'
+import { useSettingsStore } from '../../stores/settings'
 import { toast } from '../../stores/toast'
 import { configsStr } from '../../strings/configs'
 
@@ -32,7 +32,8 @@ export function JsonView({
   /** 线上最新发布版 key→value 快照（key 格式 group:key）；null=无发布史 */
   onlineValues: Map<string, string> | null
 }) {
-  const theme = useThemeStore((s) => s.theme)
+  const theme = useSettingsStore((s) => s.theme)
+  const editorFontSize = useSettingsStore((s) => s.editorFontSize)
   const [text, setText] = useState<string | null>(null)
   const [savedText, setSavedText] = useState('')
   const [patch, setPatch] = useState(true)
@@ -247,7 +248,7 @@ export function JsonView({
             theme="agile"
             original={diffTarget === 'online' ? onlineJsonText : savedText}
             modified={text ?? ''}
-            options={DIFF_EDITOR_OPTIONS}
+            options={{ ...DIFF_EDITOR_OPTIONS, fontSize: editorFontSize }}
           />
         </div>
       ) : (
@@ -261,7 +262,7 @@ export function JsonView({
             onChange={(v) => setText(v ?? '')}
             options={{
               minimap: { enabled: false },
-              fontSize: 12,
+              fontSize: editorFontSize,
               lineNumbersMinChars: 3,
               scrollBeyondLastLine: false,
               tabSize: 2,

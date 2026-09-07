@@ -2,13 +2,13 @@ import { Check, Palette } from 'lucide-react'
 import { useDropdown } from '../hooks/useDropdown'
 import { THEMES } from '../lib/themes'
 import { cn } from '../lib/utils'
-import { useThemeStore } from '../stores/theme'
+import { useSettingsStore } from '../stores/settings'
 import { themeStr } from '../strings/theme'
 
-/** 顶栏主题切换器：5 个预置主题，即时生效 + 持久化（store） */
+/** 顶栏主题切换器：5 个预置主题，即时生效 + 持久化（与 /settings 主题设置同一 store，双向同步） */
 export function ThemeSwitcher() {
-  const theme = useThemeStore((s) => s.theme)
-  const setTheme = useThemeStore((s) => s.setTheme)
+  const theme = useSettingsStore((s) => s.theme)
+  const setTheme = useSettingsStore((s) => s.setTheme)
   const { open, setOpen, rootRef } = useDropdown()
 
   return (

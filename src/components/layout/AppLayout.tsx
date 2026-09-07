@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import {
+  BookOpen,
   Boxes,
   CircleCheck,
   Clock,
@@ -7,6 +8,7 @@ import {
   Menu,
   ScrollText,
   Server,
+  Settings,
   Shield,
   Users,
   Waypoints,
@@ -41,6 +43,8 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/users', label: layoutStr.nav.users, icon: Users, perm: PERMISSION.UserRead },
   { to: '/roles', label: layoutStr.nav.roles, icon: Shield, perm: PERMISSION.RoleRead },
   { to: '/services', label: layoutStr.nav.services, icon: Waypoints, perm: PERMISSION.ServiceRead },
+  { to: '/guide', label: layoutStr.nav.guide, icon: BookOpen },
+  { to: '/settings', label: layoutStr.nav.settings, icon: Settings },
 ]
 
 /**

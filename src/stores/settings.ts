@@ -1,0 +1,158 @@
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { DEFAULT_THEME, isThemeId, type ThemeId } from '../lib/themes'
+
+/**
+ * 设置中心 store（ITER-09）：浏览器本地个性化设置，统一持久化键。
+ * 防闪屏由 index.html 引导脚本先行铺 data-theme / data-ui-font / data-motion 与 html 背景。
+ */
+
+/** 统一设置持久化键（index.html 引导脚本读同一个键；结构为 zustand persist 的 {state,version}） */
+export const SETTINGS_STORAGE_KEY = 'agile-config-ui.settings'
+/** 老版本主题键（ITER-02~08），仅作迁移来源，迁完即删 */
+export const LEGACY_THEME_STORAGE_KEY = 'agile-config-ui.theme'
+
+// ---------------------------------------------------------------------------
+// 界面字号档位（html[data-ui-font]，缩放比在 src/index.css 的 --font-ui-scale）
+// ---------------------------------------------------------------------------
+export const UI_FONT_SIZES = ['compact', 'standard', 'large'] as const
+export type UiFontSize = (typeof UI_FONT_SIZES)[number]
+export const DEFAULT_UI_FONT_SIZE: UiFontSize = 'standard'
+
+export function isUiFontSize(v: unknown): v is UiFontSize {
+  return typeof v === 'string' && (UI_FONT_SIZES as readonly string[]).includes(v)
+}
+
+// ---------------------------------------------------------------------------
+// 编辑器字号（monaco Editor/DiffEditor options.fontSize；KV 文本视图同源）
+// ---------------------------------------------------------------------------
+export const EDITOR_FONT_SIZES = [12, 13, 14, 15] as const
+export type EditorFontSize = (typeof EDITOR_FONT_SIZES)[number]
+/** 默认 12：与设置中心落地前的编辑器现状一致，老用户无感 */
+export const DEFAULT_EDITOR_FONT_SIZE: EditorFontSize = 12
+
+export function isEditorFontSize(v: unknown): v is EditorFontSize {
+  return typeof v === 'number' && (EDITOR_FONT_SIZES as readonly number[]).includes(v)
+}
+
+/** 动效默认跟随系统"减少动态"偏好（用户一旦显式设置则以持久化值为准） */
+function systemPrefersReducedMotion(): boolean {
+  try {
+    return !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  } catch {
+    return false
+  }
+}
+
+/** 把设置写到 <html>：dataset 供 CSS 令牌/动效选择器消费 */
+function applyToDocument(s: Pick<SettingsState, 'theme' | 'uiFontSize' | 'motion'>) {
+  const doc = document.documentElement
+  doc.dataset.theme = s.theme
+  doc.dataset.uiFont = s.uiFontSize
+  doc.dataset.motion = s.motion ? 'on' : 'off'
+  // html 内联背景：CSS 加载前由 index.html 引导脚本的静态映射铺底（防白闪）；
+  // 此处以 --bg-page 令牌实时值回写（令牌改色后自动跟随），取不到令牌则保留引导值。
+  const bg = getComputedStyle(doc).getPropertyValue('--bg-page').trim()
+  if (bg) doc.style.backgroundColor = bg
+}
+
+export interface SettingsState {
+  theme: ThemeId
+  uiFontSize: UiFontSize
+  editorFontSize: EditorFontSize
+  motion: boolean
+  setTheme: (theme: ThemeId) => void
+  setUiFontSize: (size: UiFontSize) => void
+  setEditorFontSize: (size: EditorFontSize) => void
+  setMotion: (on: boolean) => void
+}
+
+// ---------------------------------------------------------------------------
+// 老键迁移（纯函数决策 + 副作用执行，单测见 settings.test.ts）
+// ---------------------------------------------------------------------------
+
+/**
+ * 迁移决策（纯函数）：
+ * - 新键已存在（无论内容）→ null：不做迁移，幂等，绝不覆盖新数据
+ * - 老键存在且主题合法 → 返回该主题（老键 → 新键）
+ * - 老键缺失 / JSON 损坏 / 主题非法 → null（回退默认主题，等效"非法值回退默认"）
+ */
+export function planLegacyThemeMigration(
+  settingsRaw: string | null,
+  legacyRaw: string | null
+): ThemeId | null {
+  if (settingsRaw) return null
+  if (!legacyRaw) return null
+  try {
+    const theme = JSON.parse(legacyRaw)?.state?.theme
+    return isThemeId(theme) ? theme : null
+  } catch {
+    return null
+  }
+}
+
+/** 执行老键迁移（fail-safe：任何异常吞掉、保留现场、不影响启动） */
+export function migrateLegacyTheme(): boolean {
+  try {
+    const theme = planLegacyThemeMigration(
+      localStorage.getItem(SETTINGS_STORAGE_KEY),
+      localStorage.getItem(LEGACY_THEME_STORAGE_KEY)
+    )
+    if (!theme) return false
+    localStorage.setItem(
+      SETTINGS_STORAGE_KEY,
+      JSON.stringify({ state: { theme }, version: 0 })
+    )
+    localStorage.removeItem(LEGACY_THEME_STORAGE_KEY)
+    return true
+  } catch {
+    return false
+  }
+}
+
+// 应用启动即迁移：必须先于下方 create()（persist 创建时同步读取新键）
+migrateLegacyTheme()
+
+/** 设置中心（localStorage 持久化，1.13.2 无服务端偏好 API，不落服务端） */
+export const useSettingsStore = create<SettingsState>()(
+  persist(
+    (set) => ({
+      theme: DEFAULT_THEME,
+      uiFontSize: DEFAULT_UI_FONT_SIZE,
+      editorFontSize: DEFAULT_EDITOR_FONT_SIZE,
+      motion: !systemPrefersReducedMotion(),
+      setTheme: (theme) =>
+        set((s) => {
+          applyToDocument({ ...s, theme })
+          return { theme }
+        }),
+      setUiFontSize: (uiFontSize) =>
+        set((s) => {
+          applyToDocument({ ...s, uiFontSize })
+          return { uiFontSize }
+        }),
+      setEditorFontSize: (editorFontSize) => set({ editorFontSize }),
+      setMotion: (motion) =>
+        set((s) => {
+          applyToDocument({ ...s, motion })
+          return { motion }
+        }),
+    }),
+    {
+      name: SETTINGS_STORAGE_KEY,
+      merge: (persisted, current) => {
+        const p = persisted as Partial<SettingsState> | undefined
+        const next = {
+          theme: isThemeId(p?.theme) ? p.theme : DEFAULT_THEME,
+          uiFontSize: isUiFontSize(p?.uiFontSize) ? p.uiFontSize : DEFAULT_UI_FONT_SIZE,
+          editorFontSize: isEditorFontSize(p?.editorFontSize)
+            ? p.editorFontSize
+            : DEFAULT_EDITOR_FONT_SIZE,
+          motion: typeof p?.motion === 'boolean' ? p.motion : !systemPrefersReducedMotion(),
+        }
+        applyToDocument(next)
+        return { ...current, ...next }
+      },
+    }
+  )
+)
