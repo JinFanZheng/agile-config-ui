@@ -1,6 +1,6 @@
 # ITER-11 Agent 运维 Skill（agileconfig-ops）
 
-> 状态：PLANNED（2026-09-08 与用户约定）。产出物是 skill 文件，不是前端代码。
+> 状态：验收中（EVIDENCE_READY，2026-09-08 编写+安装+冷启动巡检通过，等待用户验收）
 
 ## 1. 目标
 
@@ -31,3 +31,12 @@
 ## 5. Gate 要点
 
 skill 内**不得含真实密码**（纪律第 2 条）；端点事实与 API_INVENTORY 一致，新增实测结论回写 API_INVENTORY（事实源纪律）；GR-9 左overs 归属。
+
+## 6. 验收记录（2026-09-08）
+
+- 实现（子代理 C）：`skills/agileconfig-ops/SKILL.md`（七节骨架齐全：触发/认证/信封/速查/坑位/纪律/回验）+ `CHEATSHEET.md` + `README.md`。速查 28 端点（要求 ~20：指定 19 + 登录 + 4 只读常用）逐条对 API_INVENTORY 核对路径/方法，信封经上游 1.13.2 源码复核。
+- 事实修正：`WaitPublishStatus` 为 `{success,data}` 信封（handoff §5.4 原记裸 JSON）——已回写 handoff，并经主会话本机实测复核（keys=`["data","success"]`）。
+- T-01 verify（冷启动只读巡检，主会话按 SKILL.md §7 执行）：Home/Sys → 登录（密码经 env→stdin）→ App/Search（demo_app 只读在场）→ ServerNode/All → Report/Clients → WaitPublishStatus，六步全绿；顺带核实 `envList=null` 回退行为并补进 skill §4。
+- T-02 安装：`~/.agents/skills/agileconfig-ops` symlink 建立并可见；frontmatter 经 symlink 读取正常。skill 文件内无真实密码（自检通过）。
+- 证据：docs/evidence/ITER-11/。
+- 待用户验收（新会话实际触发一次 skill 可作为补充验收）。

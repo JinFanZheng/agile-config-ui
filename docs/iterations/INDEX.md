@@ -7,7 +7,9 @@
 
 | 迭代                              | 标题           | 状态   | 最高风险 next ready task   |
 | --------------------------------- | -------------- | ------ | -------------------------- |
-| [ITER-08](ITER-08-delivery.md) | 打磨与交付（M6） | 验收中（EVIDENCE_READY） | T-07 用户验收（compose 演示+导入导出） |
+| [ITER-09](ITER-09-settings.md) | 设置中心与防闪屏修复 | 验收中（EVIDENCE_READY） | 用户验收（设置页档位 + FOUC 逐帧证据） |
+| [ITER-10](ITER-10-integration-guide.md) | 接入指南（网页直出） | 验收中（EVIDENCE_READY） | 用户验收（五节内容 + 复制交互） |
+| [ITER-11](ITER-11-agent-skill.md) | Agent 运维 Skill | 验收中（EVIDENCE_READY） | 用户验收（skill 触发一次实操） |
 
 ## 迭代路线图（2026-09-04 与用户约定：逐迭代交付，验收一个再继续；跨模块独立页用子代理并行）
 
@@ -21,9 +23,9 @@
 | ITER-06 | 运维视图（概览/客户端一致性/节点/日志/远程操作；**子代理并行**） | M4         | 22       | PLANNED     | [ITER-06-ops.md](ITER-06-ops.md)                                       | —                        |
 | ITER-07 | 权限体系（用户/角色/应用授权/按钮级权限）                        | M5         | 13       | PLANNED     | [ITER-07-permissions.md](ITER-07-permissions.md)                       | —                        |
 | ITER-08 | 打磨与交付（导入导出/环境同步/服务注册/SSO/Docker）              | M6         | 12       | ✅ VERIFIED | [ITER-08-delivery.md](ITER-08-delivery.md)                             | `docs/evidence/ITER-08/` |
-| ITER-09 | 设置中心与防闪屏修复（浏览器本地个性化）                          | —          | 0        | PLANNED     | [ITER-09-settings.md](ITER-09-settings.md)                             | —                        |
-| ITER-10 | 接入指南（产品内文档页，网页直出 TSX）                            | —          | 0        | PLANNED     | [ITER-10-integration-guide.md](ITER-10-integration-guide.md)           | —                        |
-| ITER-11 | Agent 运维 Skill（agileconfig-ops）                              | —          | 0        | PLANNED     | [ITER-11-agent-skill.md](ITER-11-agent-skill.md)                       | —                        |
+| ITER-09 | 设置中心与防闪屏修复（浏览器本地个性化）                          | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-09-settings.md](ITER-09-settings.md) | `docs/evidence/ITER-09/` |
+| ITER-10 | 接入指南（产品内文档页，网页直出 TSX）                            | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-10-integration-guide.md](ITER-10-integration-guide.md) | `docs/evidence/ITER-10/` |
+| ITER-11 | Agent 运维 Skill（agileconfig-ops）                              | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-11-agent-skill.md](ITER-11-agent-skill.md) | `docs/evidence/ITER-11/` |
 
 > 覆盖核对：M0 已适配 3 + ITER-03..08 共 78（含 Search 归 03、WaitPublishStatus 归 04、发布共用）+ 显式豁免 4（`Admin/Logoff`、`Home/IndexAsync`、`Home/Echo`、`Home/GetIP`；另有 `RemoteOP/RegisterNode` 待 ITER-06 定案）= 86 ✓。豁免需用户确认，见 API_INVENTORY 文末。
 
