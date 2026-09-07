@@ -1,0 +1,15 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:5173",
+      "localStorage": [
+        {
+          "name": "agile-config-ui.session",
+          "value": "{\"state\":{\"token\":\"eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI4ZGNlM2IxMi05N2Q0LTQzOGEtOWE2Yy1lMDBmNjNkZWRkMWEiLCJpZCI6InN1cGVyX2FkbWluIiwidXNlcm5hbWUiOiJhZG1pbiIsImFkbWluIjp0cnVlLCJuYmYiOjE3ODg3NjAzNjcsImV4cCI6MTc4ODg0Njc2NywiaXNzIjoiYWdpbGVjb25maWcuYWRtaW4iLCJhdWQiOiJhZ2lsZWNvbmZpZy5hZG1pbiJ9.t6fvmOruYKPFCKrVbDQ6N5k_pE6CPkpPQdxMjkrDYro\",\"user\":{\"userName\":\"admin\",\"roles\":[\"Super Administrator\"],\"functions\":[\"APP_ADD\",\"APP_AUTH\",\"APP_DELETE\",\"APP_EDIT\",\"APP_READ\",\"CLIENT_DISCONNECT\",\"CLIENT_READ\",\"CLIENT_REFRESH\",\"CONFIG_ADD\",\"CONFIG_DELETE\",\"CONFIG_EDIT\",\"CONFIG_OFFLINE\",\"CONFIG_PUBLISH\",\"CONFIG_READ\",\"LOG_READ\",\"NODE_ADD\",\"NODE_DELETE\",\"NODE_READ\",\"ROLE_ADD\",\"ROLE_DELETE\",\"ROLE_EDIT\",\"ROLE_READ\",\"SERVICE_ADD\",\"SERVICE_DELETE\",\"SERVICE_READ\",\"USER_ADD\",\"USER_DELETE\",\"USER_EDIT\",\"USER_READ\"]}},\"version\":0}"
+        }
+      ],
+      "sessionStorage": []
+    }
+  ]
+}
