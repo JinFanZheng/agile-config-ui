@@ -1,0 +1,22 @@
+== bool（hotel-supplier 真实格式：C# ToString 风格）==
+PASS  bool("True")                 → True
+PASS  bool("False")                → False
+PASS  bool("true")                 → True
+PASS  bool("false")                → False
+PASS  bool("TRUE")                 → True
+FAIL  bool("1")                    InvalidOperationException: Failed to convert configuration value at 'k' to type 'System.Boolean'.
+FAIL  bool("0")                    InvalidOperationException: Failed to convert configuration value at 'k' to type 'System.Boolean'.
+PASS  bool("是") 非法值报错              InvalidOperationException
+
+== 数值 ==
+PASS  int("15")                    → 15
+PASS  int("1000")                  → 1000
+PASS  int("-3")                    → -3
+FAIL  int("3.14")                  InvalidOperationException: Failed to convert configuration value at 'k' to type 'System.Int32'.
+PASS  long(914194193427992576)     → 914194193427992576（WholesalerId 场景，int 会溢出 long 不溢）
+
+== 枚举 / POCO（嵌套+数组索引，模拟 Suppliers:1200:* 与 Routes:0:*）==
+PASS  enum("MissingHotelOnly")     → MissingHotelOnly
+PASS  POCO 绑定                      Max=100 ✓ Allow=True ✓ Routes=2 ✓ WholesalerId(long) ✓
+
+结论：存在失败 ❌（.NET 8.0.11）
