@@ -106,13 +106,23 @@ if (hasService)
 // ---- 服务发现 ----
 if (hasService)
 {
-    await Task.Delay(2000); // 等注册生效
-    var discovery = client.DiscoveryService();
-    await discovery.RefreshAsync();
-    var services = discovery.Services.Where(s => s.ServiceName == serviceName).ToList();
-    Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] ✓ 服务发现「{serviceName}」→ {services.Count} 个实例：");
-    foreach (var svc in services)
-        Console.WriteLine($"    {svc.ServiceId} @ {svc.Ip}:{svc.Port} 状态={svc.Status} 健康={svc.Status == ServiceStatus.Healthy}");
+    try
+    {
+        await Task.Delay(2000);
+        var discovery = client.DiscoveryService();
+        if (discovery != null)
+        {
+            await discovery.RefreshAsync();
+            var services = discovery.Services?.Where(s => s?.ServiceName == serviceName).ToList() ?? new();
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] ✓ 服务发现「{serviceName}」→ {services.Count} 个实例");
+            foreach (var svc in services)
+                Console.WriteLine($"    {svc?.ServiceId} @ {svc?.Ip}:{svc?.Port}");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] 服务发现异常（不影响配置验证）：{ex.GetType().Name}: {ex.Message}");
+    }
 }
 
 // ---- 心跳循环 ----
