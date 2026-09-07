@@ -190,6 +190,8 @@ Content-Type: application/json
 
 > **安全相关实测（2026-09-07，ITER-07）**：**未分配角色的新用户自动获得内置 `Operator` 角色**（登录响应 currentAuthority 含 Operator，权限码=APP_*/CONFIG_* 全套，不含 USER/ROLE/NODE/CLIENT/LOG/SERVICE 域）；服务端越权拒绝返回 **403 空内容**；`User/ResetPassword` 重置为固定默认密码 **123456**（UI 已明示）。
 
+> **客户端实测补充（2026-09-07，C# 验证客户端 `tools/verify-client`）**：① 应用 `secret` 由客户端在 Add/Edit 时提供，服务端**不自动生成**（为空则 SDK 连接失败难排查）；② 单容器 adminConsole 拓扑下节点表默认为空，`SearchServerNodeClients` 只聚合**在线节点**的客户端——需注册容器内可达的节点地址（Docker 下为 `http://localhost:5000` 而非宿主 5017），等 ~30s echo 探活置在线后客户端才出现在列表；③ 改值→发布→WebSocket 推送→客户端免重启生效实测 ~1s。
+
 > **安全相关实测（2026-09-07，ITER-06）**：`Report/*`（Clients/ServerNodeClients/SearchServerNodeClients/各 Count/RemoteNodesStatus）与 `Home/Sys` 为**匿名端点**（面向客户端 SDK/实例信息），无 token 可访问；据此概览页在无有效会话时不会触发 401，401 拦截用例需走 `App/Search` 等鉴权端点。
 
 ## 6. 功能范围与页面清单

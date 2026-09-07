@@ -1,0 +1,61 @@
+== AgileConfig 客户端验证 ==
+appId=csharp_demo nodes=http://localhost:5017 env=DEV 运行 60s
+[40m[37mtrce[39m[22m[49m: AgileConfig.Client.ConfigClient[0]
+      client try connect to server ws://localhost:5017/ws?client_name=&client_tag=
+[40m[37mtrce[39m[22m[49m: AgileConfig.Client.ConfigClient[0]
+      client connect server ws://localhost:5017/ws?client_name=&client_tag= successful .
+[18:15:14] <推送> 配置变更：action=reload key= 新值=
+[18:15:14] <推送> 配置全量重载，共 3 条
+[40m[37mtrce[39m[22m[49m: AgileConfig.Client.ConfigClient[0]
+      client send 'loaded' to server by websocket .
+[40m[37mtrce[39m[22m[49m: AgileConfig.Client.ConfigClient[0]
+      client load all the configs success by API: http://localhost:5017/api/config/app/csharp_demo?env=DEV, publishTimeLineId: 03ebb6651f7d4edaa009bf9b8430108a , try count: 0.
+[18:15:14] ConnectAsync 返回：True
+[18:15:14] 拉取到 3 条配置：
+    app:feature_new_pay = false
+    app:timeout_seconds = 30
+    db:connection = server=localhost;db=demo
+[18:15:16] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:18] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:20] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:22] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:24] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:26] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:28] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:30] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:32] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:34] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:36] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:38] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:40] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[18:15:42] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[40m[37mtrce[39m[22m[49m: AgileConfig.Client.ConfigClient[0]
+      client send 'ping' to server by websocket .
+[18:15:44] 哨兵 app:timeout_seconds = 30（在线心跳中）
+[40m[37mtrce[39m[22m[49m: AgileConfig.Client.ConfigClient[0]
+      client receive message ' {"Module":"c","Action":"ping","Data":"c4e2599252294906b9592e1316339f5f"} ' from server .
+[40m[37mtrce[39m[22m[49m: AgileConfig.Client.ConfigClient[0]
+      local version is 03ebb6651f7d4edaa009bf9b8430108a , server version is c4e2599252294906b9592e1316339f5f , there are different so try to load from server again .
+[18:15:44] <推送> 配置变更：action=reload key= 新值=
+[18:15:44] <推送> 配置全量重载，共 3 条
+[40m[37mtrce[39m[22m[49m: AgileConfig.Client.ConfigClient[0]
+      client send 'loaded' to server by websocket .
+[40m[37mtrce[39m[22m[49m: AgileConfig.Client.ConfigClient[0]
+      client load all the configs success by API: http://localhost:5017/api/config/app/csharp_demo?env=DEV, publishTimeLineId: c4e2599252294906b9592e1316339f5f , try count: 0.
+[18:15:46] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:15:48] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:15:50] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:15:52] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:15:54] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:15:56] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:15:58] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:16:00] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:16:02] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:16:04] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:16:06] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:16:08] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:16:10] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:16:12] 哨兵 app:timeout_seconds = 77（在线心跳中）
+[18:16:14] 验证结束，退出。
+[40m[37mtrce[39m[22m[49m: AgileConfig.Client.ConfigClient[0]
+      client send 'ping' to server by websocket .

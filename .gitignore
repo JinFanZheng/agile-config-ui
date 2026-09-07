@@ -12,3 +12,6 @@ test-results
 
 # TS 构建缓存
 *.tsbuildinfo
+# C# 验证客户端构建产物
+tools/verify-client/bin/
+tools/verify-client/obj/
