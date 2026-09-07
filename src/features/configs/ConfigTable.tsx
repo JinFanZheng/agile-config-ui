@@ -45,6 +45,8 @@ interface ConfigTableProps {
   onCancelEdit: (item: ConfigItem) => void
   onHistory: (item: ConfigItem) => void
   toolbar?: ReactNode
+  /** 行内 diff：取该配置线上旧值（最新发布快照）；null=无线上版本 */
+  oldValueOf?: (item: ConfigItem) => string | null
 }
 
 /** 配置表：虚拟滚动（千级数据 DOM 只渲染可视行）+ 分组折叠 + 多选 + 行内快编 value */
@@ -61,6 +63,7 @@ export function ConfigTable({
   onDelete,
   onCancelEdit,
   onHistory,
+  oldValueOf,
 }: ConfigTableProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [editing, setEditing] = useState<{ id: string; value: string } | null>(null)
@@ -218,25 +221,38 @@ export function ConfigTable({
                       if (e.key === 'Escape') setEditing(null)
                     }}
                   />
-                ) : (
-                  <button
-                    type="button"
-                    disabled={isInherited || isDeleting}
-                    title={
-                      isInherited
-                        ? configsStr.table.inheritedFrom(appNameOf(item.inheritedFrom!))
-                        : configsStr.inline.hint
-                    }
-                    className={cn(
-                      'truncate text-left font-mono text-xs text-foreground',
-                      !isInherited && !isDeleting && 'hover:text-primary',
-                      isDeleting && 'line-through'
-                    )}
-                    onClick={() => setEditing({ id: item.id, value: item.value })}
-                  >
-                    {item.value || '—'}
-                  </button>
-                )}
+                ) : (() => {
+                  const old = isInherited ? null : (oldValueOf?.(item) ?? null)
+                  const showOld =
+                    old !== null && old !== item.value && (item.editStatus === 1 || item.editStatus === 2)
+                  return (
+                    <button
+                      type="button"
+                      disabled={isInherited || isDeleting}
+                      title={
+                        (isInherited
+                          ? configsStr.table.inheritedFrom(appNameOf(item.inheritedFrom!))
+                          : configsStr.inline.hint) + (showOld ? `\n旧值：${old}` : '')
+                      }
+                      className={cn(
+                        'flex min-w-0 items-baseline gap-1.5 text-left font-mono text-xs',
+                        !isInherited && !isDeleting && 'hover:text-primary'
+                      )}
+                      onClick={() => setEditing({ id: item.id, value: item.value })}
+                    >
+                      {showOld && (
+                        <span className="max-w-[45%] shrink truncate text-[11px] text-muted-foreground line-through opacity-70">
+                          {old}
+                        </span>
+                      )}
+                      <span
+                        className={cn('truncate text-foreground', isDeleting && 'line-through opacity-70')}
+                      >
+                        {item.value || '—'}
+                      </span>
+                    </button>
+                  )
+                })()}
                 <span>
                   {/* 已上线判定：editStatus!==0（修改/删除方向/已提交都存在线上旧版） */}
                   {item.editStatus !== 0 ? (

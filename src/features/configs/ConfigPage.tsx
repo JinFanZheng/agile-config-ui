@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Clock, Cloud, Layers, Plus, Table2 } from 'lucide-react'
 import { Suspense, lazy, useCallback, useMemo, useState } from 'react'
 import { useSearchParams, useParams } from 'react-router'
@@ -37,6 +37,7 @@ import {
   useInvalidateConfigs,
   useWaitPublish,
 } from './useConfigs'
+import { getPublishHistory } from '../../api/publish'
 
 const KvView = lazy(() => import('./KvView').then((m) => ({ default: m.KvView })))
 const JsonView = lazy(() => import('./JsonView').then((m) => ({ default: m.JsonView })))
@@ -87,6 +88,20 @@ export function ConfigPage() {
   const appInfo = useAppInfo(appId)
   const configsQ = useConfigs(appId, env)
   const wait = useWaitPublish(appId, env)
+
+  // 行内 diff 旧值来源：最新发布版本快照（group+key → 线上值）
+  const latestSnapshot = useQuery({
+    queryKey: ['publish', 'history', appId, env, 'latest'],
+    queryFn: async () => {
+      const list = await getPublishHistory(appId, env)
+      const node = list?.[0]?.list ?? []
+      const m = new Map<string, string>()
+      for (const c of node) m.set(`${c.group}\u0000${c.key}`, c.value)
+      return m
+    },
+    enabled: !!appId,
+    staleTime: 0,
+  })
   const inheritIds = useMemo(() => appInfo.data?.inheritancedApps ?? [], [appInfo.data])
   const inheritedQ = useInheritedConfigs(appId, env, inheritIds, showInherited)
 
@@ -400,6 +415,7 @@ export function ConfigPage() {
           ) : (
             <ConfigTable
               rows={filtered}
+              oldValueOf={(item: ConfigItem) => latestSnapshot.data?.get(`${item.group}\u0000${item.key}`) ?? null}
               appNameOf={appNameOf}
               collapsed={collapsed}
               onToggleGroup={(g) =>
