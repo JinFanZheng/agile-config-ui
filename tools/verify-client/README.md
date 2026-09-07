@@ -15,15 +15,21 @@
 > 1. 单容器 adminConsole 模式下，节点表默认为空 → `SearchServerNodeClients` 只聚合"在线节点"的客户端，会恒为空。需注册一个**容器内可达**的节点地址（Docker 拓扑下是 `http://localhost:5000`，不是宿主机的 5017），等 echo 探活（~30s 周期）把它置为在线。
 > 2. 应用的 `secret` 由客户端在 `App/Add`/`App/Edit` 时提供，服务端不自动生成；为空则客户端连不上时难以排查。
 
-## 运行
+## 运行（配置 + 服务注册）
 
 ```bash
 cd tools/verify-client
-dotnet run -- <appId> <secret> <serverUrl> <env> <运行秒数>
+dotnet run -- <appId> <secret> <serverUrl> <env> <运行秒数> [服务名] [服务ID]
 # 例（secret 从管理端应用详情查看）：
-dotnet run -- csharp_demo <secret> http://localhost:5017 DEV 60
+dotnet run -- csharp_demo <secret> http://localhost:5017 DEV 60 verify-order-service verify-svc-001
 ```
+
+不带服务名/服务ID 参数则只连配置中心不注册服务（兼容旧行为）。带了则同时做服务注册（心跳模式 client），退出时自动注销。
 
 程序行为：连接 → 打印全量配置 → 订阅 `ConfigChanged`/`ReLoaded` 推送 → 每 2s 打印哨兵值（此时在管理端改值并发布，观察免重启变化）→ 超时退出。Ctrl+C 提前退出。
 
-证据：`docs/evidence/C-SHARP-VERIFY/`（客户端 transcript ×2 + 客户端页在线截图）。
+## 服务注册验证
+
+2026-09-07 实测：`dotnet run -- ... verify-order-service verify-svc-001` → SDK `RegisterService.RegisterAsync()` → 管理端「服务注册」页显示 `verify-order-service`（状态：健康，心跳模式 client），Ctrl+C 或超时退出时自动 `UnRegisterAsync` 注销。截图 `services-online.png`。
+
+证据：`docs/evidence/C-SHARP-VERIFY/`（客户端 transcript ×2 + 客户端页/服务注册页在线截图）。
