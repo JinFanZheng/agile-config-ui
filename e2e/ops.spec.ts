@@ -60,11 +60,17 @@ test('系统日志：列表 + 类型过滤', async ({ page }) => {
   await expect(page.locator('tbody').getByText('警告').first()).toBeVisible({ timeout: 15_000 })
 })
 
-test('客户端：空态（本机实例无嵌入式 SDK 客户端）', async ({ page }) => {
+test('客户端：页面渲染（空态或在线行，视本机是否有 SDK 客户端）', async ({ page }) => {
   await login(page)
   await page.goto('/clients')
   await expect(page.getByRole('heading', { name: '客户端' })).toBeVisible()
-  await expect(page.getByText('暂无在线客户端')).toBeVisible({ timeout: 15_000 })
+  // 本机可能运行着 C# 验证客户端（tools/verify-client）——空态与在线行二选一均可接受
+  // 本机可能运行着 C# 验证客户端——空态与在线行二选一
+  await page.waitForTimeout(1200)
+  const hasRow = (await page.locator('tbody tr').count()) > 0
+  if (!hasRow) {
+    await expect(page.getByText('暂无在线客户端')).toBeVisible({ timeout: 15_000 })
+  }
   // 危险操作入口在（仅验证存在，不触发）
   await expect(page.getByRole('button', { name: '重载全部客户端' })).toBeVisible()
 })
