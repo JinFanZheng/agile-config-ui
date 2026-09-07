@@ -11,7 +11,7 @@ import { groupSortKey } from './useConfigs'
 export type VirtualRow =
   { kind: 'group'; group: string; count: number } | { kind: 'row'; index: number }
 
-const GRID = 'grid grid-cols-[28px_96px_210px_minmax(160px,1fr)_84px_84px_104px_140px] items-center'
+const GRID = 'grid grid-cols-[28px_96px_210px_minmax(160px,1fr)_84px_84px_104px_200px] items-center'
 
 const badgeCls = 'rounded px-1.5 py-0.5 text-[10px]'
 
