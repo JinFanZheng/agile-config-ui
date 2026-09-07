@@ -129,3 +129,34 @@ test('跟随系统：随系统深浅实时切换、刷新持久且 boot 铺对�
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'graphite')
   await page.emulateMedia({ colorScheme: 'light' })
 })
+
+test('跟随系统：深/浅映射可配置，修改即时生效且 boot 按用户映射铺底', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await login(page)
+  await page.goto('/settings')
+
+  // 选跟随系统（默认深色映射=深蓝中控），改"深色时使用"为曜石 → 即时生效
+  await page.getByRole('radio', { name: /跟随系统/ }).check()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'navy-console')
+  await page.getByLabel('深色时使用').selectOption('obsidian')
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'obsidian')
+
+  // 浅色映射一并配置（当前系统深色，不立即切换主题，仅持久化）
+  await page.getByLabel('浅色时使用').selectOption('clear-blue')
+
+  // 刷新：boot 脚本按用户映射解析并铺曜石纯黑底（防白闪）
+  await page.reload()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'obsidian')
+  expect(await page.evaluate(() => document.documentElement.style.backgroundColor)).toBe('rgb(0, 0, 0)')
+
+  // 系统切浅色：按用户映射实时切到晨雾蓝
+  await page.emulateMedia({ colorScheme: 'light' })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'clear-blue')
+
+  // 还原默认映射 + 显式石墨
+  await page.getByRole('radio', { name: /跟随系统/ }).check()
+  await page.getByLabel('深色时使用').selectOption('navy-console')
+  await page.getByLabel('浅色时使用').selectOption('graphite')
+  await page.getByRole('radio', { name: '石墨' }).check()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'graphite')
+})

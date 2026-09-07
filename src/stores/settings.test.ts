@@ -180,6 +180,36 @@ describe('useSettingsStore', () => {
     expect(['navy-console', 'graphite']).toContain(document.documentElement.dataset.theme)
   })
 
+  it('system 档深浅映射可配置：修改映射即时重解析并持久化；非法持久化值回退默认映射', () => {
+    vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true })) // 系统深色
+    useSettingsStore.getState().setTheme('system')
+    expect(useSettingsStore.getState().resolvedTheme).toBe('navy-console') // 默认映射
+
+    useSettingsStore.getState().setSystemDark('obsidian')
+    expect(useSettingsStore.getState().resolvedTheme).toBe('obsidian')
+    expect(document.documentElement.dataset.theme).toBe('obsidian')
+    const raw = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY)!)
+    expect(raw.state.systemDark).toBe('obsidian')
+    expect(raw.state.systemLight).toBe('graphite')
+
+    // 非 system 档改映射：只持久化，不动当前主题
+    useSettingsStore.getState().setTheme('sakura')
+    useSettingsStore.getState().setSystemLight('clear-blue')
+    expect(useSettingsStore.getState().resolvedTheme).toBe('sakura')
+    expect(document.documentElement.dataset.theme).toBe('sakura')
+
+    // 非法持久化映射 → 回退默认（深=深蓝中控/浅=石墨）
+    localStorage.setItem(
+      SETTINGS_STORAGE_KEY,
+      persisted({ theme: 'system', systemDark: 'hacker-green', systemLight: null })
+    )
+    useSettingsStore.persist.rehydrate()
+    const s2 = useSettingsStore.getState()
+    expect(s2.systemDark).toBe('navy-console')
+    expect(s2.systemLight).toBe('graphite')
+    vi.unstubAllGlobals()
+  })
+
   it('系统配色变化时 system 档实时跟随（不刷新页面）', async () => {
     vi.resetModules()
     localStorage.clear()

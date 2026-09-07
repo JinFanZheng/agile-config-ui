@@ -52,9 +52,11 @@
           var saved = JSON.parse(raw).state
           if (saved) {
             if (saved.theme === 'system') {
-              // 跟随系统（ITER-13）：深→深蓝中控 / 浅→石墨，与 stores/settings.ts 解析规则一致
+              // 跟随系统（ITER-13/14）：按用户映射（默认深=深蓝中控/浅=石墨）解析，与 stores/settings.ts 同规则
               try {
-                t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'navy-console' : 'graphite'
+                var sd = THEMES.indexOf(saved.systemDark) !== -1 ? saved.systemDark : 'navy-console'
+                var sl = THEMES.indexOf(saved.systemLight) !== -1 ? saved.systemLight : 'graphite'
+                t = window.matchMedia('(prefers-color-scheme: dark)').matches ? sd : sl
               } catch (e3) {}
             } else if (THEMES.indexOf(saved.theme) !== -1) t = saved.theme
             if (UI_FONTS.indexOf(saved.uiFontSize) !== -1) uiFont = saved.uiFontSize

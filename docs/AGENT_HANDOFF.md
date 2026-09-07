@@ -259,7 +259,7 @@ Content-Type: application/json
 | `mocha`            | 摩卡     | 暖棕深色、奶油金强调（ITER-12） | 底 #16120B / 奶油金 #EAD9AE |
 | `forest`           | 森夜     | 深绿夜林、月光银强调（ITER-12） | 底 #0C1410 / 银绿 #D5E8DA  |
 
-**跟随系统档（ITER-13）**：设置值哨兵 `'system'`（非具体主题）；解析规则：系统深色→`navy-console`、系统浅色→`graphite`（`lib/themes.ts` 的 `resolveThemeSetting`，store/boot 脚本同规则）。store 派生 `resolvedTheme`（monaco 深浅、切换器文案消费它），`prefers-color-scheme` 变化实时重解析。默认主题仍为 graphite（system 为显式 opt-in）。切换器与设置页按 浅色/深色 两组呈现。
+**跟随系统档（ITER-13/14）**：设置值哨兵 `'system'`（非具体主题）；深/浅映射**用户可配置**（store `systemDark`/`systemLight`，默认深=`navy-console`、浅=`graphite`，选项限定各自深浅组，设置页跟随系统块内两个下拉即时生效），解析在 `lib/themes.ts` 的 `resolveThemeSetting(theme, prefersDark, systemDark, systemLight)`，store/boot 脚本同规则。store 派生 `resolvedTheme`（monaco 深浅、切换器文案消费它），`prefers-color-scheme` 变化实时重解析。默认主题仍为 graphite（system 为显式 opt-in）。切换器与设置页按 浅色/深色 两组呈现（设置页为全宽区块：跟随系统块 + 色卡网格）。
 
 **主题切换边界（契约）**：主题只改变**颜色 / 圆角 / 阴影**三维度（通过 `html[data-theme]` 上的 CSS 变量实现）；**布局、信息架构、密度、排版全局恒定**，不随主题变。
 

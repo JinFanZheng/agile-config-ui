@@ -4,6 +4,8 @@ export const settingsStr = {
   appearance: '外观',
   theme: '主题',
   themeDesc: '全局配色方案，与顶栏切换器双向同步；跟随系统档随系统深浅色自动切换',
+  systemWhenDark: '深色时使用',
+  systemWhenLight: '浅色时使用',
   uiFontSize: '界面字号',
   uiFontSizeDesc: '缩放全站文字与布局密度',
   uiFontSizeOptions: {

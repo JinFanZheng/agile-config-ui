@@ -5,6 +5,8 @@ import {
   isThemeId,
   isThemeSetting,
   resolveThemeSetting,
+  SYSTEM_DARK_THEME,
+  SYSTEM_LIGHT_THEME,
   SYSTEM_THEME,
   type ThemeId,
   type ThemeSetting,
@@ -62,9 +64,11 @@ function systemPrefersDark(): boolean {
 }
 
 /** 把设置写到 <html>：dataset 供 CSS 令牌/动效选择器消费。返回解析后的有效主题（system → 具体 id） */
-function applyToDocument(s: Pick<SettingsState, 'theme' | 'uiFontSize' | 'motion'>): ThemeId {
+function applyToDocument(
+  s: Pick<SettingsState, 'theme' | 'uiFontSize' | 'motion' | 'systemDark' | 'systemLight'>
+): ThemeId {
   const doc = document.documentElement
-  const resolved = resolveThemeSetting(s.theme, systemPrefersDark())
+  const resolved = resolveThemeSetting(s.theme, systemPrefersDark(), s.systemDark, s.systemLight)
   doc.dataset.theme = resolved
   doc.dataset.uiFont = s.uiFontSize
   doc.dataset.motion = s.motion ? 'on' : 'off'
@@ -80,10 +84,15 @@ export interface SettingsState {
   theme: ThemeSetting
   /** 有效主题（system 已解析为具体 id）：monaco 深浅、切换器文案等消费方一律用它 */
   resolvedTheme: ThemeId
+  /** 跟随系统档的深/浅映射（用户可配置，默认 深蓝中控/石墨；选项限定各自深浅组） */
+  systemDark: ThemeId
+  systemLight: ThemeId
   uiFontSize: UiFontSize
   editorFontSize: EditorFontSize
   motion: boolean
   setTheme: (theme: ThemeSetting) => void
+  setSystemDark: (theme: ThemeId) => void
+  setSystemLight: (theme: ThemeId) => void
   setUiFontSize: (size: UiFontSize) => void
   setEditorFontSize: (size: EditorFontSize) => void
   setMotion: (on: boolean) => void
@@ -141,6 +150,8 @@ export const useSettingsStore = create<SettingsState>()(
     (set) => ({
       theme: DEFAULT_THEME,
       resolvedTheme: DEFAULT_THEME,
+      systemDark: SYSTEM_DARK_THEME,
+      systemLight: SYSTEM_LIGHT_THEME,
       uiFontSize: DEFAULT_UI_FONT_SIZE,
       editorFontSize: DEFAULT_EDITOR_FONT_SIZE,
       motion: !systemPrefersReducedMotion(),
@@ -149,6 +160,11 @@ export const useSettingsStore = create<SettingsState>()(
           const resolvedTheme = applyToDocument({ ...s, theme })
           return { theme, resolvedTheme }
         }),
+      // 映射变更即时生效（system 档下）并持久化；非 system 档仅持久化，等切回时生效
+      setSystemDark: (systemDark) =>
+        set((s) => ({ systemDark, resolvedTheme: applyToDocument({ ...s, systemDark }) })),
+      setSystemLight: (systemLight) =>
+        set((s) => ({ systemLight, resolvedTheme: applyToDocument({ ...s, systemLight }) })),
       setUiFontSize: (uiFontSize) =>
         set((s) => {
           applyToDocument({ ...s, uiFontSize })
@@ -167,6 +183,8 @@ export const useSettingsStore = create<SettingsState>()(
         const p = persisted as Partial<SettingsState> | undefined
         const next = {
           theme: isThemeSetting(p?.theme) ? p.theme : DEFAULT_THEME,
+          systemDark: isThemeId(p?.systemDark) ? p.systemDark : SYSTEM_DARK_THEME,
+          systemLight: isThemeId(p?.systemLight) ? p.systemLight : SYSTEM_LIGHT_THEME,
           uiFontSize: isUiFontSize(p?.uiFontSize) ? p.uiFontSize : DEFAULT_UI_FONT_SIZE,
           editorFontSize: isEditorFontSize(p?.editorFontSize)
             ? p.editorFontSize

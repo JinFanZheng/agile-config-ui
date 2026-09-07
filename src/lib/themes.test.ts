@@ -67,4 +67,10 @@ describe('themes 注册表', () => {
     expect(resolveThemeSetting('sakura', true)).toBe('sakura')
     expect(resolveThemeSetting('navy-console', false)).toBe('navy-console')
   })
+
+  it('resolveThemeSetting：支持用户自定义深浅映射（ITER-14）', () => {
+    expect(resolveThemeSetting('system', true, 'obsidian', 'sakura')).toBe('obsidian')
+    expect(resolveThemeSetting('system', false, 'obsidian', 'sakura')).toBe('sakura')
+    expect(resolveThemeSetting('forest', true, 'obsidian', 'sakura')).toBe('forest')
+  })
 })

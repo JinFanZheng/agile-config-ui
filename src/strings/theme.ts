@@ -10,7 +10,7 @@ export const themeStr = {
   },
   /** 跟随系统档（'system' 哨兵值的展示名） */
   system: '跟随系统',
-  systemDesc: '随系统深浅色自动切换（深色=深蓝中控，浅色=石墨）',
+  systemDesc: '随系统深浅色自动切换，深浅各自使用的主题可在下方指定',
   themes: {
     graphite: '石墨',
     'clear-blue': '晨雾蓝',

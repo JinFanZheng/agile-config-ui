@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Monitor } from 'lucide-react'
 import { Card, CardHeader, CardTitle } from '../../components/ui/card'
-import { isDarkTheme, SYSTEM_THEME, THEMES, type ThemeSetting } from '../../lib/themes'
+import { isDarkTheme, SYSTEM_THEME, THEMES, type ThemeId } from '../../lib/themes'
 import { cn } from '../../lib/utils'
 import {
   EDITOR_FONT_SIZES,
@@ -98,46 +98,166 @@ function Switch({
   )
 }
 
-/** 主题 chip：透明 radio 铺满 chip（点击面=chip 本体，键盘可达）；concrete 主题带三色样条，system 带显示器图标 */
-function ThemeChip({
-  value,
+/** 主题色卡（网格项）：三色条 + 名称居中，透明 radio 铺满整卡（点击面=整卡，键盘可达） */
+function ThemeCardChip({
+  id,
+  label,
+  swatch,
   checked,
   onSelect,
-  children,
 }: {
-  value: string
+  id: string
+  label: string
+  swatch: readonly [string, string, string]
   checked: boolean
   onSelect: () => void
-  children: ReactNode
 }) {
   return (
     <label className="group relative cursor-pointer">
       <input
         type="radio"
         name="settings-theme"
-        value={value}
+        value={id}
         checked={checked}
         onChange={onSelect}
         className="peer absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0"
       />
       <span
         className={cn(
-          'flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs transition-colors duration-150 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50',
-          checked
-            ? 'border-primary bg-selected font-medium text-selected-foreground'
-            : 'border-border text-muted-foreground group-hover:bg-hover group-hover:text-foreground'
+          'flex flex-col gap-1.5 rounded-md border p-2 transition-colors duration-150 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50',
+          checked ? 'border-primary bg-selected' : 'border-border group-hover:bg-hover'
         )}
       >
-        {children}
+        <span className="flex h-2 overflow-hidden rounded-sm border border-border">
+          {swatch.map((c) => (
+            <span key={c} className="h-full flex-1" style={{ backgroundColor: c }} />
+          ))}
+        </span>
+        <span
+          className={cn(
+            'truncate text-center text-xs',
+            checked
+              ? 'font-medium text-selected-foreground'
+              : 'text-muted-foreground group-hover:text-foreground'
+          )}
+        >
+          {label}
+        </span>
       </span>
     </label>
   )
 }
 
-/** 设置中心：主题（跟随系统 + 浅/深两组）/ 界面字号 / 编辑器字号 / 动效，全部本地持久化 + 即时生效 */
+/** 跟随系统的深/浅映射选择（原生 select，仅列对应深浅组的主题） */
+function SystemMappingSelect({
+  idSuffix,
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  idSuffix: 'dark' | 'light'
+  label: string
+  value: ThemeId
+  options: readonly { id: ThemeId; label: string }[]
+  onChange: (id: ThemeId) => void
+}) {
+  return (
+    <label
+      htmlFor={`system-mapping-${idSuffix}`}
+      className="flex items-center gap-2 text-xs text-muted-foreground"
+    >
+      {label}
+      <select
+        id={`system-mapping-${idSuffix}`}
+        value={value}
+        onChange={(e) => onChange(e.target.value as ThemeId)}
+        className="h-6 rounded-md border border-border bg-input px-1.5 text-xs text-foreground outline-none transition-colors duration-150 ease-out hover:border-border-strong focus-visible:ring-2 focus-visible:ring-primary/50"
+      >
+        {options.map((o) => (
+          <option key={o.id} value={o.id}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  )
+}
+
+/** 跟随系统块：整块可选中的 radio 项；选中时展开深/浅映射配置（映射变更即时生效） */
+function SystemThemeBlock({
+  active,
+  onSelect,
+  systemDark,
+  systemLight,
+  onSystemDarkChange,
+  onSystemLightChange,
+}: {
+  active: boolean
+  onSelect: () => void
+  systemDark: ThemeId
+  systemLight: ThemeId
+  onSystemDarkChange: (id: ThemeId) => void
+  onSystemLightChange: (id: ThemeId) => void
+}) {
+  const darkOptions = THEMES.filter((t) => isDarkTheme(t.id))
+  const lightOptions = THEMES.filter((t) => !isDarkTheme(t.id))
+  return (
+    <div
+      className={cn(
+        'rounded-md border p-3 transition-colors duration-150 ease-out',
+        active ? 'border-primary bg-selected/40' : 'border-border'
+      )}
+    >
+      <label className="group relative flex cursor-pointer items-start gap-2">
+        <input
+          type="radio"
+          name="settings-theme"
+          value={SYSTEM_THEME}
+          checked={active}
+          onChange={onSelect}
+          className="peer absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0"
+        />
+        <Monitor className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50" />
+        <span className="min-w-0">
+          <span className={cn('block text-xs', active && 'font-medium text-foreground')}>
+            {themeStr.system}
+          </span>
+          <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">
+            {themeStr.systemDesc}
+          </span>
+        </span>
+      </label>
+      {active && (
+        <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-border pt-3 sm:pl-6">
+          <SystemMappingSelect
+            idSuffix="dark"
+            label={settingsStr.systemWhenDark}
+            value={systemDark}
+            options={darkOptions}
+            onChange={onSystemDarkChange}
+          />
+          <SystemMappingSelect
+            idSuffix="light"
+            label={settingsStr.systemWhenLight}
+            value={systemLight}
+            options={lightOptions}
+            onChange={onSystemLightChange}
+          />
+        </div>
+      )}
+    </div>
+  )
+}
+
+/** 设置中心：主题（跟随系统块 + 浅/深色卡网格）/ 界面字号 / 编辑器字号 / 动效，全部本地持久化 + 即时生效 */
 export function SettingsPage() {
   const theme = useSettingsStore((s) => s.theme)
   const setTheme = useSettingsStore((s) => s.setTheme)
+  const systemDark = useSettingsStore((s) => s.systemDark)
+  const setSystemDark = useSettingsStore((s) => s.setSystemDark)
+  const systemLight = useSettingsStore((s) => s.systemLight)
+  const setSystemLight = useSettingsStore((s) => s.setSystemLight)
   const uiFontSize = useSettingsStore((s) => s.uiFontSize)
   const setUiFontSize = useSettingsStore((s) => s.setUiFontSize)
   const editorFontSize = useSettingsStore((s) => s.editorFontSize)
@@ -154,19 +274,24 @@ export function SettingsPage() {
         <CardHeader className="border-b border-border">
           <CardTitle>{settingsStr.appearance}</CardTitle>
         </CardHeader>
-        <SettingRow title={settingsStr.theme} desc={settingsStr.themeDesc}>
-          {/* 单一 radiogroup：跟随系统 + 浅/深两组视觉聚类，方向键在全部选项间可达 */}
-          <div role="radiogroup" aria-label={settingsStr.theme} className="flex max-w-md flex-col gap-2">
-            <div className="flex flex-wrap gap-1.5">
-              <ThemeChip
-                value={SYSTEM_THEME}
-                checked={theme === SYSTEM_THEME}
-                onSelect={() => setTheme(SYSTEM_THEME)}
-              >
-                <Monitor className="h-3.5 w-3.5" />
-                {themeStr.system}
-              </ThemeChip>
+        {/* 主题：全宽区块（跟随系统块 + 浅/深色卡网格），选项多，不再用左右分栏的 SettingRow */}
+        <div className="flex flex-col gap-3 border-b border-border px-4 py-3.5 last:border-b-0">
+          <div>
+            <div className="text-sm font-medium text-foreground">{settingsStr.theme}</div>
+            <div className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+              {settingsStr.themeDesc}
             </div>
+          </div>
+          {/* 单一 radiogroup：跟随系统块 + 浅/深两组色卡，方向键在全部选项间可达；映射选择是独立 combobox */}
+          <div role="radiogroup" aria-label={settingsStr.theme} className="flex flex-col gap-3">
+            <SystemThemeBlock
+              active={theme === SYSTEM_THEME}
+              onSelect={() => setTheme(SYSTEM_THEME)}
+              systemDark={systemDark}
+              systemLight={systemLight}
+              onSystemDarkChange={setSystemDark}
+              onSystemLightChange={setSystemLight}
+            />
             {(
               [
                 [themeStr.groups.light, THEMES.filter((t) => !isDarkTheme(t.id))],
@@ -175,27 +300,22 @@ export function SettingsPage() {
             ).map(([groupLabel, items]) => (
               <div key={groupLabel} className="flex flex-col gap-1.5">
                 <span className="text-[10px] text-muted-foreground/60">{groupLabel}</span>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-5">
                   {items.map(({ id, label, swatch }) => (
-                    <ThemeChip
+                    <ThemeCardChip
                       key={id}
-                      value={id}
+                      id={id}
+                      label={label}
+                      swatch={swatch}
                       checked={theme === id}
-                      onSelect={() => setTheme(id as ThemeSetting)}
-                    >
-                      <span className="flex overflow-hidden rounded-sm border border-border">
-                        {swatch.map((c) => (
-                          <span key={c} className="h-3.5 w-1.5" style={{ backgroundColor: c }} />
-                        ))}
-                      </span>
-                      {label}
-                    </ThemeChip>
+                      onSelect={() => setTheme(id)}
+                    />
                   ))}
                 </div>
               </div>
             ))}
           </div>
-        </SettingRow>
+        </div>
         <SettingRow title={settingsStr.uiFontSize} desc={settingsStr.uiFontSizeDesc}>
           <SegmentedRadio<UiFontSize>
             name="settings-ui-font"

@@ -21,8 +21,9 @@ export function isThemeId(v: unknown): v is ThemeId {
 }
 
 // ---------------------------------------------------------------------------
-// 跟随系统档（ITER-13）：'system' 不是具体主题，是设置值哨兵；
-// 解析为具体主题后才有令牌/monaco/防闪屏语义。深浅映射锁定：深→深蓝中控、浅→石墨。
+// 跟随系统档（ITER-13/14）：'system' 不是具体主题，是设置值哨兵；
+// 解析为具体主题后才有令牌/monaco/防闪屏语义。深浅映射默认深→深蓝中控、浅→石墨，
+// 用户可在设置页自定义（store 的 systemDark/systemLight）。
 // ---------------------------------------------------------------------------
 export const SYSTEM_THEME = 'system' as const
 
@@ -35,10 +36,15 @@ export function isThemeSetting(v: unknown): v is ThemeSetting {
   return v === SYSTEM_THEME || isThemeId(v)
 }
 
-/** 解析纯函数：system 按 prefersDark 映射，具体主题原样返回（boot 脚本/store 共用同一规则） */
-export function resolveThemeSetting(theme: ThemeSetting, prefersDark: boolean): ThemeId {
+/** 解析纯函数：system 按用户映射（缺省=默认映射）解析，具体主题原样返回（boot 脚本/store 共用同一规则） */
+export function resolveThemeSetting(
+  theme: ThemeSetting,
+  prefersDark: boolean,
+  systemDark: ThemeId = SYSTEM_DARK_THEME,
+  systemLight: ThemeId = SYSTEM_LIGHT_THEME
+): ThemeId {
   if (theme !== SYSTEM_THEME) return theme
-  return prefersDark ? SYSTEM_DARK_THEME : SYSTEM_LIGHT_THEME
+  return prefersDark ? systemDark : systemLight
 }
 
 /** 深色主题集合（color-scheme: dark）——monaco 等第三方深浅判定以此为准，勿硬编码单个主题 id */
