@@ -9,6 +9,7 @@ import {
   Server,
   Shield,
   Users,
+  Waypoints,
 } from 'lucide-react'
 import { useEffect, useState, type ComponentType } from 'react'
 import { Link, NavLink, Outlet } from 'react-router'
@@ -39,6 +40,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/logs', label: layoutStr.nav.logs, icon: ScrollText, perm: PERMISSION.LogRead },
   { to: '/users', label: layoutStr.nav.users, icon: Users, perm: PERMISSION.UserRead },
   { to: '/roles', label: layoutStr.nav.roles, icon: Shield, perm: PERMISSION.RoleRead },
+  { to: '/services', label: layoutStr.nav.services, icon: Waypoints, perm: PERMISSION.ServiceRead },
 ]
 
 /**

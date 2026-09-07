@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { checkPasswordInited, login } from '../../api/auth'
+import { getSsoLoginUrl } from '../../api/importExport'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Label } from '../../components/ui/label'
@@ -25,6 +26,13 @@ export function LoginPage() {
     queryKey: ['passwordInited'],
     queryFn: checkPasswordInited,
     staleTime: Infinity,
+  })
+  // SSO 入口（Home/Sys ssoEnabled 驱动；未开启时接口 400 → 隐藏）
+  const { data: ssoUrl } = useQuery({
+    queryKey: ['ops', 'ssoLoginUrl'],
+    queryFn: getSsoLoginUrl,
+    staleTime: 5 * 60_000,
+    retry: false,
   })
   useEffect(() => {
     if (passwordInited === false) navigate('/init-password', { replace: true })
@@ -113,6 +121,22 @@ export function LoginPage() {
               {form.formState.isSubmitting && <Spinner />}
               {form.formState.isSubmitting ? authStr.login.submitting : authStr.login.submit}
             </Button>
+
+            {ssoUrl && (
+              <>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="h-px flex-1 bg-border" />
+                  或
+                  <span className="h-px flex-1 bg-border" />
+                </div>
+                <a
+                  href={ssoUrl}
+                  className="flex h-9 w-full items-center justify-center rounded-md border border-border text-sm text-foreground transition-colors duration-150 hover:bg-elevated"
+                >
+                  {authStr.login.sso}
+                </a>
+              </>
+            )}
           </div>
         </form>
       </div>

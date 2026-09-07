@@ -1,0 +1,41 @@
+# 一键演示栈：本前端 + AgileConfig 官方服务端（SQLite）
+#
+# 用法：
+#   docker compose up -d --build
+#     前端  http://localhost:5173（nginx 静态托管 + 同源反代）
+#     后端  http://localhost:5017（官方 adminConsole 也在此端口）
+#
+# 首次启动（初始化密码流程）：
+#   浏览器打开 http://localhost:5173 —— 若服务端实例尚未初始化 admin 密码，
+#   前端会引导进入"初始化密码"页，设置一次即可；也可直接访问 5017 用官方
+#   adminConsole 初始化。已初始化则直接登录。
+#
+# 数据不持久（演示用）：backend 使用容器内 SQLite 且未挂载数据卷，
+#   docker compose down -v 之后所有应用/配置/用户数据清空；要保留数据请
+#   自行为 backend 挂卷并改用独立数据库。
+#
+# 注意：若 backend 未就绪时启动 frontend，nginx 会缓存失败的 DNS 解析导致持续 502，
+#   执行 docker compose restart frontend 即恢复（实测记录见 docs/evidence/ITER-08/）。
+
+services:
+  backend:
+    image: kklldog/agile_config:latest
+    # Apple Silicon 必须显式 linux/amd64（默认 arm64 镜像缺 SQLite 原生库）
+    platform: linux/amd64
+    environment:
+      - TZ=Asia/Shanghai
+      - adminConsole=true
+      - db__provider=sqlite
+      - db__conn=Data Source=agile_config.db
+    ports:
+      - "5017:5000"
+
+  frontend:
+    build: .
+    # nginx 反代目标（容器网络内直连 backend）；镜像内默认值相同
+    environment:
+      - BACKEND=http://backend:5000
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend

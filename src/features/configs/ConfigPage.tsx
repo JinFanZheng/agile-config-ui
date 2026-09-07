@@ -26,6 +26,7 @@ import { cn } from '../../lib/utils'
 import { ConfigDialog } from './ConfigDialog'
 import { ConfigHistoryDialog } from '../publish/ConfigHistoryDialog'
 import { HistoryPanel } from '../publish/HistoryPanel'
+import { ExportJsonButton, JsonImportDialog, SyncEnvDialog } from './ConfigIoDialogs'
 import { PublishDialog } from '../publish/PublishDialog'
 import { ConfigTable } from './ConfigTable'
 import {
@@ -78,6 +79,8 @@ export function ConfigPage() {
   const [confirm, setConfirm] = useState<Confirm>(null)
   const [reloadKey, setReloadKey] = useState(0)
   const [publishOpen, setPublishOpen] = useState(false)
+  const [jsonImportOpen, setJsonImportOpen] = useState(false)
+  const [syncEnvOpen, setSyncEnvOpen] = useState(false)
   const { can } = usePermission()
   const [historyItem, setHistoryItem] = useState<ConfigItem | null>(null)
 
@@ -339,6 +342,17 @@ export function ConfigPage() {
                 </button>
               </div>
             )}
+            <ExportJsonButton appId={appId} env={env} />
+            {can(PERMISSION.ConfigAdd) && (
+              <Button size="sm" variant="ghost" onClick={() => setJsonImportOpen(true)}>
+                {configsStr.io.importJson}
+              </Button>
+            )}
+            {can(PERMISSION.ConfigEdit) && (
+              <Button size="sm" variant="ghost" onClick={() => setSyncEnvOpen(true)}>
+                {configsStr.io.syncEnv}
+              </Button>
+            )}
             {can(PERMISSION.ConfigAdd) && (
               <Button
                 size="sm"
@@ -470,6 +484,22 @@ export function ConfigPage() {
       />
 
       <ConfigHistoryDialog config={historyItem} env={env} onClose={() => setHistoryItem(null)} />
+
+      <JsonImportDialog
+        open={jsonImportOpen}
+        appId={appId}
+        env={env}
+        onClose={() => setJsonImportOpen(false)}
+        onDone={refresh}
+      />
+
+      <SyncEnvDialog
+        open={syncEnvOpen}
+        appId={appId}
+        currentEnv={env}
+        onClose={() => setSyncEnvOpen(false)}
+        onDone={refresh}
+      />
 
       {/* 确认流 */}
       {confirm?.kind === 'delete' && (

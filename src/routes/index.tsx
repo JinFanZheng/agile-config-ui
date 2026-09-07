@@ -8,6 +8,7 @@ import { ClientsPage } from '../features/clients/ClientsPage'
 import { LogsPage } from '../features/logs/LogsPage'
 import { UsersPage } from '../features/users/UsersPage'
 import { RolesPage } from '../features/roles/RolesPage'
+import { ServicesPage } from '../features/services/ServicesPage'
 import { NodesPage } from '../features/nodes/NodesPage'
 import { AppHistoryPage, HistoryIndexPage } from '../features/publish/HistoryPages'
 import { HomePage } from '../features/home/HomePage'
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
           { path: 'logs', element: <LogsPage /> },
           { path: 'users', element: <UsersPage /> },
           { path: 'roles', element: <RolesPage /> },
+          { path: 'services', element: <ServicesPage /> },
           { path: '*', element: <Navigate to="/" replace /> },
         ],
       },

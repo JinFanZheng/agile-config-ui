@@ -63,6 +63,26 @@ export const configsStr = {
   inline: {
     hint: '回车保存 · Esc 取消',
   },
+  io: {
+    exportJson: '导出 JSON',
+    importJson: '导入 JSON',
+    syncEnv: '同步到其他环境',
+    importTitle: '从 JSON 文件导入配置',
+    importHint: '支持带注释的 jsonc；层级键 a:b:c 会拆为分组 a:b + 键 c，注释写入描述',
+    importItems: (n: number) => `将新增 ${n} 条配置（导入后处于待发布状态）`,
+    importConfirm: '确认导入',
+    importing: '导入中…',
+    previewEmpty: '文件中没有可导入的配置',
+    syncTitle: '环境间同步',
+    syncHint: (from: string) => `把当前环境 ${from} 的全部配置覆盖到所选目标环境（同名键覆盖、新增键补齐），目标环境将产生待发布改动`,
+    syncConfirm: '开始同步',
+    syncing: '同步中…',
+    noOtherEnv: '没有其他可选环境',
+  },
+  toasts2: {
+    imported: '配置导入成功（待发布）',
+    synced: (envs: string) => `已同步到 ${envs}`,
+  },
   kv: {
     loadError: 'KV 视图加载失败',
     save: '保存 KV',

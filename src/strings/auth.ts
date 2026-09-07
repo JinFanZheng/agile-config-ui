@@ -9,6 +9,7 @@ export const authStr = {
     submit: '登录',
     submitting: '登录中…',
     failed: '登录失败',
+    sso: 'SSO 登录',
     needInit: '该实例尚未初始化管理员密码',
     goInit: '去初始化',
   },

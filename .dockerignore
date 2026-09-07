@@ -1,0 +1,18 @@
+# 构建上下文瘦身（Dockerfile 的 COPY . . 由此过滤）
+node_modules
+dist
+.git
+dogfood-output
+docs/evidence
+test-results
+playwright-report
+
+# 凭证纪律（docs/AGENT_HANDOFF.md §9）：gitignore 的真实凭证不入构建上下文；
+# .env 为可提交的非敏感默认值，保留
+.env.development
+.env.e2e
+
+# 本地杂项 / 构建缓存
+coverage
+*.tsbuildinfo
+.DS_Store

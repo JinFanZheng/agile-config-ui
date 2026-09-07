@@ -128,7 +128,7 @@ test('KV 视图保存往返', async ({ page }) => {
   await page.getByRole('button', { name: '保存 KV' }).click()
   await expect(page.getByText('KV 已保存')).toBeVisible({ timeout: 15_000 })
   // 表格视图可见新键
-  await page.getByRole('button', { name: '表格' }).click()
+  await page.getByRole('button', { name: '表格', exact: true }).click()
   await expect(page.locator('[data-testid=config-table]').getByText('new_key')).toBeVisible({
     timeout: 15_000,
   })
@@ -138,7 +138,7 @@ test('JSON 视图加载与保存', async ({ page }) => {
   test.setTimeout(90_000) // monaco 首次分包加载（CI 冷缓存）
   await login(page)
   await page.goto(`/apps/${CHILD_ID}/config`)
-  await page.getByRole('button', { name: 'JSON' }).click()
+  await page.getByRole('button', { name: 'JSON', exact: true }).click()
   await expect(page.getByText('保存 JSON')).toBeVisible({ timeout: 30_000 })
   // monaco 就绪后存在可编辑文本
   await expect(page.locator('[data-testid=json-editor-wrap] textarea')).toBeAttached({

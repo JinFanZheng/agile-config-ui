@@ -11,6 +11,7 @@ import {
   type AppItem,
 } from '../../api/apps'
 import { getWaitPublishStatus } from '../../api/configs'
+import { exportApps } from '../../api/importExport'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { CopyButton } from '../../components/CopyButton'
 import { Button } from '../../components/ui/button'
@@ -24,6 +25,7 @@ import { useEnvStore } from '../../stores/env'
 import { toast } from '../../stores/toast'
 import { appsStr } from '../../strings/apps'
 import { AppAuthDialog } from './AppAuthDialog'
+import { AppImportDialog } from './AppImportDialog'
 import { AppDialog } from './AppDialog'
 
 const PAGE_SIZE = 20
@@ -45,6 +47,7 @@ export function AppsPage() {
   const [confirm, setConfirm] = useState<ConfirmState>(null)
   const [secretApp, setSecretApp] = useState<AppItem | null>(null)
   const [authApp, setAuthApp] = useState<AppItem | null>(null)
+  const [importOpen, setImportOpen] = useState(false)
   const { can } = usePermission()
 
   // 搜索防抖 300ms（UX #5 即时过滤的服务端侧）
@@ -127,17 +130,22 @@ export function AppsPage() {
           <h1 className="text-base font-semibold">{appsStr.title}</h1>
           <p className="mt-0.5 text-xs text-muted-foreground">{appsStr.subtitle}</p>
         </div>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
           {can(PERMISSION.AppAdd) && (
-            <Button
-              onClick={() => {
-                setEditing(null)
-                setDialogOpen(true)
-              }}
-            >
-              <Plus className="h-3.5 w-3.5" />
-              {appsStr.create}
-            </Button>
+            <>
+              <Button variant="outline" onClick={() => setImportOpen(true)}>
+                {appsStr.actions.importBtn}
+              </Button>
+              <Button
+                onClick={() => {
+                  setEditing(null)
+                  setDialogOpen(true)
+                }}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                {appsStr.create}
+              </Button>
+            </>
           )}
         </div>
       </div>
@@ -332,6 +340,20 @@ export function AppsPage() {
                       >
                         {appsStr.actions.secret}
                       </button>
+                      <button
+                        type="button"
+                        className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
+                        onClick={async () => {
+                          try {
+                            await exportApps([app.id])
+                            toast.success(appsStr.toasts.exported)
+                          } catch (e) {
+                            toast.error(e instanceof ApiError ? e.message : '导出失败')
+                          }
+                        }}
+                      >
+                        {appsStr.actions.exportOne}
+                      </button>
                       {can(PERMISSION.AppAuth) && (
                         <button
                           type="button"
@@ -424,6 +446,8 @@ export function AppsPage() {
       />
 
       <AppAuthDialog app={authApp} onClose={() => setAuthApp(null)} />
+
+      <AppImportDialog open={importOpen} onClose={() => setImportOpen(false)} />
 
       <Modal
         open={secretApp !== null}
