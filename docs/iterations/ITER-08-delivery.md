@@ -1,6 +1,6 @@
 # 迭代卡 ITER-08 - 打磨与交付（M6）
 
-> 状态：ACTIVE（2026-09-07 开工；baseline @2bd11c1：59 unit + 19 e2e 全绿）
+> 状态：验收中（EVIDENCE_READY，2026-09-07 实现与自动化门全绿，等待用户验收）
 > GR 复审：PASS（oracle=compose 演示 transcript + 全量 E2E + 导入导出 round-trip 用例；Docker 部署契约=nginx 前缀同 API_PREFIXES）
 > 变更分类：大改（P2 功能聚合 + 部署交付链）
 > 方案出处：handoff §6 P2 + §10 M6；API 见 [../API_INVENTORY.md](../API_INVENTORY.md)
@@ -48,3 +48,12 @@ RG-1 baseline；RG-2 GREEN；RG-3 部署契约（nginx 前缀=API_PREFIXES 清�
 
 - SSO 无真实 OIDC Provider 时：本地起 Keycloak 测试容器或文档化降级（如实标注证据强度）
 - 镜像体积与构建缓存（node 构建层 + nginx 运行层多阶段）
+
+## 5. 验收记录（2026-09-07）
+
+- Baseline：@2bd11c1（59 unit + 19 e2e 全绿）
+- 实现：api/importExport.ts 8 端点；应用导出（浏览器下载）+ 导入两段式（预览校验→确认）；配置 JSON 导入（jsonc 注释/层级键拆分）/导出；环境间同步（DEV→TEST 实测）；服务注册中心页（子代理A）；SSO 登录入口（ssoEnabled 驱动）；Docker 镜像 + nginx 同源反代 + compose 一键演示 + README 终稿 + .dockerignore（子代理B；corepack 钉 pnpm@9.12.0 修 pnpm10 构建失败）
+- compose 演示（RG-5 L-Real）：up -d --build → 前端/SPA 直访/代理 200 → 浏览器全链路（初始化→登录→建应用→建配置→发布→已上线）零页面错误；实排障 ×2 记录进 compose 注释（pnpm10 approve-builds；backend 未就绪时 nginx DNS 缓存 502→restart frontend 恢复）
+- E2E **23/23**（+4：round-trip / JSON 导入 / 环境同步 / 服务注册移除）；vitest 59；build ✓；compose config ✓
+- API_INVENTORY 收口：86 端点全部处置（78 上线 + 4 豁免 + 1 候选），声明写入清单
+- Evidence：docs/evidence/ITER-08/（transcript + compose-1/2/3 截图）

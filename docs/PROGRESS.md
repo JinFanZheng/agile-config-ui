@@ -11,7 +11,7 @@
 - [ITER-05 发布链路](iterations/ITER-05-publish.md)：✅ VERIFIED —— 自测代验收全绿；v0.4.0 标记
 - [ITER-06 运维视图](iterations/ITER-06-ops.md)：✅ VERIFIED —— v0.5.0 标记；含两轮反馈修复
 - [ITER-07 权限体系](iterations/ITER-07-permissions.md)：✅ VERIFIED —— v0.6.0 标记
-- [ITER-08 打磨与交付](iterations/ITER-08-delivery.md)：ACTIVE —— 2026-09-07 开工（子代理并行）
+- [ITER-08 打磨与交付](iterations/ITER-08-delivery.md)：EVIDENCE_READY —— 导入导出/环境同步/服务注册/SSO + Docker + compose 一键演示实测，E2E 23/23，**86 端点全部处置，等待用户验收收官**
 - 附：发布域整合（历史合并进配置页第四视图 + /apps 待发布徽标，北极星对齐，@2bd11c1）
 - 迭代路线图见 [iterations/INDEX.md](iterations/INDEX.md)（功能模块逐迭代交付，验收一个继续下一个）
 
