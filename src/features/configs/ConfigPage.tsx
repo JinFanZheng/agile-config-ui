@@ -17,6 +17,8 @@ import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Skeleton } from '../../components/ui/spinner'
+import { usePermission } from '../../hooks/usePermission'
+import { PERMISSION } from '../../lib/permissions'
 import { useEnvStore } from '../../stores/env'
 import { toast } from '../../stores/toast'
 import { configsStr } from '../../strings/configs'
@@ -71,6 +73,7 @@ export function ConfigPage() {
   const [confirm, setConfirm] = useState<Confirm>(null)
   const [reloadKey, setReloadKey] = useState(0)
   const [publishOpen, setPublishOpen] = useState(false)
+  const { can } = usePermission()
   const [historyItem, setHistoryItem] = useState<ConfigItem | null>(null)
 
   const appInfo = useAppInfo(appId)
@@ -261,9 +264,11 @@ export function ConfigPage() {
             >
               {configsStr.pendingStrip.cancelAll}
             </Button>
-            <Button size="sm" onClick={() => setPublishOpen(true)}>
-              {configsStr.pendingStrip.publish}
-            </Button>
+            {can(PERMISSION.ConfigPublish) && (
+              <Button size="sm" onClick={() => setPublishOpen(true)}>
+                {configsStr.pendingStrip.publish}
+              </Button>
+            )}
           </>
         )}
       </div>
@@ -327,16 +332,18 @@ export function ConfigPage() {
                 </button>
               </div>
             )}
-            <Button
-              size="sm"
-              onClick={() => {
-                setEditing(null)
-                setDialogOpen(true)
-              }}
-            >
-              <Plus className="h-3.5 w-3.5" />
-              {configsStr.create}
-            </Button>
+            {can(PERMISSION.ConfigAdd) && (
+              <Button
+                size="sm"
+                onClick={() => {
+                  setEditing(null)
+                  setDialogOpen(true)
+                }}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                {configsStr.create}
+              </Button>
+            )}
           </div>
 
           {/* 表格 / 状态 */}
@@ -349,16 +356,18 @@ export function ConfigPage() {
           ) : own.length === 0 ? (
             <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-border bg-panel">
               <p className="text-sm text-muted-foreground">{configsStr.empty.title}</p>
-              <Button
-                size="sm"
-                className="mt-3"
-                onClick={() => {
-                  setEditing(null)
-                  setDialogOpen(true)
-                }}
-              >
-                {configsStr.empty.action}
-              </Button>
+              {can(PERMISSION.ConfigAdd) && (
+                <Button
+                  size="sm"
+                  className="mt-3"
+                  onClick={() => {
+                    setEditing(null)
+                    setDialogOpen(true)
+                  }}
+                >
+                  {configsStr.empty.action}
+                </Button>
+              )}
             </div>
           ) : filtered.length === 0 ? (
             <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-border bg-panel">

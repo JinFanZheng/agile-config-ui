@@ -16,7 +16,9 @@ import { Label } from '../../components/ui/label'
 import { Modal } from '../../components/ui/modal'
 import { Skeleton, Spinner } from '../../components/ui/spinner'
 import { useDirtyGuard } from '../../hooks/useDirtyGuard'
+import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
+import { PERMISSION } from '../../lib/permissions'
 import { toast } from '../../stores/toast'
 import { S } from '../../strings/common'
 import { nodesStr } from '../../strings/nodes'
@@ -32,6 +34,7 @@ type ConfirmState = { kind: 'reload'; address: string } | { kind: 'delete'; addr
 
 /** 节点管理：列表 + 添加节点 + 重载客户端 / 删除（危险动作二次确认） */
 export function NodesPage() {
+  const { can } = usePermission()
   const queryClient = useQueryClient()
   const [addOpen, setAddOpen] = useState(false)
   const [confirm, setConfirm] = useState<ConfirmState>(null)
@@ -84,10 +87,12 @@ export function NodesPage() {
           <p className="mt-0.5 text-xs text-muted-foreground">{nodesStr.subtitle}</p>
         </div>
         <div className="ml-auto">
-          <Button onClick={() => setAddOpen(true)}>
-            <Plus className="h-3.5 w-3.5" />
-            {nodesStr.add}
-          </Button>
+          {can(PERMISSION.NodeAdd) && (
+            <Button onClick={() => setAddOpen(true)}>
+              <Plus className="h-3.5 w-3.5" />
+              {nodesStr.add}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -179,20 +184,24 @@ export function NodesPage() {
                   </td>
                   <td className="px-4 py-[7px] text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <button
-                        type="button"
-                        className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
-                        onClick={() => setConfirm({ kind: 'reload', address: node.address })}
-                      >
-                        {nodesStr.actions.reloadClients}
-                      </button>
-                      <button
-                        type="button"
-                        className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-danger"
-                        onClick={() => setConfirm({ kind: 'delete', address: node.address })}
-                      >
-                        {nodesStr.actions.delete}
-                      </button>
+                      {can(PERMISSION.ClientRefresh) && (
+                        <button
+                          type="button"
+                          className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
+                          onClick={() => setConfirm({ kind: 'reload', address: node.address })}
+                        >
+                          {nodesStr.actions.reloadClients}
+                        </button>
+                      )}
+                      {can(PERMISSION.NodeDelete) && (
+                        <button
+                          type="button"
+                          className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-danger"
+                          onClick={() => setConfirm({ kind: 'delete', address: node.address })}
+                        >
+                          {nodesStr.actions.delete}
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

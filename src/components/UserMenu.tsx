@@ -1,5 +1,7 @@
 import { KeyRound, LogOut } from 'lucide-react'
+import { useState } from 'react'
 import { logout } from '../api/auth'
+import { ChangePasswordDialog } from '../features/auth/ChangePasswordDialog'
 import { useDropdown } from '../hooks/useDropdown'
 import { cn } from '../lib/utils'
 import { useAuthStore } from '../stores/auth'
@@ -10,6 +12,7 @@ import { layoutStr } from '../strings/layout'
 export function UserMenu() {
   const user = useAuthStore((s) => s.user)
   const { open, setOpen, rootRef } = useDropdown()
+  const [cpOpen, setCpOpen] = useState(false)
 
   if (!user) return null
 
@@ -42,9 +45,11 @@ export function UserMenu() {
           <button
             type="button"
             role="menuitem"
-            disabled
-            title={S.comingSoon}
-            className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground opacity-60"
+            onClick={() => {
+              setOpen(false)
+              setCpOpen(true)
+            }}
+            className="flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground transition-colors duration-150 hover:bg-hover hover:text-foreground"
           >
             <KeyRound className="h-3.5 w-3.5" />
             {layoutStr.userMenu.changePassword}
@@ -63,6 +68,8 @@ export function UserMenu() {
           </button>
         </div>
       )}
+
+      <ChangePasswordDialog open={cpOpen} onClose={() => setCpOpen(false)} />
     </div>
   )
 }

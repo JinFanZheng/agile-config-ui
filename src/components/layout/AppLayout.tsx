@@ -1,5 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
-import { Boxes, CircleCheck, Clock, Home, Menu, ScrollText, Server, Users } from 'lucide-react'
+import {
+  Boxes,
+  CircleCheck,
+  Clock,
+  Home,
+  Menu,
+  ScrollText,
+  Server,
+  Shield,
+  Users,
+} from 'lucide-react'
 import { useEffect, useState, type ComponentType } from 'react'
 import { Link, NavLink, Outlet } from 'react-router'
 import { getSys } from '../../api/ops'
@@ -7,6 +17,8 @@ import { cn } from '../../lib/utils'
 import { S } from '../../strings/common'
 import { layoutStr } from '../../strings/layout'
 import { EnvSwitcher } from '../EnvSwitcher'
+import { usePermission } from '../../hooks/usePermission'
+import { PERMISSION } from '../../lib/permissions'
 import { ThemeSwitcher } from '../ThemeSwitcher'
 import { UserMenu } from '../UserMenu'
 
@@ -14,18 +26,19 @@ interface NavItem {
   to: string
   label: string
   icon: ComponentType<{ className?: string }>
-  /** 后续里程碑的入口：可见但禁用，保持信息架构稳定 */
-  soon?: boolean
+  /** 页面级权限码（fail-closed：无权限不显示入口） */
+  perm?: string
 }
 
 const NAV_ITEMS: NavItem[] = [
   { to: '/', label: layoutStr.nav.overview, icon: Home },
-  { to: '/apps', label: layoutStr.nav.apps, icon: Boxes },
-  { to: '/history', label: layoutStr.nav.publishHistory, icon: Clock },
-  { to: '/clients', label: layoutStr.nav.clients, icon: CircleCheck },
-  { to: '/nodes', label: layoutStr.nav.nodes, icon: Server },
-  { to: '/users', label: layoutStr.nav.users, icon: Users, soon: true },
-  { to: '/logs', label: layoutStr.nav.logs, icon: ScrollText },
+  { to: '/apps', label: layoutStr.nav.apps, icon: Boxes, perm: PERMISSION.AppRead },
+  { to: '/history', label: layoutStr.nav.publishHistory, icon: Clock, perm: PERMISSION.ConfigRead },
+  { to: '/clients', label: layoutStr.nav.clients, icon: CircleCheck, perm: PERMISSION.ClientRead },
+  { to: '/nodes', label: layoutStr.nav.nodes, icon: Server, perm: PERMISSION.NodeRead },
+  { to: '/logs', label: layoutStr.nav.logs, icon: ScrollText, perm: PERMISSION.LogRead },
+  { to: '/users', label: layoutStr.nav.users, icon: Users, perm: PERMISSION.UserRead },
+  { to: '/roles', label: layoutStr.nav.roles, icon: Shield, perm: PERMISSION.RoleRead },
 ]
 
 /**
@@ -34,6 +47,7 @@ const NAV_ITEMS: NavItem[] = [
  */
 export function AppLayout() {
   const [navOpen, setNavOpen] = useState(false)
+  const { can } = usePermission()
   // 侧栏版本号由匿名接口 /Home/Sys 驱动；加载/失败/缺 appVer 时仅显示产品名
   const sys = useQuery({ queryKey: ['ops', 'sys'], queryFn: getSys, staleTime: 300_000 })
 
@@ -89,17 +103,8 @@ export function AppLayout() {
           }
         >
           <nav className="flex flex-col gap-0.5">
-            {NAV_ITEMS.map(({ to, label, icon: Icon, soon }) =>
-              soon ? (
-                <span
-                  key={to}
-                  title={S.comingSoon}
-                  className="flex cursor-default items-center gap-2 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground/50 select-none"
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                  {label}
-                </span>
-              ) : (
+            {NAV_ITEMS.filter((item) => !item.perm || can(item.perm)).map(
+              ({ to, label, icon: Icon }) => (
                 <NavLink
                   key={to}
                   to={to}

@@ -7,7 +7,9 @@ import { Button } from '../../components/ui/button'
 import { Modal } from '../../components/ui/modal'
 import { Skeleton } from '../../components/ui/spinner'
 import { buildVersionDiff, type DiffRow } from '../../lib/diff'
+import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
+import { PERMISSION } from '../../lib/permissions'
 import { cn } from '../../lib/utils'
 import { toast } from '../../stores/toast'
 import { publishStr } from '../../strings/publish'
@@ -21,6 +23,7 @@ export function HistoryPanel({ appId, env }: { appId: string; env: string }) {
   const [selected, setSelected] = useState<string[]>([]) // timelineNode ids，最多 2
   const [diffOpen, setDiffOpen] = useState(false)
   const [rollbackTo, setRollbackTo] = useState<PublishHistoryGroup | null>(null)
+  const { can } = usePermission()
 
   const history = useQuery({
     queryKey: ['publish', 'history', appId, env],
@@ -124,7 +127,7 @@ export function HistoryPanel({ appId, env }: { appId: string; env: string }) {
                       />
                       {publishStr.history.compare}
                     </label>
-                    {!isLatest ? (
+                    {!isLatest && can(PERMISSION.ConfigOffline) ? (
                       <button
                         type="button"
                         className="text-xs text-muted-foreground transition-colors hover:text-danger"

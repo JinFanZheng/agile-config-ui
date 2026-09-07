@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react'
 import { getJson, saveJson } from '../../api/configs'
 import { Button } from '../../components/ui/button'
 import { Spinner } from '../../components/ui/spinner'
+import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
+import { PERMISSION } from '../../lib/permissions'
 import { applyMonacoTheme } from '../../lib/monaco'
 import { useThemeStore } from '../../stores/theme'
 import { toast } from '../../stores/toast'
@@ -29,6 +31,7 @@ export function JsonView({
   const [savedText, setSavedText] = useState('')
   const [patch, setPatch] = useState(true)
   const [saving, setSaving] = useState(false)
+  const { can } = usePermission()
 
   const isDark = theme === 'navy-console'
   useEffect(() => {
@@ -110,7 +113,7 @@ export function JsonView({
         >
           {configsStr.jsonView.reload}
         </Button>
-        <Button size="sm" onClick={save} disabled={!dirty || saving}>
+        <Button size="sm" onClick={save} disabled={!dirty || saving || !can(PERMISSION.ConfigEdit)}>
           {saving && <Spinner />}
           {saving ? configsStr.jsonView.saving : configsStr.jsonView.save}
         </Button>

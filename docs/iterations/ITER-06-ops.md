@@ -50,7 +50,6 @@ RG-1 baseline；RG-2 GREEN；RG-4 危险操作权限码（RemoteOP 类）+ 二�
 - 本机实例无常驻业务客户端 → 一致性视图可能无真实数据可验：准备最小 .NET 客户端 demo 或标注 Mock 证据强度不冒充 L-Real
 - 子代理并行分区：api 层与共享组件由主线先冻结，页面实现分派，避免同时改账本
 
-
 | T-06 | G0 / 验收反馈修复：日志表列宽 | 用户反馈"系统日志表格列宽度不够" → 实测定位：类型列 48px 致"普通/警告"徽标换行、AppId 列无 nowrap 长 ID 折行 | 表头列宽提示（时间 168/AppId 200 max 220/类型 76）+ AppId truncate+title + 类型列 nowrap；复测换行问题归零（内容列截断为悬浮全文设计）；nodes/clients 同类排查无问题 | logs-columns-fixed.png + 测量输出 | T-05 | Codex / DONE |
 | T-07 | G0 / 全站同类审计与修复 | 用户问"其他有类似情况吗"→ 全站 8 页 × 1280/900 视口自动审计（徽标换行/截断无 title/文档溢出/配置行溢出四类检测） | 发现并修复：应用页状态列 900px 下徽标换行（w-80+nowrap，分组/时间列预防性 nowrap）；其余 15 项检查全部通过 | apps-900px-fixed.png + 审计输出 | T-06 | Codex / DONE |
 

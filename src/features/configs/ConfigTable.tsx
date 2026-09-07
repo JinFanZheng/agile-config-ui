@@ -2,6 +2,8 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import { useMemo, useRef, useState, type ReactNode } from 'react'
 import type { ConfigItem } from '../../api/configs'
+import { usePermission } from '../../hooks/usePermission'
+import { PERMISSION } from '../../lib/permissions'
 import { cn } from '../../lib/utils'
 import { configsStr } from '../../strings/configs'
 import { groupSortKey } from './useConfigs'
@@ -62,6 +64,7 @@ export function ConfigTable({
 }: ConfigTableProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [editing, setEditing] = useState<{ id: string; value: string } | null>(null)
+  const { can } = usePermission()
 
   // 虚拟行模型：分组头 + 展开组的数据行
   const virtualRows = useMemo<VirtualRow[]>(() => {
@@ -255,7 +258,7 @@ export function ConfigTable({
                 <span className="flex items-center justify-end gap-1 pr-1">
                   {!isInherited && (
                     <>
-                      {item.editStatus !== 0 && (
+                      {item.editStatus !== 0 && can(PERMISSION.ConfigEdit) && (
                         <button
                           type="button"
                           className="rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-hover hover:text-foreground"
@@ -264,13 +267,15 @@ export function ConfigTable({
                           {configsStr.actions.history}
                         </button>
                       )}
-                      <button
-                        type="button"
-                        className="rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-hover hover:text-foreground"
-                        onClick={() => onEdit(item)}
-                      >
-                        {configsStr.actions.edit}
-                      </button>
+                      {can(PERMISSION.ConfigEdit) && (
+                        <button
+                          type="button"
+                          className="rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-hover hover:text-foreground"
+                          onClick={() => onEdit(item)}
+                        >
+                          {configsStr.actions.edit}
+                        </button>
+                      )}
                       {item.editStatus !== 10 && (
                         <button
                           type="button"
@@ -280,13 +285,15 @@ export function ConfigTable({
                           {configsStr.actions.cancelEdit}
                         </button>
                       )}
-                      <button
-                        type="button"
-                        className="rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-hover hover:text-danger"
-                        onClick={() => onDelete(item)}
-                      >
-                        {configsStr.actions.delete}
-                      </button>
+                      {can(PERMISSION.ConfigDelete) && (
+                        <button
+                          type="button"
+                          className="rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-hover hover:text-danger"
+                          onClick={() => onDelete(item)}
+                        >
+                          {configsStr.actions.delete}
+                        </button>
+                      )}
                     </>
                   )}
                 </span>

@@ -3,7 +3,9 @@ import { useEffect, useState } from 'react'
 import { getKvList, saveKvList } from '../../api/configs'
 import { Button } from '../../components/ui/button'
 import { Spinner } from '../../components/ui/spinner'
+import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
+import { PERMISSION } from '../../lib/permissions'
 import { toast } from '../../stores/toast'
 import { configsStr } from '../../strings/configs'
 
@@ -25,6 +27,7 @@ export function KvView({
   const [savedText, setSavedText] = useState('')
   const [patch, setPatch] = useState(true)
   const [saving, setSaving] = useState(false)
+  const { can } = usePermission()
 
   const query = useQuery({
     queryKey: ['configs', 'kv', appId, env, reloadKey],
@@ -101,7 +104,7 @@ export function KvView({
         >
           {configsStr.kv.reload}
         </Button>
-        <Button size="sm" onClick={save} disabled={!dirty || saving}>
+        <Button size="sm" onClick={save} disabled={!dirty || saving || !can(PERMISSION.ConfigEdit)}>
           {saving && <Spinner />}
           {saving ? configsStr.kv.saving : configsStr.kv.save}
         </Button>

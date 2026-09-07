@@ -16,9 +16,12 @@ import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Modal } from '../../components/ui/modal'
 import { Skeleton } from '../../components/ui/spinner'
+import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
+import { PERMISSION } from '../../lib/permissions'
 import { toast } from '../../stores/toast'
 import { appsStr } from '../../strings/apps'
+import { AppAuthDialog } from './AppAuthDialog'
 import { AppDialog } from './AppDialog'
 
 const PAGE_SIZE = 20
@@ -39,6 +42,8 @@ export function AppsPage() {
   const [editing, setEditing] = useState<AppItem | null>(null)
   const [confirm, setConfirm] = useState<ConfirmState>(null)
   const [secretApp, setSecretApp] = useState<AppItem | null>(null)
+  const [authApp, setAuthApp] = useState<AppItem | null>(null)
+  const { can } = usePermission()
 
   // 搜索防抖 300ms（UX #5 即时过滤的服务端侧）
   useEffect(() => {
@@ -110,15 +115,17 @@ export function AppsPage() {
           <p className="mt-0.5 text-xs text-muted-foreground">{appsStr.subtitle}</p>
         </div>
         <div className="ml-auto">
-          <Button
-            onClick={() => {
-              setEditing(null)
-              setDialogOpen(true)
-            }}
-          >
-            <Plus className="h-3.5 w-3.5" />
-            {appsStr.create}
-          </Button>
+          {can(PERMISSION.AppAdd) && (
+            <Button
+              onClick={() => {
+                setEditing(null)
+                setDialogOpen(true)
+              }}
+            >
+              <Plus className="h-3.5 w-3.5" />
+              {appsStr.create}
+            </Button>
+          )}
         </div>
       </div>
 
@@ -155,9 +162,13 @@ export function AppsPage() {
               <th className="px-4 py-2 font-medium">{appsStr.table.name}</th>
               <th className="px-4 py-2 font-medium">{appsStr.table.appId}</th>
               <th className="px-4 py-2 font-medium whitespace-nowrap">{appsStr.table.group}</th>
-              <th className="w-[80px] px-4 py-2 font-medium whitespace-nowrap">{appsStr.table.status}</th>
+              <th className="w-[80px] px-4 py-2 font-medium whitespace-nowrap">
+                {appsStr.table.status}
+              </th>
               <th className="px-4 py-2 font-medium">{appsStr.table.inherit}</th>
-              <th className="px-4 py-2 font-medium whitespace-nowrap">{appsStr.table.updateTime}</th>
+              <th className="px-4 py-2 font-medium whitespace-nowrap">
+                {appsStr.table.updateTime}
+              </th>
               <th className="px-4 py-2 text-right font-medium">{appsStr.table.actions}</th>
             </tr>
           </thead>
@@ -285,34 +296,49 @@ export function AppsPage() {
                       >
                         {appsStr.actions.secret}
                       </button>
-                      <button
-                        type="button"
-                        className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
-                        onClick={() => {
-                          setEditing(app)
-                          setDialogOpen(true)
-                        }}
-                      >
-                        {appsStr.actions.edit}
-                      </button>
-                      <button
-                        type="button"
-                        className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
-                        onClick={() =>
-                          setConfirm(
-                            app.enabled ? { kind: 'disable', app } : { kind: 'enable', app }
-                          )
-                        }
-                      >
-                        {app.enabled ? appsStr.actions.disable : appsStr.actions.enable}
-                      </button>
-                      <button
-                        type="button"
-                        className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-danger"
-                        onClick={() => setConfirm({ kind: 'delete', app })}
-                      >
-                        {appsStr.actions.delete}
-                      </button>
+                      {can(PERMISSION.AppAuth) && (
+                        <button
+                          type="button"
+                          className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
+                          onClick={() => setAuthApp(app)}
+                        >
+                          授权
+                        </button>
+                      )}
+                      {can(PERMISSION.AppEdit) && (
+                        <button
+                          type="button"
+                          className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
+                          onClick={() => {
+                            setEditing(app)
+                            setDialogOpen(true)
+                          }}
+                        >
+                          {appsStr.actions.edit}
+                        </button>
+                      )}
+                      {can(PERMISSION.AppEdit) && (
+                        <button
+                          type="button"
+                          className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"
+                          onClick={() =>
+                            setConfirm(
+                              app.enabled ? { kind: 'disable', app } : { kind: 'enable', app }
+                            )
+                          }
+                        >
+                          {app.enabled ? appsStr.actions.disable : appsStr.actions.enable}
+                        </button>
+                      )}
+                      {can(PERMISSION.AppDelete) && (
+                        <button
+                          type="button"
+                          className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-danger"
+                          onClick={() => setConfirm({ kind: 'delete', app })}
+                        >
+                          {appsStr.actions.delete}
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -349,6 +375,8 @@ export function AppsPage() {
       </div>
 
       <AppDialog open={dialogOpen} app={editing} onClose={() => setDialogOpen(false)} />
+
+      <AppAuthDialog app={authApp} onClose={() => setAuthApp(null)} />
 
       <Modal
         open={secretApp !== null}

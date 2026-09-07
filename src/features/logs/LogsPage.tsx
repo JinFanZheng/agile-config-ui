@@ -100,9 +100,15 @@ export function LogsPage() {
         <table className="w-full min-w-[720px] border-collapse text-[13px]">
           <thead>
             <tr className="border-b border-border bg-elevated text-left text-xs text-muted-foreground">
-              <th className="w-[168px] px-4 py-2 font-medium whitespace-nowrap">{logsStr.table.time}</th>
-              <th className="w-[200px] max-w-[220px] px-4 py-2 font-medium">{logsStr.table.appId}</th>
-              <th className="w-[76px] px-4 py-2 font-medium whitespace-nowrap">{logsStr.table.type}</th>
+              <th className="w-[168px] px-4 py-2 font-medium whitespace-nowrap">
+                {logsStr.table.time}
+              </th>
+              <th className="w-[200px] max-w-[220px] px-4 py-2 font-medium">
+                {logsStr.table.appId}
+              </th>
+              <th className="w-[76px] px-4 py-2 font-medium whitespace-nowrap">
+                {logsStr.table.type}
+              </th>
               <th className="px-4 py-2 font-medium">{logsStr.table.text}</th>
             </tr>
           </thead>
@@ -156,7 +162,10 @@ export function LogsPage() {
                     {formatLogTime(log.logTime)}
                   </td>
                   <td className="max-w-[220px] px-4 py-[7px]">
-                    <span className="block truncate font-mono text-xs" title={log.appId || undefined}>
+                    <span
+                      className="block truncate font-mono text-xs"
+                      title={log.appId || undefined}
+                    >
                       {log.appId || '—'}
                     </span>
                   </td>

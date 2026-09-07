@@ -14,7 +14,9 @@ import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Skeleton } from '../../components/ui/spinner'
+import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
+import { PERMISSION } from '../../lib/permissions'
 import { cn } from '../../lib/utils'
 import { toast } from '../../stores/toast'
 import { clientsStr } from '../../strings/clients'
@@ -47,6 +49,7 @@ export function ClientsPage() {
   const [env, setEnv] = useState('')
   const [page, setPage] = useState(1)
   const [confirm, setConfirm] = useState<Confirm>(null)
+  const { can } = usePermission()
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -118,24 +121,28 @@ export function ClientsPage() {
           <p className="mt-0.5 text-xs text-muted-foreground">{clientsStr.subtitle}</p>
         </div>
         <div className="ml-auto flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setConfirm({ kind: 'clearServiceCache' })}
-          >
-            {clientsStr.actions.clearServiceCache}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setConfirm({ kind: 'clearConfigCache' })}
-          >
-            {clientsStr.actions.clearConfigCache}
-          </Button>
-          <Button variant="danger" size="sm" onClick={() => setConfirm({ kind: 'reloadAll' })}>
-            <RefreshCw className="h-3.5 w-3.5" />
-            {clientsStr.actions.reloadAll}
-          </Button>
+          {can(PERMISSION.ClientRefresh) && (
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setConfirm({ kind: 'clearServiceCache' })}
+              >
+                {clientsStr.actions.clearServiceCache}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setConfirm({ kind: 'clearConfigCache' })}
+              >
+                {clientsStr.actions.clearConfigCache}
+              </Button>
+              <Button variant="danger" size="sm" onClick={() => setConfirm({ kind: 'reloadAll' })}>
+                <RefreshCw className="h-3.5 w-3.5" />
+                {clientsStr.actions.reloadAll}
+              </Button>
+            </>
+          )}
         </div>
       </div>
 

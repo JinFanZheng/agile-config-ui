@@ -39,7 +39,7 @@ test('节点管理：添加 → 离线徽标 → 删除', async ({ page }) => {
   await page.getByLabel('备注', { exact: true }).fill('e2e 临时节点')
   await page.getByRole('button', { name: '添加', exact: true }).click()
   await expect(page.getByRole('cell', { name: addr, exact: true })).toBeVisible({ timeout: 15_000 })
-  await expect(page.locator('tbody').getByText('离线')).toBeVisible()
+  await expect(page.locator(`tr:has-text("${addr}")`).getByText('离线')).toBeVisible()
 
   await page.locator(`tr:has-text("${addr}")`).getByRole('button', { name: '删除' }).click()
   await page.getByRole('alertdialog').getByRole('button', { name: '删除' }).click()

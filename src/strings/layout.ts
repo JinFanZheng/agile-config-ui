@@ -6,6 +6,7 @@ export const layoutStr = {
     clients: '客户端',
     nodes: '节点',
     users: '用户',
+    roles: '角色',
     logs: '系统日志',
     openMenu: '打开导航菜单',
   },

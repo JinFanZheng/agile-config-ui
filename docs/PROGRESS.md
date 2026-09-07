@@ -10,7 +10,7 @@
 - [ITER-04 配置管理](iterations/ITER-04-configs.md)：✅ VERIFIED —— 含验收反馈三项修复（面包屑/KV 数组 bug/jsonc 注释）
 - [ITER-05 发布链路](iterations/ITER-05-publish.md)：✅ VERIFIED —— 自测代验收全绿；v0.4.0 标记
 - [ITER-06 运维视图](iterations/ITER-06-ops.md)：✅ VERIFIED —— v0.5.0 标记；含两轮反馈修复
-- [ITER-07 权限体系](iterations/ITER-07-permissions.md)：ACTIVE —— 2026-09-07 开工（子代理并行）
+- [ITER-07 权限体系](iterations/ITER-07-permissions.md)：EVIDENCE_READY —— 用户/角色(权限矩阵)/应用授权/改密 + 全站 fail-closed 门控 + 越权 403 negative，E2E 18/18，**等待用户验收**
 - 迭代路线图见 [iterations/INDEX.md](iterations/INDEX.md)（功能模块逐迭代交付，验收一个继续下一个）
 
 ## M0 脚手架 — ✅ 完成（2026-09-04）
