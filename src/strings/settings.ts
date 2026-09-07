@@ -3,7 +3,7 @@ export const settingsStr = {
   intro: '个性化偏好仅保存在本浏览器，不落服务端，修改即时生效',
   appearance: '外观',
   theme: '主题',
-  themeDesc: '全局配色方案，与顶栏切换器双向同步',
+  themeDesc: '全局配色方案，与顶栏切换器双向同步；跟随系统档随系统深浅色自动切换',
   uiFontSize: '界面字号',
   uiFontSizeDesc: '缩放全站文字与布局密度',
   uiFontSizeOptions: {

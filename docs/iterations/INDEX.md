@@ -11,6 +11,7 @@
 | [ITER-10](ITER-10-integration-guide.md) | 接入指南（网页直出） | 验收中（EVIDENCE_READY） | 用户验收（五节内容 + 复制交互） |
 | [ITER-11](ITER-11-agent-skill.md) | Agent 运维 Skill | 验收中（EVIDENCE_READY） | 用户验收（skill 触发一次实操） |
 | [ITER-12](ITER-12-themes.md) | 盲盒皮肤×5（十主题） | 验收中（EVIDENCE_READY） | 用户验收（十主题逐个过目） |
+| [ITER-13](ITER-13-themes-polish.md) | 主题打磨：基线对比度+浅/深分组+跟随系统 | 验收中（EVIDENCE_READY） | 用户验收（新观感/分组/跟随系统） |
 
 ## 迭代路线图（2026-09-04 与用户约定：逐迭代交付，验收一个再继续；跨模块独立页用子代理并行）
 
@@ -28,6 +29,7 @@
 | ITER-10 | 接入指南（产品内文档页，网页直出 TSX）                            | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-10-integration-guide.md](ITER-10-integration-guide.md) | `docs/evidence/ITER-10/` |
 | ITER-11 | Agent 运维 Skill（agileconfig-ops）                              | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-11-agent-skill.md](ITER-11-agent-skill.md) | `docs/evidence/ITER-11/` |
 | ITER-12 | 盲盒皮肤×5（曜石/紫夜/樱粉/摩卡/森夜，共十主题）                | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-12-themes.md](ITER-12-themes.md) | `docs/evidence/ITER-12/` |
+| ITER-13 | 主题打磨：基线对比度优化 + 浅/深分组 + 跟随系统                | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-13-themes-polish.md](ITER-13-themes-polish.md) | `docs/evidence/ITER-13/` |
 
 > 覆盖核对：M0 已适配 3 + ITER-03..08 共 78（含 Search 归 03、WaitPublishStatus 归 04、发布共用）+ 显式豁免 4（`Admin/Logoff`、`Home/IndexAsync`、`Home/Echo`、`Home/GetIP`；另有 `RemoteOP/RegisterNode` 待 ITER-06 定案）= 86 ✓。豁免需用户确认，见 API_INVENTORY 文末。
 

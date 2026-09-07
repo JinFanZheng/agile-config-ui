@@ -49,7 +49,7 @@ pnpm dev          # http://localhost:5173
 | 路由       | React Router v7                                         |
 | 服务端状态 | TanStack Query                                          |
 | 客户端状态 | zustand（仅会话 / 当前环境）                            |
-| UI         | shadcn/ui 风格自有组件 + Tailwind CSS 4（十主题引擎）   |
+| UI         | shadcn/ui 风格自有组件 + Tailwind CSS 4（十主题+跟随系统引擎）   |
 | 表单       | react-hook-form + zod                                   |
 | HTTP       | ky 薄封装（Bearer 注入、401 全局拦截、信封解包）        |
 | 测试       | Vitest（单元）+ Playwright（对本机实例的 E2E）          |

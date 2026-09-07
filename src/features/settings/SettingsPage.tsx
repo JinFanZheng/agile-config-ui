@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
+import { Monitor } from 'lucide-react'
 import { Card, CardHeader, CardTitle } from '../../components/ui/card'
-import { THEMES } from '../../lib/themes'
+import { isDarkTheme, SYSTEM_THEME, THEMES, type ThemeSetting } from '../../lib/themes'
 import { cn } from '../../lib/utils'
 import {
   EDITOR_FONT_SIZES,
@@ -10,6 +11,7 @@ import {
   type UiFontSize,
 } from '../../stores/settings'
 import { settingsStr } from '../../strings/settings'
+import { themeStr } from '../../strings/theme'
 
 /** 设置行：左侧标题+说明，右侧控件（触屏纵向堆叠） */
 function SettingRow({ title, desc, children }: { title: string; desc?: string; children: ReactNode }) {
@@ -96,7 +98,43 @@ function Switch({
   )
 }
 
-/** 设置中心：主题 / 界面字号 / 编辑器字号 / 动效，全部本地持久化 + 即时生效（ITER-09） */
+/** 主题 chip：透明 radio 铺满 chip（点击面=chip 本体，键盘可达）；concrete 主题带三色样条，system 带显示器图标 */
+function ThemeChip({
+  value,
+  checked,
+  onSelect,
+  children,
+}: {
+  value: string
+  checked: boolean
+  onSelect: () => void
+  children: ReactNode
+}) {
+  return (
+    <label className="group relative cursor-pointer">
+      <input
+        type="radio"
+        name="settings-theme"
+        value={value}
+        checked={checked}
+        onChange={onSelect}
+        className="peer absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0"
+      />
+      <span
+        className={cn(
+          'flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs transition-colors duration-150 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50',
+          checked
+            ? 'border-primary bg-selected font-medium text-selected-foreground'
+            : 'border-border text-muted-foreground group-hover:bg-hover group-hover:text-foreground'
+        )}
+      >
+        {children}
+      </span>
+    </label>
+  )
+}
+
+/** 设置中心：主题（跟随系统 + 浅/深两组）/ 界面字号 / 编辑器字号 / 动效，全部本地持久化 + 即时生效 */
 export function SettingsPage() {
   const theme = useSettingsStore((s) => s.theme)
   const setTheme = useSettingsStore((s) => s.setTheme)
@@ -117,37 +155,45 @@ export function SettingsPage() {
           <CardTitle>{settingsStr.appearance}</CardTitle>
         </CardHeader>
         <SettingRow title={settingsStr.theme} desc={settingsStr.themeDesc}>
-          <div role="radiogroup" aria-label={settingsStr.theme} className="flex max-w-md flex-wrap gap-1.5">
-            {THEMES.map(({ id, label, swatch }) => {
-              const active = theme === id
-              return (
-                <label key={id} className="group relative cursor-pointer">
-                  <input
-                    type="radio"
-                    name="settings-theme"
-                    value={id}
-                    checked={active}
-                    onChange={() => setTheme(id)}
-                    className="peer absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0"
-                  />
-                  <span
-                    className={cn(
-                      'flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs transition-colors duration-150 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50',
-                    active
-                      ? 'border-primary bg-selected font-medium text-selected-foreground'
-                      : 'border-border text-muted-foreground group-hover:bg-hover group-hover:text-foreground'
-                    )}
-                  >
-                    <span className="flex overflow-hidden rounded-sm border border-border">
-                      {swatch.map((c) => (
-                        <span key={c} className="h-3.5 w-1.5" style={{ backgroundColor: c }} />
-                      ))}
-                    </span>
-                    {label}
-                  </span>
-                </label>
-              )
-            })}
+          {/* 单一 radiogroup：跟随系统 + 浅/深两组视觉聚类，方向键在全部选项间可达 */}
+          <div role="radiogroup" aria-label={settingsStr.theme} className="flex max-w-md flex-col gap-2">
+            <div className="flex flex-wrap gap-1.5">
+              <ThemeChip
+                value={SYSTEM_THEME}
+                checked={theme === SYSTEM_THEME}
+                onSelect={() => setTheme(SYSTEM_THEME)}
+              >
+                <Monitor className="h-3.5 w-3.5" />
+                {themeStr.system}
+              </ThemeChip>
+            </div>
+            {(
+              [
+                [themeStr.groups.light, THEMES.filter((t) => !isDarkTheme(t.id))],
+                [themeStr.groups.dark, THEMES.filter((t) => isDarkTheme(t.id))],
+              ] as const
+            ).map(([groupLabel, items]) => (
+              <div key={groupLabel} className="flex flex-col gap-1.5">
+                <span className="text-[10px] text-muted-foreground/60">{groupLabel}</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {items.map(({ id, label, swatch }) => (
+                    <ThemeChip
+                      key={id}
+                      value={id}
+                      checked={theme === id}
+                      onSelect={() => setTheme(id as ThemeSetting)}
+                    >
+                      <span className="flex overflow-hidden rounded-sm border border-border">
+                        {swatch.map((c) => (
+                          <span key={c} className="h-3.5 w-1.5" style={{ backgroundColor: c }} />
+                        ))}
+                      </span>
+                      {label}
+                    </ThemeChip>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </SettingRow>
         <SettingRow title={settingsStr.uiFontSize} desc={settingsStr.uiFontSizeDesc}>

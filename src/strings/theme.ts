@@ -3,6 +3,14 @@ export const themeStr = {
     label: '主题',
     title: '切换界面主题',
   },
+  /** 分组标签（切换器与设置页共用；分组下具体主题清单由注册表驱动） */
+  groups: {
+    light: '浅色',
+    dark: '深色',
+  },
+  /** 跟随系统档（'system' 哨兵值的展示名） */
+  system: '跟随系统',
+  systemDesc: '随系统深浅色自动切换（深色=深蓝中控，浅色=石墨）',
   themes: {
     graphite: '石墨',
     'clear-blue': '晨雾蓝',

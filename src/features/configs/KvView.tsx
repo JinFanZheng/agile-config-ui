@@ -40,7 +40,7 @@ export function KvView({
   const [diffTarget, setDiffTarget] = useState<'saved' | 'online' | null>(null)
   const { can } = usePermission()
 
-  const theme = useSettingsStore((s) => s.theme)
+  const theme = useSettingsStore((s) => s.resolvedTheme)
   const editorFontSize = useSettingsStore((s) => s.editorFontSize)
   useEffect(() => {
     applyMonacoTheme(isDarkTheme(theme))

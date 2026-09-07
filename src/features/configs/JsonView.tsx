@@ -33,7 +33,7 @@ export function JsonView({
   /** 线上最新发布版 key→value 快照（key 格式 group:key）；null=无发布史 */
   onlineValues: Map<string, string> | null
 }) {
-  const theme = useSettingsStore((s) => s.theme)
+  const theme = useSettingsStore((s) => s.resolvedTheme)
   const editorFontSize = useSettingsStore((s) => s.editorFontSize)
   const [text, setText] = useState<string | null>(null)
   const [savedText, setSavedText] = useState('')

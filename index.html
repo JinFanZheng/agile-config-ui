@@ -51,7 +51,12 @@
         if (raw) {
           var saved = JSON.parse(raw).state
           if (saved) {
-            if (THEMES.indexOf(saved.theme) !== -1) t = saved.theme
+            if (saved.theme === 'system') {
+              // 跟随系统（ITER-13）：深→深蓝中控 / 浅→石墨，与 stores/settings.ts 解析规则一致
+              try {
+                t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'navy-console' : 'graphite'
+              } catch (e3) {}
+            } else if (THEMES.indexOf(saved.theme) !== -1) t = saved.theme
             if (UI_FONTS.indexOf(saved.uiFontSize) !== -1) uiFont = saved.uiFontSize
             if (typeof saved.motion === 'boolean') motion = saved.motion
           }

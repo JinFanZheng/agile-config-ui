@@ -74,7 +74,6 @@ function hueDist(a, b) {
 const failures = []
 const notes = []
 const ids = ['graphite', 'clear-blue', 'warm-paper', 'navy-console', 'fresh-mint', 'obsidian', 'violet-night', 'sakura', 'mocha', 'forest']
-const NEW_IDS = ['obsidian', 'violet-night', 'sakura', 'mocha', 'forest']
 
 if (JSON.stringify(themes['(root)']) !== JSON.stringify(themes['graphite'])) {
   failures.push('graphite 块与 :root 令牌不一致')
@@ -86,15 +85,11 @@ for (const id of ids) {
     failures.push(`${id}: index.css 缺少令牌块`)
     continue
   }
-  const isNew = NEW_IDS.includes(id)
-  // 既有 5 套 v1.0.0 已验收外观不动：次级文/强调文的既有弱点降级为基线记录；新 5 套硬卡
+  // ITER-13 起：基线优化完成，十主题全量硬卡（无豁免）
   const hard = (fg, bg, min, what) => {
     const c = contrast(t[fg], t[bg])
-    if (c < min) {
-      const msg = `${id}: ${what} ${t[fg]} on ${t[bg]} = ${c.toFixed(2)} < ${min}`
-      if (isNew) failures.push(msg)
-      else notes.push(`[基线] ${msg}`)
-    } else if (c < 7) notes.push(`${id}: ${what} = ${c.toFixed(2)}（≥AA，低于 7）`)
+    if (c < min) failures.push(`${id}: ${what} ${t[fg]} on ${t[bg]} = ${c.toFixed(2)} < ${min}`)
+    else if (c < 7) notes.push(`${id}: ${what} = ${c.toFixed(2)}（≥AA，低于 7）`)
   }
   // 文本对比度（WCAG AA 4.5；正文目标 7）
   for (const bg of ['bg-page', 'bg-panel', 'bg-elevated', 'bg-input']) hard('text-primary', bg, 4.5, `正文/${bg}`)

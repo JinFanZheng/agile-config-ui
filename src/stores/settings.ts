@@ -1,6 +1,14 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { DEFAULT_THEME, isThemeId, type ThemeId } from '../lib/themes'
+import {
+  DEFAULT_THEME,
+  isThemeId,
+  isThemeSetting,
+  resolveThemeSetting,
+  SYSTEM_THEME,
+  type ThemeId,
+  type ThemeSetting,
+} from '../lib/themes'
 
 /**
  * 设置中心 store（ITER-09）：浏览器本地个性化设置，统一持久化键。
@@ -44,24 +52,38 @@ function systemPrefersReducedMotion(): boolean {
   }
 }
 
-/** 把设置写到 <html>：dataset 供 CSS 令牌/动效选择器消费 */
-function applyToDocument(s: Pick<SettingsState, 'theme' | 'uiFontSize' | 'motion'>) {
+/** 系统配色偏好（跟随系统主题档的解析依据） */
+function systemPrefersDark(): boolean {
+  try {
+    return !!window.matchMedia?.('(prefers-color-scheme: dark)').matches
+  } catch {
+    return false
+  }
+}
+
+/** 把设置写到 <html>：dataset 供 CSS 令牌/动效选择器消费。返回解析后的有效主题（system → 具体 id） */
+function applyToDocument(s: Pick<SettingsState, 'theme' | 'uiFontSize' | 'motion'>): ThemeId {
   const doc = document.documentElement
-  doc.dataset.theme = s.theme
+  const resolved = resolveThemeSetting(s.theme, systemPrefersDark())
+  doc.dataset.theme = resolved
   doc.dataset.uiFont = s.uiFontSize
   doc.dataset.motion = s.motion ? 'on' : 'off'
-  // html 内联背景：CSS 加载前由 index.html 引导脚本的静态映射铺底（防白闪）；
+  // html 内联背景：CSS 加载前由 index.html 引导脚本的静态映射铺底（防闪屏）；
   // 此处以 --bg-page 令牌实时值回写（令牌改色后自动跟随），取不到令牌则保留引导值。
   const bg = getComputedStyle(doc).getPropertyValue('--bg-page').trim()
   if (bg) doc.style.backgroundColor = bg
+  return resolved
 }
 
 export interface SettingsState {
-  theme: ThemeId
+  /** 主题设置值：具体主题 id 或 'system'（跟随系统，ITER-13） */
+  theme: ThemeSetting
+  /** 有效主题（system 已解析为具体 id）：monaco 深浅、切换器文案等消费方一律用它 */
+  resolvedTheme: ThemeId
   uiFontSize: UiFontSize
   editorFontSize: EditorFontSize
   motion: boolean
-  setTheme: (theme: ThemeId) => void
+  setTheme: (theme: ThemeSetting) => void
   setUiFontSize: (size: UiFontSize) => void
   setEditorFontSize: (size: EditorFontSize) => void
   setMotion: (on: boolean) => void
@@ -118,13 +140,14 @@ export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
       theme: DEFAULT_THEME,
+      resolvedTheme: DEFAULT_THEME,
       uiFontSize: DEFAULT_UI_FONT_SIZE,
       editorFontSize: DEFAULT_EDITOR_FONT_SIZE,
       motion: !systemPrefersReducedMotion(),
       setTheme: (theme) =>
         set((s) => {
-          applyToDocument({ ...s, theme })
-          return { theme }
+          const resolvedTheme = applyToDocument({ ...s, theme })
+          return { theme, resolvedTheme }
         }),
       setUiFontSize: (uiFontSize) =>
         set((s) => {
@@ -143,16 +166,32 @@ export const useSettingsStore = create<SettingsState>()(
       merge: (persisted, current) => {
         const p = persisted as Partial<SettingsState> | undefined
         const next = {
-          theme: isThemeId(p?.theme) ? p.theme : DEFAULT_THEME,
+          theme: isThemeSetting(p?.theme) ? p.theme : DEFAULT_THEME,
           uiFontSize: isUiFontSize(p?.uiFontSize) ? p.uiFontSize : DEFAULT_UI_FONT_SIZE,
           editorFontSize: isEditorFontSize(p?.editorFontSize)
             ? p.editorFontSize
             : DEFAULT_EDITOR_FONT_SIZE,
           motion: typeof p?.motion === 'boolean' ? p.motion : !systemPrefersReducedMotion(),
         }
-        applyToDocument(next)
-        return { ...current, ...next }
+        const resolvedTheme = applyToDocument(next)
+        return { ...current, ...next, resolvedTheme }
       },
     }
   )
 )
+
+// ---------------------------------------------------------------------------
+// 跟随系统（ITER-13）：system 档下系统配色切换时实时重解析并应用（不刷新页面）
+// ---------------------------------------------------------------------------
+try {
+  const colorScheme = window.matchMedia('(prefers-color-scheme: dark)')
+  const onSchemeChange = () => {
+    const s = useSettingsStore.getState()
+    if (s.theme !== SYSTEM_THEME) return
+    const resolvedTheme = applyToDocument(s)
+    useSettingsStore.setState({ resolvedTheme })
+  }
+  colorScheme.addEventListener?.('change', onSchemeChange)
+} catch {
+  // matchMedia 不可用（极端环境）：跟随系统退化为解析时点的静态值
+}

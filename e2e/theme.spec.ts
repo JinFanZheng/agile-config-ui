@@ -85,3 +85,47 @@ for (const t of NEW_THEMES) {
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'graphite')
   })
 }
+
+test('切换器分组：跟随系统 + 浅色/深色两组', async ({ page }) => {
+  await login(page)
+  await page.getByRole('button', { name: '石墨' }).click()
+  const menu = page.getByRole('menu', { name: '主题' })
+  await expect(menu.getByRole('menuitemradio', { name: '跟随系统' })).toBeVisible()
+  await expect(menu.getByRole('group', { name: '浅色' })).toBeVisible()
+  await expect(menu.getByRole('group', { name: '深色' })).toBeVisible()
+  // 浅色组 5 项 + 深色组 5 项 + 跟随系统 1 项
+  await expect(menu.getByRole('group', { name: '浅色' }).getByRole('menuitemradio')).toHaveCount(5)
+  await expect(menu.getByRole('group', { name: '深色' }).getByRole('menuitemradio')).toHaveCount(5)
+  // 有且仅有一项选中（跟随系统的显示器图标不得被误当作选中态）
+  await expect(menu.locator('[aria-checked="true"]')).toHaveCount(1)
+  await expect(menu.getByRole('menuitemradio', { name: '石墨' })).toHaveAttribute('aria-checked', 'true')
+  await page.keyboard.press('Escape')
+})
+
+test('跟随系统：随系统深浅实时切换、刷新持久且 boot 铺对应底色', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await login(page)
+
+  await page.getByRole('button', { name: '石墨' }).click()
+  await page.getByRole('menuitemradio', { name: '跟随系统' }).click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'navy-console')
+
+  // 系统切浅色：不刷新实时跟随
+  await page.emulateMedia({ colorScheme: 'light' })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'graphite')
+
+  // 切回深色后刷新：boot 脚本按（模拟的）系统深色解析并铺深色底（防白闪）
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'navy-console')
+  await page.reload()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'navy-console')
+  expect(await page.evaluate(() => document.documentElement.style.backgroundColor)).toBe('rgb(10, 20, 36)')
+  // 切换器按钮显示"跟随系统"
+  await expect(page.getByRole('button', { name: '跟随系统' })).toBeVisible()
+
+  // 还原：显式石墨（并复位媒体模拟）
+  await page.getByRole('button', { name: '跟随系统' }).click()
+  await page.getByRole('menuitemradio', { name: '石墨' }).click()
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'graphite')
+  await page.emulateMedia({ colorScheme: 'light' })
+})

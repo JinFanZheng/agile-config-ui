@@ -156,4 +156,51 @@ describe('useSettingsStore', () => {
   it('编辑器字号档位枚举为 12/13/14/15', () => {
     expect([...EDITOR_FONT_SIZES]).toEqual([12, 13, 14, 15])
   })
+
+  it('setTheme(system)：resolvedTheme 按系统配色解析并写 data-theme（深→深蓝中控 / 浅→石墨）', () => {
+    vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
+    useSettingsStore.getState().setTheme('system')
+    expect(useSettingsStore.getState().theme).toBe('system')
+    expect(useSettingsStore.getState().resolvedTheme).toBe('navy-console')
+    expect(document.documentElement.dataset.theme).toBe('navy-console')
+
+    vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: false }))
+    useSettingsStore.getState().setTheme('system')
+    expect(useSettingsStore.getState().resolvedTheme).toBe('graphite')
+    expect(document.documentElement.dataset.theme).toBe('graphite')
+    vi.unstubAllGlobals()
+  })
+
+  it('持久化恢复 system 档：resolvedTheme 重新解析并应用', () => {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, persisted({ theme: 'system' }))
+    useSettingsStore.persist.rehydrate()
+    const s = useSettingsStore.getState()
+    expect(s.theme).toBe('system')
+    expect(['navy-console', 'graphite']).toContain(s.resolvedTheme)
+    expect(['navy-console', 'graphite']).toContain(document.documentElement.dataset.theme)
+  })
+
+  it('系统配色变化时 system 档实时跟随（不刷新页面）', async () => {
+    vi.resetModules()
+    localStorage.clear()
+    const listeners: Array<() => void> = []
+    let dark = false
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn().mockImplementation((q: string) => ({
+        matches: q.includes('prefers-color-scheme: dark') ? dark : false,
+        addEventListener: (_t: string, fn: () => void) => listeners.push(fn),
+        removeEventListener: () => {},
+      }))
+    )
+    const mod = await import('./settings')
+    mod.useSettingsStore.getState().setTheme('system')
+    expect(mod.useSettingsStore.getState().resolvedTheme).toBe('graphite')
+
+    dark = true
+    for (const fn of listeners) fn()
+    expect(mod.useSettingsStore.getState().resolvedTheme).toBe('navy-console')
+    expect(document.documentElement.dataset.theme).toBe('navy-console')
+    vi.unstubAllGlobals()
+  })
 })

@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest'
 import { themeStr } from '../strings/theme'
-import { DEFAULT_THEME, isDarkTheme, isThemeId, THEMES, THEME_IDS } from './themes'
+import {
+  DEFAULT_THEME,
+  isDarkTheme,
+  isThemeId,
+  isThemeSetting,
+  resolveThemeSetting,
+  SYSTEM_DARK_THEME,
+  SYSTEM_LIGHT_THEME,
+  THEMES,
+  THEME_IDS,
+} from './themes'
 
 /** ITER-12：主题注册表完整性——新增主题必须四处同步（css 令牌块另有 contrast 脚本核对） */
 describe('themes 注册表', () => {
@@ -37,9 +47,24 @@ describe('themes 注册表', () => {
     expect(isDarkTheme(DEFAULT_THEME)).toBe(false)
   })
 
-  it('isThemeId 拒绝非法值', () => {
+  it('isThemeId 拒绝非法值（system 是设置哨兵，不是具体主题）', () => {
     expect(isThemeId('dark')).toBe(false)
+    expect(isThemeId('system')).toBe(false)
     expect(isThemeId('')).toBe(false)
     expect(isThemeId(null)).toBe(false)
+  })
+
+  it('跟随系统：isThemeSetting 接受 system 与具体主题，拒绝其他值', () => {
+    expect(isThemeSetting('system')).toBe(true)
+    expect(isThemeSetting('graphite')).toBe(true)
+    expect(isThemeSetting('dark')).toBe(false)
+    expect(isThemeSetting(null)).toBe(false)
+  })
+
+  it('resolveThemeSetting：system 按系统深浅映射（深=深蓝中控/浅=石墨），具体主题原样返回', () => {
+    expect(resolveThemeSetting('system', true)).toBe(SYSTEM_DARK_THEME)
+    expect(resolveThemeSetting('system', false)).toBe(SYSTEM_LIGHT_THEME)
+    expect(resolveThemeSetting('sakura', true)).toBe('sakura')
+    expect(resolveThemeSetting('navy-console', false)).toBe('navy-console')
   })
 })
