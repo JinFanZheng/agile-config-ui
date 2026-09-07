@@ -65,6 +65,8 @@ test.afterAll(async ({ request }) => {
 })
 
 test('发布链路全流程：diff 预览 → 发布 v1/v2 → 版本对比 → 回滚恢复', async ({ page }) => {
+  // 最长链路（隔离 ~14s）：全量并行时后台负载会逼近默认 30s，放宽到 60s 防抖（两次全量闪挂实录）
+  test.setTimeout(60_000)
   await login(page)
 
   // 准备两条待发布配置（API 建数据，UI 走发布）

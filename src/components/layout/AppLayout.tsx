@@ -33,18 +33,44 @@ interface NavItem {
   perm?: string
 }
 
-const NAV_ITEMS: NavItem[] = [
-  { to: '/', label: layoutStr.nav.overview, icon: Home },
-  { to: '/apps', label: layoutStr.nav.apps, icon: Boxes, perm: PERMISSION.AppRead },
-  { to: '/history', label: layoutStr.nav.publishHistory, icon: Clock, perm: PERMISSION.ConfigRead },
-  { to: '/clients', label: layoutStr.nav.clients, icon: CircleCheck, perm: PERMISSION.ClientRead },
-  { to: '/nodes', label: layoutStr.nav.nodes, icon: Server, perm: PERMISSION.NodeRead },
-  { to: '/logs', label: layoutStr.nav.logs, icon: ScrollText, perm: PERMISSION.LogRead },
-  { to: '/users', label: layoutStr.nav.users, icon: Users, perm: PERMISSION.UserRead },
-  { to: '/roles', label: layoutStr.nav.roles, icon: Shield, perm: PERMISSION.RoleRead },
-  { to: '/services', label: layoutStr.nav.services, icon: Waypoints, perm: PERMISSION.ServiceRead },
-  { to: '/guide', label: layoutStr.nav.guide, icon: BookOpen },
-  { to: '/settings', label: layoutStr.nav.settings, icon: Settings },
+interface NavGroup {
+  /** 组标签；无标签 = 不分组的置顶/沉底段 */
+  label?: string
+  items: NavItem[]
+}
+
+/** 侧栏导航分组（ITER-16）：概览置顶、接入指南/设置沉底不分组；权限过滤后组内无可见项则整组隐藏 */
+const NAV_GROUPS: NavGroup[] = [
+  { items: [{ to: '/', label: layoutStr.nav.overview, icon: Home }] },
+  {
+    label: layoutStr.navGroups.config,
+    items: [
+      { to: '/apps', label: layoutStr.nav.apps, icon: Boxes, perm: PERMISSION.AppRead },
+      { to: '/history', label: layoutStr.nav.publishHistory, icon: Clock, perm: PERMISSION.ConfigRead },
+    ],
+  },
+  {
+    label: layoutStr.navGroups.ops,
+    items: [
+      { to: '/clients', label: layoutStr.nav.clients, icon: CircleCheck, perm: PERMISSION.ClientRead },
+      { to: '/nodes', label: layoutStr.nav.nodes, icon: Server, perm: PERMISSION.NodeRead },
+      { to: '/services', label: layoutStr.nav.services, icon: Waypoints, perm: PERMISSION.ServiceRead },
+      { to: '/logs', label: layoutStr.nav.logs, icon: ScrollText, perm: PERMISSION.LogRead },
+    ],
+  },
+  {
+    label: layoutStr.navGroups.access,
+    items: [
+      { to: '/users', label: layoutStr.nav.users, icon: Users, perm: PERMISSION.UserRead },
+      { to: '/roles', label: layoutStr.nav.roles, icon: Shield, perm: PERMISSION.RoleRead },
+    ],
+  },
+  {
+    items: [
+      { to: '/guide', label: layoutStr.nav.guide, icon: BookOpen },
+      { to: '/settings', label: layoutStr.nav.settings, icon: Settings },
+    ],
+  },
 ]
 
 /**
@@ -109,27 +135,36 @@ export function AppLayout() {
           }
         >
           <nav className="flex flex-col gap-0.5">
-            {NAV_ITEMS.filter((item) => !item.perm || can(item.perm)).map(
-              ({ to, label, icon: Icon }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  end={to === '/'}
-                  onClick={() => setNavOpen(false)}
-                  className={({ isActive }) =>
-                    cn(
-                      'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs transition-colors duration-150 ease-out',
-                      isActive
-                        ? 'bg-selected font-medium text-selected-foreground'
-                        : 'text-muted-foreground hover:bg-hover hover:text-foreground'
-                    )
-                  }
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                  {label}
-                </NavLink>
+            {NAV_GROUPS.map((group, gi) => {
+              const visible = group.items.filter((item) => !item.perm || can(item.perm))
+              if (visible.length === 0) return null
+              return (
+                <div key={group.label ?? `nav-section-${gi}`} className="pt-2 first:pt-0">
+                  {group.label && (
+                    <p className="px-2.5 pb-1 text-[10px] text-muted-foreground/60">{group.label}</p>
+                  )}
+                  {visible.map(({ to, label, icon: Icon }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      end={to === '/'}
+                      onClick={() => setNavOpen(false)}
+                      className={({ isActive }) =>
+                        cn(
+                          'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs transition-colors duration-150 ease-out',
+                          isActive
+                            ? 'bg-selected font-medium text-selected-foreground'
+                            : 'text-muted-foreground hover:bg-hover hover:text-foreground'
+                        )
+                      }
+                    >
+                      <Icon className="h-3.5 w-3.5" />
+                      {label}
+                    </NavLink>
+                  ))}
+                </div>
               )
-            )}
+            })}
           </nav>
           <div className="flex-1" />
           <p className="px-2.5 pb-1 font-mono text-[10px] text-muted-foreground/50">

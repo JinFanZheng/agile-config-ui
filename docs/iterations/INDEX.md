@@ -14,6 +14,7 @@
 | [ITER-13](ITER-13-themes-polish.md) | 主题打磨：基线对比度+浅/深分组+跟随系统 | 验收中（EVIDENCE_READY） | 用户验收（新观感/分组/跟随系统） |
 | [ITER-14](ITER-14-theme-settings.md) | 设置页主题区重排+跟随系统映射可配置 | 验收中（EVIDENCE_READY） | 用户验收（新布局/映射下拉） |
 | [ITER-15](ITER-15-guide-di.md) | 接入指南：依赖注入与 IConfiguration 节 | 验收中（EVIDENCE_READY） | 用户验收（/guide 新节） |
+| [ITER-16](ITER-16-nav-groups.md) | 侧栏导航分组 | 验收中（EVIDENCE_READY） | 用户验收（分组观感与命名） |
 
 ## 迭代路线图（2026-09-04 与用户约定：逐迭代交付，验收一个再继续；跨模块独立页用子代理并行）
 
@@ -34,6 +35,7 @@
 | ITER-13 | 主题打磨：基线对比度优化 + 浅/深分组 + 跟随系统                | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-13-themes-polish.md](ITER-13-themes-polish.md) | `docs/evidence/ITER-13/` |
 | ITER-14 | 设置页主题区重排 + 跟随系统深浅映射可配置                      | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-14-theme-settings.md](ITER-14-theme-settings.md) | `docs/evidence/ITER-14/` |
 | ITER-15 | 接入指南：依赖注入与 IConfiguration 集成节（实测驱动）          | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-15-guide-di.md](ITER-15-guide-di.md) | `docs/evidence/ITER-15/` |
+| ITER-16 | 侧栏导航分组（配置管理/运维监控/权限管理，空组隐藏）          | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-16-nav-groups.md](ITER-16-nav-groups.md) | `docs/evidence/ITER-16/` |
 
 > 覆盖核对：M0 已适配 3 + ITER-03..08 共 78（含 Search 归 03、WaitPublishStatus 归 04、发布共用）+ 显式豁免 4（`Admin/Logoff`、`Home/IndexAsync`、`Home/Echo`、`Home/GetIP`；另有 `RemoteOP/RegisterNode` 待 ITER-06 定案）= 86 ✓。豁免需用户确认，见 API_INVENTORY 文末。
 

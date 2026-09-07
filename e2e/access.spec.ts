@@ -68,6 +68,10 @@ test('只读角色：导航与按钮 fail-closed + 直调 API 403', async ({ pag
   await expect(nav.getByRole('link', { name: '客户端' })).toHaveCount(0)
   await expect(nav.getByRole('link', { name: '用户' })).toHaveCount(0)
   await expect(nav.getByRole('link', { name: '角色' })).toHaveCount(0)
+  // 分组标签（ITER-16）：组内有可见项 → 标签在；权限组整组无权 → 标签隐藏
+  await expect(nav.getByText('配置管理', { exact: true })).toBeVisible()
+  await expect(nav.getByText('运维监控', { exact: true })).toBeVisible()
+  await expect(nav.getByText('权限管理', { exact: true })).toHaveCount(0)
 
   // 2) 应用页：新建/编辑/删除/授权全部隐藏，查看类保留
   await page.goto('/apps')

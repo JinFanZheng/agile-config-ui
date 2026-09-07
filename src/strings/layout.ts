@@ -13,6 +13,12 @@ export const layoutStr = {
     settings: '设置',
     openMenu: '打开导航菜单',
   },
+  /** 侧栏分组标签（权限过滤后组内无可见项时整组隐藏） */
+  navGroups: {
+    config: '配置管理',
+    ops: '运维监控',
+    access: '权限管理',
+  },
   env: {
     DEV: 'DEV',
     TEST: 'TEST',
