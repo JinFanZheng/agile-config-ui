@@ -11,6 +11,7 @@ import { ApiError } from '../../lib/http'
 import { diffKv, diffKvVsMap, parseKv, type KvDiff } from '../../lib/kvDiff'
 import { applyMonacoTheme, DIFF_EDITOR_OPTIONS } from '../../lib/monaco'
 import { PERMISSION } from '../../lib/permissions'
+import { isDarkTheme } from '../../lib/themes'
 import { useSettingsStore } from '../../stores/settings'
 import { toast } from '../../stores/toast'
 import { configsStr } from '../../strings/configs'
@@ -42,7 +43,7 @@ export function KvView({
   const theme = useSettingsStore((s) => s.theme)
   const editorFontSize = useSettingsStore((s) => s.editorFontSize)
   useEffect(() => {
-    applyMonacoTheme(theme === 'navy-console')
+    applyMonacoTheme(isDarkTheme(theme))
   }, [theme])
 
   const query = useQuery({

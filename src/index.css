@@ -170,6 +170,173 @@
   --border-header: #d9eae4;
 }
 
+/* ---------------------------------------------------------------------------
+ * 盲盒皮肤第一批（ITER-12，2026-09-08）：5 套新主题，注册表在 src/lib/themes.ts。
+ * 强调色刻意避开语义色族（绿/橙黄/红/蓝），防与 success/warning/danger/info 混淆；
+ * 语义色在每个深色主题统一用亮色变体、浅色主题用暗色变体（对比度断言见
+ * docs/evidence/ITER-12/check-contrast.mjs）。
+ * ------------------------------------------------------------------------- */
+
+/* 曜石：OLED 纯黑终端风，白强调（石墨的暗色镜像） */
+[data-theme='obsidian'] {
+  color-scheme: dark;
+  --bg-page: #000000;
+  --bg-panel: #0a0a0c;
+  --bg-elevated: #121216;
+  --bg-input: #0c0c0f;
+  --border-default: #1f1f26;
+  --border-strong: #3a3a44;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --accent: #fafafa;
+  --accent-hover: #ffffff;
+  --accent-foreground: #09090b;
+  --info: #60a5fa;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --env-dev: #3fb950;
+  --env-test: #d29922;
+  --env-prod: #f85149;
+  --radius-control: 4px;
+  --radius-card: 5px;
+  --fx-card: none;
+  --fx-overlay: 0 8px 24px rgba(0, 0, 0, 0.7);
+  --scrollbar-thumb: #26262e;
+  --bg-hover: #141419;
+  --bg-selected: #232329;
+  --text-selected: #fafafa;
+  --border-header: #2c2c34;
+}
+
+/* 紫夜：深紫罗兰夜域，紫罗兰强调 */
+[data-theme='violet-night'] {
+  color-scheme: dark;
+  --bg-page: #120f1e;
+  --bg-panel: #191430;
+  --bg-elevated: #221c3f;
+  --bg-input: #151028;
+  --border-default: #2e2650;
+  --border-strong: #453a75;
+  --text-primary: #e8e2f8;
+  --text-secondary: #a89bd0;
+  --accent: #a78bfa;
+  --accent-hover: #c4b5fd;
+  --accent-foreground: #1e1240;
+  --info: #60a5fa;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #fb7185;
+  --env-dev: #3fb950;
+  --env-test: #d29922;
+  --env-prod: #f85149;
+  --radius-control: 7px;
+  --radius-card: 8px;
+  --fx-card: 0 1px 2px rgba(80, 60, 140, 0.2);
+  --fx-overlay: 0 8px 24px rgba(10, 6, 24, 0.65);
+  --scrollbar-thumb: #372e5e;
+  --bg-hover: #221c3f;
+  --bg-selected: #2d2452;
+  --text-selected: #c4b5fd;
+  --border-header: #2e2650;
+}
+
+/* 樱粉：浅玫瑰，全套最柔圆角（强调色取品红侧，与 danger 玫红拉开色相） */
+[data-theme='sakura'] {
+  color-scheme: light;
+  --bg-page: #fdf7f9;
+  --bg-panel: #ffffff;
+  --bg-elevated: #fdf0f4;
+  --bg-input: #ffffff;
+  --border-default: #f0dfe7;
+  --border-strong: #dcbecd;
+  --text-primary: #3d2430;
+  --text-secondary: #7d5f6e;
+  --accent: #b52a86;
+  --accent-hover: #96226f;
+  --accent-foreground: #ffffff;
+  --info: #2563eb;
+  --success: #15803d;
+  --warning: #b45309;
+  --danger: #be123c;
+  --env-dev: #15803d;
+  --env-test: #b45309;
+  --env-prod: #dc2626;
+  --radius-control: 10px;
+  --radius-card: 14px;
+  --fx-card: 0 2px 10px rgba(190, 61, 119, 0.06);
+  --fx-overlay: 0 10px 28px rgba(140, 55, 100, 0.16);
+  --scrollbar-thumb: #eed3de;
+  --bg-hover: #fbecf1;
+  --bg-selected: #f8d8ec;
+  --text-selected: #96226f;
+  --border-header: #f0dfe7;
+}
+
+/* 摩卡：暖棕深色，奶油金强调 */
+[data-theme='mocha'] {
+  color-scheme: dark;
+  --bg-page: #16120b;
+  --bg-panel: #1f1a11;
+  --bg-elevated: #292217;
+  --bg-input: #1a150e;
+  --border-default: #362d1d;
+  --border-strong: #55482e;
+  --text-primary: #f2e9d8;
+  --text-secondary: #b3a488;
+  --accent: #ead9ae;
+  --accent-hover: #f6ecc8;
+  --accent-foreground: #241c0a;
+  --info: #60a5fa;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --env-dev: #3fb950;
+  --env-test: #d29922;
+  --env-prod: #f85149;
+  --radius-control: 5px;
+  --radius-card: 6px;
+  --fx-card: none;
+  --fx-overlay: 0 8px 24px rgba(12, 8, 2, 0.65);
+  --scrollbar-thumb: #43371f;
+  --bg-hover: #241d12;
+  --bg-selected: #33291a;
+  --text-selected: #ead9ae;
+  --border-header: #362d1d;
+}
+
+/* 森夜：深绿夜林，月光银白强调（与摩卡的金强调拉开身份） */
+[data-theme='forest'] {
+  color-scheme: dark;
+  --bg-page: #0c1410;
+  --bg-panel: #122019;
+  --bg-elevated: #182b21;
+  --bg-input: #101b15;
+  --border-default: #1f3529;
+  --border-strong: #2f4f3c;
+  --text-primary: #dcefe3;
+  --text-secondary: #93b7a2;
+  --accent: #d5e8da;
+  --accent-hover: #e3f2e7;
+  --accent-foreground: #0b1f14;
+  --info: #60a5fa;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --env-dev: #3fb950;
+  --env-test: #d29922;
+  --env-prod: #f85149;
+  --radius-control: 6px;
+  --radius-card: 7px;
+  --fx-card: none;
+  --fx-overlay: 0 8px 24px rgba(3, 10, 6, 0.65);
+  --scrollbar-thumb: #274435;
+  --bg-hover: #182b21;
+  --bg-selected: #1d3a2c;
+  --text-selected: #d5e8da;
+  --border-header: #1f3529;
+}
+
 /*
  * 设置中心接线（ITER-09）—— html[data-ui-font] / html[data-motion] 由 stores/settings.ts 写入，
  * index.html 引导脚本在应用挂载前先行铺同样的 dataset（防闪屏/防字号跳变）。

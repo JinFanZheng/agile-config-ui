@@ -14,13 +14,29 @@
       // 3) 同步 data-ui-font / data-motion（src/index.css 字号缩放与动效开关选择器），
       //    避免应用挂载后字号/动效跳变。
       try {
-        var THEMES = ['graphite', 'clear-blue', 'warm-paper', 'navy-console', 'fresh-mint']
+        var THEMES = [
+          'graphite',
+          'clear-blue',
+          'warm-paper',
+          'navy-console',
+          'fresh-mint',
+          'obsidian',
+          'violet-night',
+          'sakura',
+          'mocha',
+          'forest',
+        ]
         var BG = {
           graphite: '#ffffff',
           'clear-blue': '#f7f9fc',
           'warm-paper': '#f6f4ef',
           'navy-console': '#0a1424',
           'fresh-mint': '#f5faf8',
+          obsidian: '#000000',
+          'violet-night': '#120f1e',
+          sakura: '#fdf7f9',
+          mocha: '#16120b',
+          forest: '#0c1410',
         }
         var UI_FONTS = ['compact', 'standard', 'large']
         var doc = document.documentElement

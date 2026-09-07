@@ -5,6 +5,11 @@ export const THEME_IDS = [
   'warm-paper',
   'navy-console',
   'fresh-mint',
+  'obsidian',
+  'violet-night',
+  'sakura',
+  'mocha',
+  'forest',
 ] as const
 
 export type ThemeId = (typeof THEME_IDS)[number]
@@ -15,11 +20,18 @@ export function isThemeId(v: unknown): v is ThemeId {
   return typeof v === 'string' && (THEME_IDS as readonly string[]).includes(v)
 }
 
+/** 深色主题集合（color-scheme: dark）——monaco 等第三方深浅判定以此为准，勿硬编码单个主题 id */
+const DARK_THEMES: ReadonlySet<ThemeId> = new Set(['navy-console', 'obsidian', 'violet-night', 'mocha', 'forest'])
+
+export function isDarkTheme(theme: ThemeId): boolean {
+  return DARK_THEMES.has(theme)
+}
+
 export interface ThemeMeta {
   id: ThemeId
   /** 展示名（strings/theme.ts 的 key） */
   label: string
-  /** 切换器菜单里的三色样条 */
+  /** 切换器菜单里的三色样条（强调色 / 底色 / 边框色） */
   swatch: [string, string, string]
 }
 
@@ -29,4 +41,9 @@ export const THEMES: ThemeMeta[] = [
   { id: 'warm-paper', label: '暖纸', swatch: ['#2b2620', '#f6f4ef', '#e7e0d2'] },
   { id: 'navy-console', label: '深蓝中控', swatch: ['#38bdf8', '#0a1424', '#1d365c'] },
   { id: 'fresh-mint', label: '薄荷', swatch: ['#0d9488', '#f5faf8', '#d9eae4'] },
+  { id: 'obsidian', label: '曜石', swatch: ['#fafafa', '#000000', '#1f1f26'] },
+  { id: 'violet-night', label: '紫夜', swatch: ['#a78bfa', '#120f1e', '#2e2650'] },
+  { id: 'sakura', label: '樱粉', swatch: ['#b52a86', '#fdf7f9', '#f0dfe7'] },
+  { id: 'mocha', label: '摩卡', swatch: ['#ead9ae', '#16120b', '#362d1d'] },
+  { id: 'forest', label: '森夜', swatch: ['#d5e8da', '#0c1410', '#1f3529'] },
 ]

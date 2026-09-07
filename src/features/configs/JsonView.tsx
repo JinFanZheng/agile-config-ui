@@ -11,6 +11,7 @@ import { ApiError } from '../../lib/http'
 import { PERMISSION } from '../../lib/permissions'
 import { buildOnlineJsonText, diffJsonCounts, parseJsoncToEntries } from '../../lib/jsonDiff'
 import { applyMonacoTheme, DIFF_EDITOR_OPTIONS } from '../../lib/monaco'
+import { isDarkTheme } from '../../lib/themes'
 import { useSettingsStore } from '../../stores/settings'
 import { toast } from '../../stores/toast'
 import { configsStr } from '../../strings/configs'
@@ -42,7 +43,7 @@ export function JsonView({
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
   const { can } = usePermission()
 
-  const isDark = theme === 'navy-console'
+  const isDark = isDarkTheme(theme)
   useEffect(() => {
     applyMonacoTheme(isDark)
   }, [isDark, text])

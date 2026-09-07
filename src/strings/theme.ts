@@ -9,5 +9,10 @@ export const themeStr = {
     'warm-paper': '暖纸',
     'navy-console': '深蓝中控',
     'fresh-mint': '薄荷',
+    obsidian: '曜石',
+    'violet-night': '紫夜',
+    sakura: '樱粉',
+    mocha: '摩卡',
+    forest: '森夜',
   },
 } as const

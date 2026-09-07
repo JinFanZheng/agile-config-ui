@@ -5,7 +5,7 @@ import { cn } from '../lib/utils'
 import { useSettingsStore } from '../stores/settings'
 import { themeStr } from '../strings/theme'
 
-/** 顶栏主题切换器：5 个预置主题，即时生效 + 持久化（与 /settings 主题设置同一 store，双向同步） */
+/** 顶栏主题切换器：主题清单由 lib/themes.ts 注册表驱动，即时生效 + 持久化（与 /settings 同一 store，双向同步） */
 export function ThemeSwitcher() {
   const theme = useSettingsStore((s) => s.theme)
   const setTheme = useSettingsStore((s) => s.setTheme)
