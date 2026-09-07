@@ -374,7 +374,18 @@ export function AppsPage() {
         )}
       </div>
 
-      <AppDialog open={dialogOpen} app={editing} onClose={() => setDialogOpen(false)} />
+      <AppDialog
+        open={dialogOpen}
+        app={editing}
+        onClose={() => setDialogOpen(false)}
+        onCreated={() => {
+          // ISSUE-001：新建成功清除过滤词与分组，确保新应用立即可见
+          setKeyword('')
+          setDebounced('')
+          setGroup('')
+          setPage(1)
+        }}
+      />
 
       <AppAuthDialog app={authApp} onClose={() => setAuthApp(null)} />
 

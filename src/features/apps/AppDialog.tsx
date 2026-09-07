@@ -21,10 +21,12 @@ interface AppDialogProps {
   /** 编辑对象；null = 新建 */
   app: AppItem | null
   onClose: () => void
+  /** 新建成功回调（ISSUE-001：调用方借此清除过滤词，避免新应用被残留过滤器隐藏） */
+  onCreated?: () => void
 }
 
 /** 新建/编辑应用：新建时自动生成 AppId（UX #6），编辑时 ID 不可变 */
-export function AppDialog({ open, app, onClose }: AppDialogProps) {
+export function AppDialog({ open, app, onClose, onCreated }: AppDialogProps) {
   const isEdit = app !== null
   const queryClient = useQueryClient()
   const [error, setError] = useState<string | null>(null)
@@ -90,6 +92,7 @@ export function AppDialog({ open, app, onClose }: AppDialogProps) {
           : appsStr.toasts.created(form.getValues('name'))
       )
       await queryClient.invalidateQueries({ queryKey: ['apps'] })
+      if (!isEdit) onCreated?.()
       onClose()
     },
     onError: (e) => setError(e instanceof ApiError ? e.message : '保存失败'),

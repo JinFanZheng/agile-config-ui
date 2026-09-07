@@ -25,7 +25,8 @@ test('应用全生命周期：创建→编辑→启停→删除', async ({ page 
   await page.goto('/apps')
   await expect(page.getByRole('heading', { name: '应用' })).toBeVisible()
 
-  // 创建：ID 自动生成，可覆盖
+  // 创建：ID 自动生成，可覆盖（先残留一个无匹配过滤词——ISSUE-001 回归：创建后应自动清除）
+  await page.getByPlaceholder('搜索应用名 / AppId…').fill('zzz_no_match')
   await page.getByRole('button', { name: '新建应用' }).click()
   await expect(page.getByRole('dialog', { name: '新建应用' })).toBeVisible()
   const autoId = await page.getByLabel('AppId').inputValue()

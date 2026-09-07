@@ -21,10 +21,12 @@ interface ConfigDialogProps {
   appId: string
   env: string
   onDone: () => void
+  /** 新建成功回调（清除过滤词，避免新配置被残留过滤器隐藏） */
+  onCreated?: () => void
 }
 
 /** 新建/编辑配置：脏态守卫 + 并发保护（last-write-wins 下先比对服务端 updateTime） */
-export function ConfigDialog({ open, config, appId, env, onDone }: ConfigDialogProps) {
+export function ConfigDialog({ open, config, appId, env, onDone, onCreated }: ConfigDialogProps) {
   const isEdit = config !== null
   const [error, setError] = useState<string | null>(null)
   const [concurrency, setConcurrency] = useState(false)
@@ -85,6 +87,7 @@ export function ConfigDialog({ open, config, appId, env, onDone }: ConfigDialogP
     },
     onSuccess: () => {
       toast.success(isEdit ? configsStr.toasts.saved : configsStr.toasts.created)
+      if (!isEdit) onCreated?.()
       onDone()
     },
     onError: (e) => {

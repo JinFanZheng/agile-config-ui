@@ -447,6 +447,7 @@ export function ConfigPage() {
           setDialogOpen(false)
           refresh()
         }}
+        onCreated={() => setKeyword('')}
       />
 
       <PublishDialog
