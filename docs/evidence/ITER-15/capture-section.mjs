@@ -1,0 +1,16 @@
+import { chromium } from '@playwright/test'
+import dotenv from 'dotenv'
+dotenv.config({ path: '.env.e2e' })
+const browser = await chromium.launch()
+const page = await browser.newPage({ viewport: { width: 1280, height: 900 } })
+await page.goto(`${process.env.E2E_BASE_URL || 'http://localhost:5173'}/login`)
+await page.getByLabel('用户名').fill(process.env.E2E_ADMIN_USER || 'admin')
+await page.getByLabel('密码').fill(process.env.E2E_ADMIN_PASSWORD)
+await page.getByRole('button', { name: '登录' }).click()
+await page.waitForURL(/\/$/)
+await page.goto(`${process.env.E2E_BASE_URL || 'http://localhost:5173'}/guide`)
+await page.locator('[data-testid="guide-toc-desktop"]').getByRole('link', { name: '依赖注入与 IConfiguration' }).click()
+await page.waitForTimeout(300)
+await page.screenshot({ path: 'docs/evidence/ITER-15/guide-di-section.png' })
+await browser.close()
+console.log('shot done')

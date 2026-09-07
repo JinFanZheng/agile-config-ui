@@ -75,6 +75,58 @@ if (client.Data.Count == 0)
 }
 `,
 
+  /** 依赖注入集成：挂到 IConfiguration（实测于 Generic Host + ASP.NET Core 形态） */
+  diSetup: `using AgileConfig.Client;
+using Microsoft.AspNetCore.Hosting;  // AddAgileConfig 扩展所在的命名空间（控制台宿主需显式引入）
+
+// ASP.NET Core（Program.cs）
+builder.Configuration.AddAgileConfig(new ConfigClientOptions
+{
+    AppId = "your-app-id",
+    Secret = "your-app-secret",
+    Nodes = "http://your-node:5000",   // 客户端进程可达的节点地址
+    ENV = "DEV",
+});
+
+// 控制台 Worker / Generic Host
+var builder = Host.CreateDefaultBuilder(args);
+builder.ConfigureAppConfiguration((ctx, config) =>
+{
+    config.AddAgileConfig(new ConfigClientOptions
+    {
+        AppId = "your-app-id",
+        Secret = "your-app-secret",
+        Nodes = "http://your-node:5000",
+        ENV = "DEV",
+    });
+});
+`,
+
+  /** DI + IOptionsMonitor 热更新（发布后秒级，实测） */
+  diOptions: `// 1) IConfigClient 进 DI 容器（连接由集成层管理，可直接注入）
+builder.Services.AddAgileConfig();
+
+// 2) 强类型绑定：group:key → 分层键
+//    配置项 Db:Host → GetSection("Db") 的 Host；空分组的键（如 Mode）是顶层键
+builder.Services.Configure<DbOptions>(builder.Configuration.GetSection("Db"));
+
+public class DbOptions { public string Host { get; set; } = ""; }
+
+// 3) 注入 IOptionsMonitor：CurrentValue 始终是最新值，可选订阅变更
+public class OrderService(IOptionsMonitor<DbOptions> db)
+{
+    public string Host => db.CurrentValue.Host;   // 发布后自动读到新值（实测秒级）
+
+    public void Watch() => db.OnChange((o, name) =>
+        Console.WriteLine($"选项 {name} 变更：Host={o.Host}"));
+}
+
+// 也可直接注入 IConfigClient（Get / 索引器 / GetGroup / Data）
+public class RawReader(IConfigClient client)
+{
+    public string? Mode => client.Get("Mode");
+}
+`,
   /** 服务注册：注册信息随 Options 一起设置 */
   registerInfo: `using AgileConfig.Client;
 using AgileConfig.Client.RegisterCenter;

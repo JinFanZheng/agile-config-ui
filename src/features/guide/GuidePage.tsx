@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { cn } from '../../lib/utils'
 import { guideStr } from '../../strings/guide'
 import { CSharpSdkSection } from './sections/CSharpSdkSection'
+import { DiIntegrationSection } from './sections/DiIntegrationSection'
 import { FaqSection } from './sections/FaqSection'
 import { PitfallsSection } from './sections/PitfallsSection'
 import { QuickStartSection } from './sections/QuickStartSection'
@@ -11,6 +12,7 @@ import { ServiceRegisterSection } from './sections/ServiceRegisterSection'
 const SECTIONS = [
   guideStr.sections.quickStart,
   guideStr.sections.csharpSdk,
+  guideStr.sections.diIntegration,
   guideStr.sections.serviceRegister,
   guideStr.sections.pitfalls,
   guideStr.sections.faq,
@@ -117,6 +119,7 @@ export function GuidePage() {
         <div className="min-w-0 space-y-12">
           <QuickStartSection />
           <CSharpSdkSection />
+          <DiIntegrationSection />
           <ServiceRegisterSection />
           <PitfallsSection />
           <FaqSection />

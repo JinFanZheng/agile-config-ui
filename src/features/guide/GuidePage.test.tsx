@@ -13,7 +13,7 @@ Object.defineProperty(navigator, 'clipboard', {
 afterEach(cleanup)
 
 describe('GuidePage（ITER-10）', () => {
-  it('渲染五个分节标题与目录锚点（分节 id 可定位）', () => {
+  it('渲染六个分节标题与目录锚点（分节 id 可定位）', () => {
     render(<GuidePage />)
     for (const s of Object.values(guideStr.sections)) {
       expect(screen.getByRole('heading', { name: s.label })).toBeInTheDocument()
@@ -23,6 +23,14 @@ describe('GuidePage（ITER-10）', () => {
     const links = screen.getAllByRole('link', { name: guideStr.sections.faq.label })
     expect(links).toHaveLength(2)
     expect(links[0]).toHaveAttribute('href', `#${guideStr.sections.faq.id}`)
+  })
+
+  it('依赖注入小节呈现关键事实（AddAgileConfig / IOptionsMonitor / 接口面）', () => {
+    render(<GuidePage />)
+    expect(screen.getAllByText(/AddAgileConfig/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/IOptionsMonitor/).length).toBeGreaterThan(0)
+    // IConfigClient 接口面坑位（元信息走 client.Options；反引号片段拆为行内代码，用纯文本段断言）
+    expect(screen.getAllByText(/等元信息走/).length).toBeGreaterThan(0)
   })
 
   it('代码块按纯文本渲染且一键复制有内联反馈（不发 Toast）', async () => {

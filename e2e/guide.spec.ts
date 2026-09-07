@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 /**
- * ITER-10 接入指南：路由可达、五节齐全、锚点导航跳转、代码块一键复制。
+ * ITER-10 接入指南：路由可达、六节齐全、锚点导航跳转、代码块一键复制。
  * 只读页面（无数据变更），无需自建/清理数据；凭证见 .env.e2e。
  */
 const ADMIN_USER = process.env.E2E_ADMIN_USER || 'admin'
@@ -21,11 +21,12 @@ test('接入指南：五节内容 + 锚点导航 + 代码一键复制', async ({
   await login(page)
   await page.goto('/guide')
 
-  // 1) 页面可达，五个分节标题齐全（与目录文案一致）
+  // 1) 页面可达，六个分节标题齐全（与目录文案一致）
   await expect(page.getByRole('heading', { name: '接入指南', exact: true })).toBeVisible()
   const sectionNames = [
     '快速开始',
     'C# SDK 接入',
+    '依赖注入与 IConfiguration',
     '服务注册与发现',
     '格式与归一化实测坑位',
     'FAQ',

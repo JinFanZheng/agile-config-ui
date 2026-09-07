@@ -1,0 +1,29 @@
+trce: AgileConfig.Client.ConfigClient[0]
+      client try connect to server ws://localhost:5017/ws?client_name=&client_tag=
+trce: AgileConfig.Client.ConfigClient[0]
+      client connect server ws://localhost:5017/ws?client_name=&client_tag= successful .
+trce: AgileConfig.Client.ConfigClient[0]
+      client send 'loaded' to server by websocket .
+trce: AgileConfig.Client.ConfigClient[0]
+      client load all the configs success by API: http://localhost:5017/api/config/app/guide_di_1788823680?env=DEV, publishTimeLineId: cf86a01825694574adc70a1c79879963 , try count: 0.
+[DI] IConfigClient 解析成功: ConfigClient Status=Connected Options.AppId=guide_di_1788823680
+[IConfiguration] Db:Host=v2-host Mode=v1-mode
+[IOptionsMonitor] Db:Host=v2-host
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/vanzheng/projects/ai-agent/agile-config-ui
+[1] Db:Host=v2-host | config Db:Host=v2-host | client.Get(Mode)=v1-mode @07:31:29
+[2] Db:Host=v2-host | config Db:Host=v2-host | client.Get(Mode)=v1-mode @07:31:31
+[3] Db:Host=v2-host | config Db:Host=v2-host | client.Get(Mode)=v1-mode @07:31:33
+[OnChange] Db:Host=v3-host @07:31:33
+[4] Db:Host=v3-host | config Db:Host=v3-host | client.Get(Mode)=v1-mode @07:31:36
+[5] Db:Host=v3-host | config Db:Host=v3-host | client.Get(Mode)=v1-mode @07:31:38
+[6] Db:Host=v3-host | config Db:Host=v3-host | client.Get(Mode)=v1-mode @07:31:40
+[7] Db:Host=v3-host | config Db:Host=v3-host | client.Get(Mode)=v1-mode @07:31:42
+[8] Db:Host=v3-host | config Db:Host=v3-host | client.Get(Mode)=v1-mode @07:31:44
+[9] Db:Host=v3-host | config Db:Host=v3-host | client.Get(Mode)=v1-mode @07:31:46
+[10] Db:Host=v3-host | config Db:Host=v3-host | client.Get(Mode)=v1-mode @07:31:48
+DONE

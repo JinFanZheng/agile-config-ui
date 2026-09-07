@@ -6,12 +6,13 @@
 export const guideStr = {
   title: '接入指南',
   subtitle:
-    '从创建应用到客户端秒级生效的完整路径：C# SDK 接入、服务注册与发现，以及实测验证过的格式与归一化行为。',
+    '从创建应用到客户端秒级生效的完整路径：C# SDK 接入（含依赖注入与 IConfiguration 集成）、服务注册与发现，以及实测验证过的格式与归一化行为。',
 
   /** 分节 id 与目录/标题文案（页面锚点与目录共用） */
   sections: {
     quickStart: { id: 'quick-start', label: '快速开始' },
     csharpSdk: { id: 'csharp-sdk', label: 'C# SDK 接入' },
+    diIntegration: { id: 'di-integration', label: '依赖注入与 IConfiguration' },
     serviceRegister: { id: 'service-register', label: '服务注册与发现' },
     pitfalls: { id: 'pitfalls', label: '格式与归一化实测坑位' },
     faq: { id: 'faq', label: 'FAQ' },
@@ -87,6 +88,26 @@ export const guideStr = {
     ] as const,
     defensiveNote:
       '另一个就绪竞争：`ConnectAsync()` 成功后 `client.Data` 仍可能为空，消费前有界轮询等待（如最多 20 次 × 250ms），超时再降级处理（记日志 / 用本地默认值），不要无限阻塞启动。',
+  },
+
+  diIntegration: {
+    intro:
+      'ASP.NET Core / Generic Host 项目不必手动 `new ConfigClient`：SDK 自带 IConfiguration 集成与 DI 注册，配置变更直达 `IOptionsMonitor<T>` 热更新（以下均对本机 1.13.2 服务端 + AgileConfig.Client 1.9.1 实测验证）。',
+    setupTitle: '把 AgileConfig 挂到 IConfiguration',
+    setupBody:
+      '`AddAgileConfig` 让 AgileConfig 成为一个标准 `IConfigurationProvider`：配置以「扁平键」进入 IConfiguration，`group:key` 天然映射为分层键（配置项 `Db:Host` → `GetSection("Db")` 的 `Host`），空分组的键是顶层键。',
+    setupWarn:
+      '控制台 Worker / Generic Host 项目需要显式 `using Microsoft.AspNetCore.Hosting;`——`AddAgileConfig` 的扩展方法恰好在 ASP.NET Core 的命名空间下（Web 项目天然可见，控制台项目会报「没有采用 N 个参数的重载」，实测踩过）。',
+    diTitle: 'DI 注册与强类型 Options',
+    diBody:
+      '`services.AddAgileConfig()` 把 `IConfigClient` 注册进容器（解析得到已连接的客户端单例，连接由集成层管理）；强类型绑定走 `Configure<T>(configuration.GetSection(...))`，注入 `IOptionsMonitor<T>` 读最新值并可订阅变更。',
+    factsTitle: '实测行为与坑位',
+    factsItems: [
+      '发布 → `IOptionsMonitor.OnChange` 触发实测秒级（WebSocket 推送）：发布与 OnChange 同秒，`CurrentValue` 与 `IConfiguration[key]` 同步翻转；',
+      '`OnChange` 在连接建立 / 全量重载时也可能触发，不必然代表值变化——需要感知「真的变了」时在回调里自行比对值；',
+      '`IConfigClient` 接口成员较窄：`Get(key)` / 索引器 / `GetGroup(group)` / `Data` / `ConfigChanged` / `ReLoaded`；`AppId`、`Env` 等元信息走 `client.Options`，不在接口属性上；',
+      '包内另有读配置节的无参/委托重载与 `IHostBuilder.UseAgileConfig` 宿主扩展；本指南只写实测过的显式 Options 用法，其他重载使用前请自行验证。',
+    ] as const,
   },
 
   serviceRegister: {
