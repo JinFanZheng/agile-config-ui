@@ -73,6 +73,12 @@ export const configsStr = {
     importConfirm: '确认导入',
     importing: '导入中…',
     previewEmpty: '文件中没有可导入的配置',
+    typeNotesTitle: '类型字面量说明',
+    typeNotes: [
+      '按标准 JSON 书写：true/false 会被服务端规范化为 True/False 存储，应用端绑定正常',
+      'JSON null 会存成空字符串（不是删除该键），不要用 null 表达"关闭"，请写 false',
+      '"1"/"0" 不是合法布尔字面量；小数请绑定 double/decimal（int 会报错）',
+    ],
     syncTitle: '环境间同步',
     syncHint: (from: string) => `把当前环境 ${from} 的全部配置覆盖到所选目标环境（同名键覆盖、新增键补齐），目标环境将产生待发布改动`,
     syncConfirm: '开始同步',

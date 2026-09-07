@@ -48,6 +48,12 @@
 - 祖先段可点击（muted → hover 前景色 + 下划线）；当前段不可点、font-medium；AppId/键名等代码性质文本用等宽字体
 - 深层钻取页（版本详情、节点客户端等）沿用同一组件，面包屑随路由 meta 生成
 
+## 6.6 Tooltip
+
+- 轻量组件 `components/ui/tooltip.tsx`：悬停 ~180ms 出现（防扫过误触）、移开即隐；focus-visible 同样触发（键盘可达）
+- 纯令牌配色（elevated 底 + overlay 阴影 + anim-menu 微动效）；placement top/bottom/left/right；内容 ≤3 行，超出改用弹窗
+- 原生 `title` 属性仅允许给表格截断单元格兜底；交互性说明一律用本组件
+
 ## 7. 列表行为
 
 - 搜索输入防抖 300ms；清空关键词 = 清除过滤

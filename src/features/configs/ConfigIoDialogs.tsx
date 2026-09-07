@@ -8,7 +8,9 @@ import {
 } from '../../api/importExport'
 import { addConfigsRange } from '../../api/configs'
 import { getSys } from '../../api/ops'
+import { Info } from 'lucide-react'
 import { Button } from '../../components/ui/button'
+import { Tooltip } from '../../components/ui/tooltip'
 import { Modal } from '../../components/ui/modal'
 import { Spinner } from '../../components/ui/spinner'
 import { ApiError } from '../../lib/http'
@@ -69,7 +71,26 @@ export function JsonImportDialog({
             {error}
           </div>
         )}
-        <p className="text-xs text-muted-foreground">{configsStr.io.importHint}</p>
+        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          {configsStr.io.importHint}
+          <Tooltip
+            placement="bottom"
+            content={
+              <span>
+                <span className="mb-1 block font-medium text-foreground">
+                  {configsStr.io.typeNotesTitle}
+                </span>
+                {configsStr.io.typeNotes.map((t) => (
+                  <span key={t} className="mb-0.5 block">
+                    · {t}
+                  </span>
+                ))}
+              </span>
+            }
+          >
+            <Info className="h-3.5 w-3.5 cursor-help text-muted-foreground/70 hover:text-foreground" />
+          </Tooltip>
+        </p>
         <input
           ref={fileRef}
           type="file"

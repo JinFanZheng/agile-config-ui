@@ -2,7 +2,9 @@ import Editor from '@monaco-editor/react'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { getJson, saveJson } from '../../api/configs'
+import { Info } from 'lucide-react'
 import { Button } from '../../components/ui/button'
+import { Tooltip } from '../../components/ui/tooltip'
 import { Spinner } from '../../components/ui/spinner'
 import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
@@ -92,7 +94,26 @@ export function JsonView({
   return (
     <div className="flex min-h-0 flex-1 flex-col rounded-lg border border-border bg-panel shadow-card">
       <div className="flex flex-wrap items-center gap-2 border-b border-border px-3 py-2">
-        <span className="text-xs text-muted-foreground">{configsStr.jsonView.editing}</span>
+        <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          {configsStr.jsonView.editing}
+          <Tooltip
+            placement="bottom"
+            content={
+              <span>
+                <span className="mb-1 block font-medium text-foreground">
+                  {configsStr.io.typeNotesTitle}
+                </span>
+                {configsStr.io.typeNotes.map((t) => (
+                  <span key={t} className="mb-0.5 block">
+                    · {t}
+                  </span>
+                ))}
+              </span>
+            }
+          >
+            <Info className="h-3.5 w-3.5 cursor-help text-muted-foreground/70 hover:text-foreground" />
+          </Tooltip>
+        </span>
         <div className="flex-1" />
         <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <input
