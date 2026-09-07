@@ -42,13 +42,9 @@ export async function initPassword(password: string, confirmPassword: string): P
   await apiPost<void>('/Admin/InitPassword', { password, confirmPassword })
 }
 
-/** M5 用：修改密码（需登录） */
-export async function changePassword(oldPassword: string, newPassword: string): Promise<void> {
-  await apiPost<void>('/Admin/ChangePassword', {
-    oldPassword,
-    newPassword,
-    confirmPassword: newPassword,
-  })
+/** 修改自己的密码（需登录；ChangePasswordVM 字段：oldPassword/password/confirmPassword——注意新密码字段名是 password） */
+export async function changePassword(oldPassword: string, password: string): Promise<void> {
+  await apiPost<void>('/Admin/ChangePassword', { oldPassword, password, confirmPassword: password })
 }
 
 /** 登出即清本地会话（服务端 JWT 无注销端点） */

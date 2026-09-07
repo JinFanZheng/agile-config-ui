@@ -188,6 +188,8 @@ Content-Type: application/json
 
 `UserController`、`RoleController`、`ServerNodeController`、`ServiceController`（服务注册中心）、`SysLogController`、`SSOController`（OIDC）、`ReportController`（客户端心跳/上报）、`HomeController`（首页统计）、`RemoteOPController`。路径模式同为 `/{Controller}/{Action}`。客户端拉取配置的 API 在 `Controllers/api/`（含 v2），**管理 UI 不用**。
 
+> **安全相关实测（2026-09-07，ITER-07）**：**未分配角色的新用户自动获得内置 `Operator` 角色**（登录响应 currentAuthority 含 Operator，权限码=APP_*/CONFIG_* 全套，不含 USER/ROLE/NODE/CLIENT/LOG/SERVICE 域）；服务端越权拒绝返回 **403 空内容**；`User/ResetPassword` 重置为固定默认密码 **123456**（UI 已明示）。
+
 > **安全相关实测（2026-09-07，ITER-06）**：`Report/*`（Clients/ServerNodeClients/SearchServerNodeClients/各 Count/RemoteNodesStatus）与 `Home/Sys` 为**匿名端点**（面向客户端 SDK/实例信息），无 token 可访问；据此概览页在无有效会话时不会触发 401，401 拦截用例需走 `App/Search` 等鉴权端点。
 
 ## 6. 功能范围与页面清单
