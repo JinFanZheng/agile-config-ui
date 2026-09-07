@@ -1,6 +1,7 @@
 # 迭代卡 ITER-07 - 权限体系（M5）
 
-> 状态：PLANNED（开工时完成 GR 复审与 baseline 冻结）
+> 状态：ACTIVE（2026-09-07 开工；baseline @9435be2：59 unit + 17 e2e 全绿）
+> GR 复审：PASS（安全修复级：RG-4 越权 negative tests + fail-closed；oracle=受限账号 E2E + 用户验收）
 > 变更分类：大改（安全面：权限/凭证）
 > 方案出处：handoff §6 P1 + §10 M5 + UX #9；API 见 [../API_INVENTORY.md](../API_INVENTORY.md)
 > 日期：2026-09-04 建卡 / 未开始
