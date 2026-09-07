@@ -114,7 +114,7 @@ export function ClientsPage() {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-3">
+    <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-start gap-3">
         <div>
           <h1 className="text-base font-semibold">{clientsStr.title}</h1>

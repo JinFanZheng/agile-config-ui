@@ -40,7 +40,7 @@ export function HistoryIndexPage() {
   })
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <div className="mb-5">
         <h1 className="text-base font-semibold">{publishStr.history.title}</h1>
         <p className="mt-0.5 text-xs text-muted-foreground">{publishStr.history.subtitle}</p>
