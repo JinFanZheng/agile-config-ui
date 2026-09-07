@@ -1,6 +1,7 @@
 # 迭代卡 ITER-08 - 打磨与交付（M6）
 
-> 状态：PLANNED（开工时完成 GR 复审与 baseline 冻结）
+> 状态：ACTIVE（2026-09-07 开工；baseline @2bd11c1：59 unit + 19 e2e 全绿）
+> GR 复审：PASS（oracle=compose 演示 transcript + 全量 E2E + 导入导出 round-trip 用例；Docker 部署契约=nginx 前缀同 API_PREFIXES）
 > 变更分类：大改（P2 功能聚合 + 部署交付链）
 > 方案出处：handoff §6 P2 + §10 M6；API 见 [../API_INVENTORY.md](../API_INVENTORY.md)
 > 日期：2026-09-04 建卡 / 未开始

@@ -1,6 +1,6 @@
 # 迭代卡 ITER-07 - 权限体系（M5）
 
-> 状态：验收中（EVIDENCE_READY，2026-09-07 实现与自动化门全绿，等待用户验收）
+> 状态：完成（G0 VERIFIED，2026-09-07 用户验收通过「ok，接下来做什么」；含自测修复与冒烟联动）
 > GR 复审：PASS（安全修复级：RG-4 越权 negative tests + fail-closed；oracle=受限账号 E2E + 用户验收）
 > 变更分类：大改（安全面：权限/凭证）
 > 方案出处：handoff §6 P1 + §10 M5 + UX #9；API 见 [../API_INVENTORY.md](../API_INVENTORY.md)
