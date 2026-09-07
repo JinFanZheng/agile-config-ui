@@ -19,6 +19,7 @@ const API_PREFIXES = [
   '/Report',
   '/Home',
   '/RemoteOP',
+  '/RemoteServerProxy',
 ]
 
 export default defineConfig(({ mode }) => {

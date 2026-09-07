@@ -2,11 +2,13 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { AlertTriangle, RefreshCw } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import {
-  allClientsAction,
+  allClientsReload,
   clearConfigServiceCache,
   clearServiceInfoCache,
   getPublishHistoryLatest,
-  oneClientAction,
+  oneClientOffline,
+  oneClientReload,
+  getAllNodes,
   searchClients,
   type ClientInfo,
 } from '../../api/ops'
@@ -103,6 +105,13 @@ export function ClientsPage() {
     [rows, latestPublish.data]
   )
 
+  // 在线节点（广播重载需逐节点转发）
+  const nodes = useQuery({
+    queryKey: ['ops', 'nodes', 'forBroadcast'],
+    queryFn: getAllNodes,
+    refetchInterval: 60_000,
+  })
+
   const act = useMutation({
     mutationFn: (a: { run: () => Promise<unknown>; ok: string }) =>
       a.run().then(() => toast.success(a.ok)),
@@ -183,17 +192,17 @@ export function ClientsPage() {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border bg-panel shadow-card">
-        <table className="w-full min-w-[880px] border-collapse text-[13px]">
+        <table className="w-full min-w-[620px] border-collapse text-[13px] md:min-w-[880px]">
           <thead>
             <tr className="border-b border-border bg-elevated text-left text-xs text-muted-foreground">
               <th className="px-4 py-2 font-medium">{clientsStr.table.id}</th>
               <th className="px-4 py-2 font-medium">{clientsStr.table.app}</th>
               <th className="px-4 py-2 font-medium">{clientsStr.table.ip}</th>
-              <th className="px-4 py-2 font-medium">{clientsStr.table.tag}</th>
+              <th className="hidden px-4 py-2 font-medium lg:table-cell">{clientsStr.table.tag}</th>
               <th className="px-4 py-2 font-medium">{clientsStr.table.env}</th>
               <th className="px-4 py-2 font-medium">{clientsStr.table.heartbeat}</th>
-              <th className="px-4 py-2 font-medium">{clientsStr.table.refresh}</th>
-              <th className="px-4 py-2 font-medium">{clientsStr.table.consistency}</th>
+              <th className="hidden px-4 py-2 font-medium lg:table-cell">{clientsStr.table.refresh}</th>
+              <th className="hidden px-4 py-2 font-medium lg:table-cell">{clientsStr.table.consistency}</th>
               <th className="px-4 py-2 text-right font-medium">{clientsStr.table.actions}</th>
             </tr>
           </thead>
@@ -252,7 +261,7 @@ export function ClientsPage() {
                     <td className="px-4 py-[7px] font-mono text-xs">{c.id}</td>
                     <td className="px-4 py-[7px] font-mono text-xs">{c.appId}</td>
                     <td className="px-4 py-[7px] text-xs text-muted-foreground">{c.ip || '—'}</td>
-                    <td className="px-4 py-[7px] text-xs text-muted-foreground">{c.tag || '—'}</td>
+                    <td className="hidden px-4 py-[7px] text-xs text-muted-foreground lg:table-cell">{c.tag || '—'}</td>
                     <td className="px-4 py-[7px]">
                       <span className="flex items-center gap-1.5 font-mono text-xs">
                         <span
@@ -270,7 +279,7 @@ export function ClientsPage() {
                     <td className="px-4 py-[7px] text-xs text-muted-foreground">
                       {fmt(c.lastRefreshTime)}
                     </td>
-                    <td className="px-4 py-[7px]">
+                    <td className="hidden px-4 py-[7px] lg:table-cell">
                       {noPublish ? (
                         <span className="rounded bg-input px-1.5 py-0.5 text-[10px] text-muted-foreground">
                           {clientsStr.consistency.noPublish}
@@ -347,7 +356,7 @@ export function ClientsPage() {
           onCancel={() => setConfirm(null)}
           onConfirm={() =>
             act.mutate({
-              run: () => oneClientAction(confirm.client.id, 'reload'),
+              run: () => oneClientReload(confirm.client.address || '', confirm.client.id),
               ok: clientsStr.toasts.reloaded,
             })
           }
@@ -364,7 +373,7 @@ export function ClientsPage() {
           onCancel={() => setConfirm(null)}
           onConfirm={() =>
             act.mutate({
-              run: () => oneClientAction(confirm.client.id, 'offline'),
+              run: () => oneClientOffline(confirm.client.address || '', confirm.client.id),
               ok: clientsStr.toasts.offlined,
             })
           }
@@ -381,7 +390,10 @@ export function ClientsPage() {
           onCancel={() => setConfirm(null)}
           onConfirm={() =>
             act.mutate({
-              run: () => allClientsAction('reload'),
+              run: async () => {
+                const online = (nodes.data ?? []).filter((n) => n.status === 1)
+                await Promise.all(online.map((n) => allClientsReload(n.address)))
+              },
               ok: clientsStr.toasts.reloadAllDone,
             })
           }

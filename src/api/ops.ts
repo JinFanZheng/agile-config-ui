@@ -103,25 +103,23 @@ export function getServiceCount() {
   return http.get('/Report/ServiceCount').json<ServiceCountInfo>()
 }
 
-// ---------- RemoteOP（客户端运维动作，module c = 配置中心） ----------
+// ---------- RemoteServerProxy（客户端运维动作） ----------
+// ⚠️ 1.13.2 实测：RemoteOP/OneClientDoActionAsync 与 AllClientsDoActionAsync 是 master
+// 新增端点，镜像里不存在（404）；必须走 RemoteServerProxy 经节点代理：
+//   Client_Reload / Client_Offline / AllClients_Reload（query 带 address=节点地址）。
+// 单容器拓扑下节点地址即容器内可达地址（见 ServerNode/All 的 address 字段）。
 
-export type ClientAction = 'reload' | 'offline'
-
-function wsAction(action: ClientAction) {
-  return { module: 'c', action }
+/** 单客户端重载（经节点代理） */
+export function oneClientReload(address: string, clientId: string) {
+  return apiPost<void>('/RemoteServerProxy/Client_Reload', undefined, { address, clientId })
 }
-
-/** 广播：全部客户端 */
-export function allClientsAction(action: ClientAction) {
-  return apiPost<void>('/RemoteOP/AllClientsDoActionAsync', wsAction(action))
+/** 单客户端下线（经节点代理） */
+export function oneClientOffline(address: string, clientId: string) {
+  return apiPost<void>('/RemoteServerProxy/Client_Offline', undefined, { address, clientId })
 }
-/** 广播：某应用+环境的客户端 */
-export function appClientsAction(appId: string, env: string, action: ClientAction) {
-  return apiPost<void>('/RemoteOP/AppClientsDoActionAsync', wsAction(action), { appId, env })
-}
-/** 单客户端指令 */
-export function oneClientAction(clientId: string, action: ClientAction) {
-  return apiPost<void>('/RemoteOP/OneClientDoActionAsync', wsAction(action), { clientId })
+/** 广播重载：需逐节点调用（proxy 是按节点转发） */
+export function allClientsReload(address: string) {
+  return apiPost<void>('/RemoteServerProxy/AllClients_Reload', undefined, { address })
 }
 /** 清配置服务缓存 */
 export function clearConfigServiceCache() {

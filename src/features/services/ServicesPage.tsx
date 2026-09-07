@@ -167,7 +167,7 @@ export function ServicesPage() {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border bg-panel shadow-card">
-        <table className="w-full min-w-[880px] border-collapse text-[13px]">
+        <table className="w-full min-w-[640px] border-collapse text-[13px] md:min-w-[880px]">
           <thead>
             <tr className="border-b border-border bg-elevated text-left text-xs text-muted-foreground">
               <th className="w-[200px] max-w-[220px] px-4 py-2 font-medium">
@@ -182,16 +182,16 @@ export function ServicesPage() {
               <th className="w-[88px] px-4 py-2 font-medium whitespace-nowrap">
                 {servicesStr.table.status}
               </th>
-              <th className="w-[96px] px-4 py-2 font-medium whitespace-nowrap">
+              <th className="hidden w-[96px] px-4 py-2 font-medium whitespace-nowrap lg:table-cell">
                 {servicesStr.table.heartBeatMode}
               </th>
-              <th className="w-[132px] px-4 py-2 font-medium whitespace-nowrap">
+              <th className="hidden w-[132px] px-4 py-2 font-medium whitespace-nowrap lg:table-cell">
                 {servicesStr.table.registerTime}
               </th>
               <th className="w-[132px] px-4 py-2 font-medium whitespace-nowrap">
                 {servicesStr.table.lastHeartBeat}
               </th>
-              <th className="px-4 py-2 text-right font-medium">{servicesStr.table.actions}</th>
+              <th className="min-w-[72px] px-4 py-2 text-right font-medium">{servicesStr.table.actions}</th>
             </tr>
           </thead>
           <tbody>
@@ -285,11 +285,11 @@ export function ServicesPage() {
                           : servicesStr.badges.unhealthy}
                       </span>
                     </td>
-                    <td className="px-4 py-[7px] text-xs whitespace-nowrap text-muted-foreground">
+                    <td className="hidden px-4 py-[7px] text-xs whitespace-nowrap text-muted-foreground lg:table-cell">
                       {heartBeatLabel(svc.heartBeatMode)}
                     </td>
                     <td
-                      className="px-4 py-[7px] text-xs whitespace-nowrap text-muted-foreground"
+                      className="hidden px-4 py-[7px] text-xs whitespace-nowrap text-muted-foreground lg:table-cell"
                       title={svc.registerTime ?? undefined}
                     >
                       {formatMinute(svc.registerTime)}

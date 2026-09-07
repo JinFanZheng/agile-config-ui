@@ -177,19 +177,19 @@ export function AppsPage() {
       </div>
 
       <div className="overflow-x-auto rounded-lg border border-border bg-panel shadow-card">
-        <table className="w-full min-w-[860px] border-collapse text-[13px]">
+        <table className="w-full min-w-[640px] border-collapse text-[13px] md:min-w-[860px]">
           <thead>
             <tr className="border-b border-border bg-elevated text-left text-xs text-muted-foreground">
               <th className="px-4 py-2 font-medium">{appsStr.table.name}</th>
               <th className="px-4 py-2 font-medium">{appsStr.table.appId}</th>
               <th className="px-4 py-2 font-medium whitespace-nowrap">{appsStr.table.group}</th>
-              <th className="w-[80px] px-4 py-2 font-medium whitespace-nowrap">
+              <th className="w-[64px] min-w-[64px] px-3 py-2 font-medium whitespace-nowrap">
                 {appsStr.table.status}
               </th>
               <th className="w-[110px] px-4 py-2 font-medium whitespace-nowrap">
                 {appsStr.table.pending}
               </th>
-              <th className="px-4 py-2 font-medium">{appsStr.table.inherit}</th>
+              <th className="hidden px-4 py-2 font-medium lg:table-cell">{appsStr.table.inherit}</th>
               <th className="px-4 py-2 font-medium whitespace-nowrap">
                 {appsStr.table.updateTime}
               </th>
@@ -317,7 +317,7 @@ export function AppsPage() {
                       )
                     })()}
                   </td>
-                  <td className="max-w-40 truncate px-4 py-[7px] text-xs text-muted-foreground">
+                  <td className="hidden max-w-40 truncate px-4 py-[7px] text-xs text-muted-foreground lg:table-cell">
                     {app.inheritancedAppNames && app.inheritancedAppNames.length > 0
                       ? appsStr.badges.inherits(app.inheritancedAppNames)
                       : '—'}
