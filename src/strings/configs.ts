@@ -84,10 +84,19 @@ export const configsStr = {
     syncConfirm: '开始同步',
     syncing: '同步中…',
     noOtherEnv: '没有其他可选环境',
+    expandAll: '全部展开',
+    collapseAll: '全部收起',
   },
   toasts2: {
     imported: '配置导入成功（待发布）',
     synced: (envs: string) => `已同步到 ${envs}`,
+  },
+  diffBar: {
+    summary: (a: number, c: number, r: number) => `+${a} ~${c} -${r}`,
+    title: '与已保存版本的差异',
+    fullWarning: (n: number) => `全量模式：保存后这 ${n} 个键将被标记"待发布删除"`,
+    empty: '与已保存版本一致，没有未保存的修改',
+    kinds: { added: '新增', changed: '修改', removed: '将删除' },
   },
   patchTip: [
     '勾选（补丁）：只改文本里出现的键，其他键保持不变',
@@ -109,6 +118,9 @@ export const configsStr = {
     patch: '补丁模式（只提交差异）',
     reload: '重新加载',
     editing: '编辑 JSON（含注释，保存后按 key 同步到配置）',
+    diffToggle: '对比已保存',
+    foldAll: '折叠全部',
+    unfoldAll: '展开全部',
   },
   confirm: {
     deleteTitle: '删除配置',

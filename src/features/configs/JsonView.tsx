@@ -1,7 +1,8 @@
-import Editor from '@monaco-editor/react'
+import Editor, { DiffEditor, type OnMount } from '@monaco-editor/react'
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getJson, saveJson } from '../../api/configs'
+import { ChevronsDownUp, ChevronsUpDown, GitCompare } from 'lucide-react'
 import { Info } from 'lucide-react'
 import { Button } from '../../components/ui/button'
 import { Tooltip } from '../../components/ui/tooltip'
@@ -33,6 +34,8 @@ export function JsonView({
   const [savedText, setSavedText] = useState('')
   const [patch, setPatch] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [diffMode, setDiffMode] = useState(false)
+  const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
   const { can } = usePermission()
 
   const isDark = theme === 'navy-console'
@@ -115,6 +118,30 @@ export function JsonView({
           </Tooltip>
         </span>
         <div className="flex-1" />
+        <Button
+          size="sm"
+          variant={diffMode ? 'default' : 'ghost'}
+          onClick={() => setDiffMode((v) => !v)}
+        >
+          <GitCompare className="h-3.5 w-3.5" />
+          {configsStr.jsonView.diffToggle}
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => editorRef.current?.getAction('editor.foldAll')?.run()}
+          title={configsStr.jsonView.foldAll}
+        >
+          <ChevronsDownUp className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => editorRef.current?.getAction('editor.unfoldAll')?.run()}
+          title={configsStr.jsonView.unfoldAll}
+        >
+          <ChevronsUpDown className="h-3.5 w-3.5" />
+        </Button>
         <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <input
             type="checkbox"
@@ -154,10 +181,29 @@ export function JsonView({
         </Button>
       </div>
       <div className="min-h-0 flex-1" data-testid="json-editor-wrap">
+        {diffMode ? (
+          <DiffEditor
+            height="100%"
+            language="json"
+            theme="agile"
+            original={savedText}
+            modified={text ?? ''}
+            options={{
+              readOnly: true,
+              renderSideBySide: true,
+              fontSize: 12,
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+              fontFamily: "'JetBrains Mono Variable', ui-monospace, Menlo, monospace",
+            }}
+          />
+        ) : (
         <Editor
           height="100%"
           language="json"
           theme="agile"
+          onMount={(ed) => (editorRef.current = ed)}
           value={text ?? ''}
           onChange={(v) => setText(v ?? '')}
           options={{
@@ -170,6 +216,7 @@ export function JsonView({
             fontFamily: "'JetBrains Mono Variable', ui-monospace, Menlo, monospace",
           }}
         />
+        )}
       </div>
     </div>
   )

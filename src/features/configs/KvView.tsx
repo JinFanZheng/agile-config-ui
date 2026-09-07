@@ -7,6 +7,8 @@ import { Tooltip } from '../../components/ui/tooltip'
 import { Spinner } from '../../components/ui/spinner'
 import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
+import { diffKv, type KvDiff, type KvDiffRow } from '../../lib/kvDiff'
+import { cn } from '../../lib/utils'
 import { PERMISSION } from '../../lib/permissions'
 import { toast } from '../../stores/toast'
 import { configsStr } from '../../strings/configs'
@@ -81,6 +83,8 @@ export function KvView({
   }
 
   const dirty = text !== null && text !== savedText
+  const diff: KvDiff | null =
+    dirty && text !== null ? diffKv(text, savedText, !patch) : null
 
   return (
     <div className="flex min-h-0 flex-1 flex-col rounded-lg border border-border bg-panel shadow-card">
@@ -129,9 +133,53 @@ export function KvView({
         value={text ?? ''}
         onChange={(e) => setText(e.target.value)}
         spellCheck={false}
-        className="min-h-0 flex-1 resize-none bg-transparent px-4 py-3 font-mono text-xs leading-relaxed text-foreground outline-none"
+        className="min-h-0 flex-[3] resize-none bg-transparent px-4 py-3 font-mono text-xs leading-relaxed text-foreground outline-none"
         aria-label="KV 文本"
       />
+
+      {diff && diff.rows.length > 0 && (
+        <div className="flex min-h-0 flex-[2] flex-col border-t border-border">
+          <div className="flex flex-wrap items-center gap-2 px-4 py-1.5">
+            <span className="text-xs font-medium text-muted-foreground">{configsStr.diffBar.title}</span>
+            <span className="rounded-full bg-info/10 px-2 py-0.5 font-mono text-[10px] text-info">
+              {configsStr.diffBar.summary(diff.counts.added, diff.counts.changed, diff.counts.removed)}
+            </span>
+            {!patch && diff.counts.removed > 0 && (
+              <span className="rounded bg-danger/10 px-2 py-0.5 text-[10px] font-medium text-danger">
+                {configsStr.diffBar.fullWarning(diff.counts.removed)}
+              </span>
+            )}
+          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-2">
+            {diff.rows.map((r: KvDiffRow) => (
+              <div
+                key={r.key}
+                className={cn(
+                  'flex items-baseline gap-2 py-0.5 font-mono text-xs',
+                  r.kind === 'removed' && 'bg-danger/5',
+                  r.kind === 'added' && 'bg-info/5'
+                )}
+              >
+                <span
+                  className={cn(
+                    'shrink-0 rounded px-1 text-[10px]',
+                    r.kind === 'added' && 'bg-info/10 text-info',
+                    r.kind === 'changed' && 'bg-warning/10 text-warning',
+                    r.kind === 'removed' && 'bg-danger/10 text-danger'
+                  )}
+                >
+                  {configsStr.diffBar.kinds[r.kind]}
+                </span>
+                <span className="shrink-0 text-foreground">{r.key}</span>
+                {r.old !== undefined && (
+                  <span className="truncate text-muted-foreground line-through opacity-70">{r.old}</span>
+                )}
+                {r.new !== undefined && <span className="truncate text-foreground">{r.new}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

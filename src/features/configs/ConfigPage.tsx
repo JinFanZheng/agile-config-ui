@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Clock, Cloud, Layers, Plus, Table2 } from 'lucide-react'
+import { ChevronsDownUp, ChevronsUpDown, Clock, Cloud, Layers, Plus, Table2 } from 'lucide-react'
 import { Suspense, lazy, useCallback, useMemo, useState } from 'react'
 import { useSearchParams, useParams } from 'react-router'
 import {
@@ -308,6 +308,26 @@ export function ConfigPage() {
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
             />
+            <Button
+              size="sm"
+              variant="ghost"
+              title={configsStr.io.collapseAll}
+              onClick={() => {
+                const all = new Set<string>()
+                rows.forEach((r) => all.add(r.group))
+                setCollapsed(all)
+              }}
+            >
+              <ChevronsDownUp className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              title={configsStr.io.expandAll}
+              onClick={() => setCollapsed(new Set())}
+            >
+              <ChevronsUpDown className="h-3.5 w-3.5" />
+            </Button>
             {inheritIds.length > 0 && (
               <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
                 <input
