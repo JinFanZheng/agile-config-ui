@@ -51,6 +51,8 @@ RG-1 baseline；RG-2 GREEN；RG-4 危险操作权限码（RemoteOP 类）+ 二�
 - 子代理并行分区：api 层与共享组件由主线先冻结，页面实现分派，避免同时改账本
 
 
+| T-06 | G0 / 验收反馈修复：日志表列宽 | 用户反馈"系统日志表格列宽度不够" → 实测定位：类型列 48px 致"普通/警告"徽标换行、AppId 列无 nowrap 长 ID 折行 | 表头列宽提示（时间 168/AppId 200 max 220/类型 76）+ AppId truncate+title + 类型列 nowrap；复测换行问题归零（内容列截断为悬浮全文设计）；nodes/clients 同类排查无问题 | logs-columns-fixed.png + 测量输出 | T-05 | Codex / DONE |
+
 ## 5. 验收记录（2026-09-07）
 
 - Baseline：@87d57d4（59 unit + 13 e2e 全绿）
