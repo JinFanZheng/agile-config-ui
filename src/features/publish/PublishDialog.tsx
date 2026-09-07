@@ -162,6 +162,7 @@ export function PublishDialog({
                       <input
                         type="checkbox"
                         tabIndex={-1}
+                        readOnly
                         aria-label={`发布 ${r.key}`}
                         checked={!off}
                         className="mt-0.5 accent-primary pointer-events-none"

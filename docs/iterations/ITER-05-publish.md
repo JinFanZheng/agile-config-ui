@@ -1,6 +1,6 @@
 # 迭代卡 ITER-05 - 发布链路（M3，产品本体）
 
-> 状态：验收中（EVIDENCE_READY，2026-09-04 实现与自动化门全绿，等待用户验收）
+> 状态：完成（G0 VERIFIED，2026-09-07 用户授权自测代验收「先自测，没问题继续推进」，自测全绿）
 > GR 复审：PASS（oracle=M3 DoD E2E 全链路+用户验收；GR-6 回滚 danger 二次确认；GR-8 回退=revert；发布/回滚仅自建应用）
 > 变更分类：大改（产品核心价值链：可知/可控/可逆 的落地）
 > 方案出处：handoff §0 北极星 + §10 M3 + UX #3/4/11；API 见 [../API_INVENTORY.md](../API_INVENTORY.md)

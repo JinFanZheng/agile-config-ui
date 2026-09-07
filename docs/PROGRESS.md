@@ -8,7 +8,8 @@
 - [ITER-02 主题系统与通用基建](iterations/ITER-02-theme-system.md)：✅ VERIFIED —— 两轮验收反馈（顶栏对齐、选中态对比度）均已修复并复验通过；v0.1.0 标记于该完成点
 - [ITER-03 应用管理](iterations/ITER-03-apps.md)：✅ VERIFIED —— 三轮验收反馈（布局对齐/危险确认/动画与脏表单）全部修复并复验通过
 - [ITER-04 配置管理](iterations/ITER-04-configs.md)：✅ VERIFIED —— 含验收反馈三项修复（面包屑/KV 数组 bug/jsonc 注释）
-- [ITER-05 发布链路](iterations/ITER-05-publish.md)：EVIDENCE_READY —— 强制 diff 预览/发布范围勾选(部分发布)/时间线/版本对比/回滚，M3 DoD 全链路 E2E 绿，**等待用户验收**
+- [ITER-05 发布链路](iterations/ITER-05-publish.md)：✅ VERIFIED —— 自测代验收全绿；v0.4.0 标记
+- [ITER-06 运维视图](iterations/ITER-06-ops.md)：ACTIVE —— 2026-09-07 开工（子代理并行）
 - 迭代路线图见 [iterations/INDEX.md](iterations/INDEX.md)（功能模块逐迭代交付，验收一个继续下一个）
 
 ## M0 脚手架 — ✅ 完成（2026-09-04）
