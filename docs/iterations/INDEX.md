@@ -20,7 +20,10 @@
 | ITER-05 | 发布链路（diff/发布/时间线/回滚——产品本体）                      | M3         | 5        | PLANNED     | [ITER-05-publish.md](ITER-05-publish.md)                               | —                        |
 | ITER-06 | 运维视图（概览/客户端一致性/节点/日志/远程操作；**子代理并行**） | M4         | 22       | PLANNED     | [ITER-06-ops.md](ITER-06-ops.md)                                       | —                        |
 | ITER-07 | 权限体系（用户/角色/应用授权/按钮级权限）                        | M5         | 13       | PLANNED     | [ITER-07-permissions.md](ITER-07-permissions.md)                       | —                        |
-| ITER-08 | 打磨与交付（导入导出/环境同步/服务注册/SSO/Docker）              | M6         | 12       | PLANNED     | [ITER-08-delivery.md](ITER-08-delivery.md)                             | —                        |
+| ITER-08 | 打磨与交付（导入导出/环境同步/服务注册/SSO/Docker）              | M6         | 12       | ✅ VERIFIED | [ITER-08-delivery.md](ITER-08-delivery.md)                             | `docs/evidence/ITER-08/` |
+| ITER-09 | 设置中心与防闪屏修复（浏览器本地个性化）                          | —          | 0        | PLANNED     | [ITER-09-settings.md](ITER-09-settings.md)                             | —                        |
+| ITER-10 | 接入指南（产品内文档页，网页直出 TSX）                            | —          | 0        | PLANNED     | [ITER-10-integration-guide.md](ITER-10-integration-guide.md)           | —                        |
+| ITER-11 | Agent 运维 Skill（agileconfig-ops）                              | —          | 0        | PLANNED     | [ITER-11-agent-skill.md](ITER-11-agent-skill.md)                       | —                        |
 
 > 覆盖核对：M0 已适配 3 + ITER-03..08 共 78（含 Search 归 03、WaitPublishStatus 归 04、发布共用）+ 显式豁免 4（`Admin/Logoff`、`Home/IndexAsync`、`Home/Echo`、`Home/GetIP`；另有 `RemoteOP/RegisterNode` 待 ITER-06 定案）= 86 ✓。豁免需用户确认，见 API_INVENTORY 文末。
 
