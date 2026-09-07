@@ -102,9 +102,9 @@
 
 | Action                  | 方法+路径                                   | 用途                    | 处置                                                                                             |
 | ----------------------- | ------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------ |
-| AllClientsDoActionAsync | POST `/RemoteOP/AllClientsDoActionAsync`    | 广播指令（reload 等）   | 适配@ITER-06（客户端运维动作，二次确认+危险色）                                                  |
-| AppClientsDoActionAsync | POST `/RemoteOP/AppClientsDoActionAsync`    | 按应用+环境广播         | 适配@ITER-06                                                                                     |
-| OneClientDoActionAsync  | POST `/RemoteOP/OneClientDoActionAsync`     | 单客户端指令            | 适配@ITER-06                                                                                     |
+| AllClientsDoActionAsync | POST `/RemoteOP/AllClientsDoActionAsync`    | 广播指令                | **1.13.2 镜像 404**（master 新增，2026-09-07 实测）→ 广播走 AllClients_Reload 逐节点转发          |
+| AppClientsDoActionAsync | POST `/RemoteOP/AppClientsDoActionAsync`    | 按应用+环境广播         | **1.13.2 镜像 404**（master 新增）→ 暂无 UI 场景，升级上游后再适配                               |
+| OneClientDoActionAsync  | POST `/RemoteOP/OneClientDoActionAsync`     | 单客户端指令            | **1.13.2 镜像 404**（master 新增，用户验收发现）→ 改走 Client_Reload/Client_Offline（经节点代理） |
 | ClearConfigServiceCache | POST `/RemoteOP/ClearConfigServiceCache`    | 清配置服务缓存          | 适配@ITER-06（危险操作区）                                                                       |
 | ClearServiceInfoCache   | POST `/RemoteOP/ClearServiceInfoCache`      | 清服务信息缓存          | 适配@ITER-06                                                                                     |
 | RegisterNode            | POST `/RemoteOP/RegisterNode`               | 节点注册（内部/节点间） | **显式豁免候选**：初判为节点互联端点非管理 UI 场景；ITER-06 开工读源码定案，若为管理功能转为适配 |
