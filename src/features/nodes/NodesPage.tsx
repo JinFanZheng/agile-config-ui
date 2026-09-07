@@ -103,10 +103,10 @@ export function NodesPage() {
       <div className="overflow-x-auto rounded-lg border border-border bg-panel shadow-card">
         <table className="w-full min-w-[720px] border-collapse text-[13px]">
           <thead>
-            <tr className="border-b border-border bg-elevated text-left text-xs text-muted-foreground">
+            <tr className="border-b border-border bg-elevated text-left text-xs text-muted-foreground [&>th]:whitespace-nowrap">
               <th className="px-4 py-2 font-medium">{nodesStr.table.address}</th>
               <th className="px-4 py-2 font-medium">{nodesStr.table.remark}</th>
-              <th className="px-4 py-2 font-medium">{nodesStr.table.status}</th>
+              <th className="w-[72px] px-4 py-2 font-medium whitespace-nowrap">{nodesStr.table.status}</th>
               <th className="px-4 py-2 font-medium">{nodesStr.table.lastEcho}</th>
               <th className="px-4 py-2 font-medium">{nodesStr.table.clientCount}</th>
               <th className="px-4 py-2 text-right font-medium">{nodesStr.table.actions}</th>
@@ -164,8 +164,8 @@ export function NodesPage() {
                     <span
                       className={
                         node.status === NodeStatus.Online
-                          ? 'rounded bg-success/10 px-1.5 py-0.5 text-[10px] text-success'
-                          : 'rounded bg-danger/10 px-1.5 py-0.5 text-[10px] text-danger'
+                          ? 'rounded bg-success/10 px-1.5 py-0.5 text-[10px] whitespace-nowrap text-success'
+                          : 'rounded bg-danger/10 px-1.5 py-0.5 text-[10px] whitespace-nowrap text-danger'
                       }
                     >
                       {node.status === NodeStatus.Online
@@ -183,7 +183,7 @@ export function NodesPage() {
                     {clientCountByAddress.get(node.address) ?? '—'}
                   </td>
                   <td className="px-4 py-[7px] text-right">
-                    <div className="flex items-center justify-end gap-1">
+                    <div className="flex items-center justify-end gap-1 [&>button]:whitespace-nowrap [&>a]:whitespace-nowrap">
                       {can(PERMISSION.ClientRefresh) && (
                         <button
                           type="button"

@@ -194,7 +194,7 @@ export function ClientsPage() {
       <div className="overflow-x-auto rounded-lg border border-border bg-panel shadow-card">
         <table className="w-full min-w-[620px] border-collapse text-[13px] md:min-w-[880px]">
           <thead>
-            <tr className="border-b border-border bg-elevated text-left text-xs text-muted-foreground">
+            <tr className="border-b border-border bg-elevated text-left text-xs text-muted-foreground [&>th]:whitespace-nowrap">
               <th className="px-4 py-2 font-medium">{clientsStr.table.id}</th>
               <th className="px-4 py-2 font-medium">{clientsStr.table.app}</th>
               <th className="px-4 py-2 font-medium">{clientsStr.table.ip}</th>
@@ -258,12 +258,12 @@ export function ClientsPage() {
                     key={c.id}
                     className="border-b border-border transition-colors last:border-b-0 hover:bg-hover"
                   >
-                    <td className="px-4 py-[7px] font-mono text-xs">{c.id}</td>
-                    <td className="px-4 py-[7px] font-mono text-xs">{c.appId}</td>
-                    <td className="px-4 py-[7px] text-xs text-muted-foreground">{c.ip || '—'}</td>
-                    <td className="hidden px-4 py-[7px] text-xs text-muted-foreground lg:table-cell">{c.tag || '—'}</td>
+                    <td className="px-4 py-[7px] font-mono text-xs whitespace-nowrap">{c.id}</td>
+                    <td className="px-4 py-[7px] font-mono text-xs whitespace-nowrap">{c.appId}</td>
+                    <td className="px-4 py-[7px] text-xs text-muted-foreground whitespace-nowrap">{c.ip || '—'}</td>
+                    <td className="hidden px-4 py-[7px] text-xs text-muted-foreground whitespace-nowrap lg:table-cell">{c.tag || '—'}</td>
                     <td className="px-4 py-[7px]">
-                      <span className="flex items-center gap-1.5 font-mono text-xs">
+                      <span className="flex items-center gap-1.5 font-mono text-xs whitespace-nowrap">
                         <span
                           className={cn(
                             'h-1.5 w-1.5 rounded-full',
@@ -273,29 +273,29 @@ export function ClientsPage() {
                         {c.env}
                       </span>
                     </td>
-                    <td className="px-4 py-[7px] text-xs text-muted-foreground">
+                    <td className="px-4 py-[7px] text-xs text-muted-foreground whitespace-nowrap">
                       {fmt(c.lastHeartbeatTime)}
                     </td>
-                    <td className="px-4 py-[7px] text-xs text-muted-foreground">
+                    <td className="hidden px-4 py-[7px] text-xs text-muted-foreground whitespace-nowrap lg:table-cell">
                       {fmt(c.lastRefreshTime)}
                     </td>
-                    <td className="hidden px-4 py-[7px] lg:table-cell">
+                    <td className="hidden px-4 py-[7px] whitespace-nowrap lg:table-cell">
                       {noPublish ? (
-                        <span className="rounded bg-input px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                        <span className="rounded bg-input px-1.5 py-0.5 text-[10px] whitespace-nowrap text-muted-foreground">
                           {clientsStr.consistency.noPublish}
                         </span>
                       ) : stale ? (
-                        <span className="rounded bg-warning/10 px-1.5 py-0.5 text-[10px] text-warning">
+                        <span className="rounded bg-warning/10 px-1.5 py-0.5 text-[10px] whitespace-nowrap text-warning">
                           {clientsStr.consistency.stale}
                         </span>
                       ) : (
-                        <span className="rounded bg-success/10 px-1.5 py-0.5 text-[10px] text-success">
+                        <span className="rounded bg-success/10 px-1.5 py-0.5 text-[10px] whitespace-nowrap text-success">
                           {clientsStr.consistency.synced}
                         </span>
                       )}
                     </td>
                     <td className="px-4 py-[7px] text-right">
-                      <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-1 [&>button]:whitespace-nowrap">
                         <button
                           type="button"
                           className="rounded px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-hover hover:text-foreground"

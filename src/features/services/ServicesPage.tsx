@@ -301,7 +301,7 @@ export function ServicesPage() {
                       {formatMinute(svc.lastHeartBeat)}
                     </td>
                     <td className="px-4 py-[7px] text-right">
-                      <div className="flex items-center justify-end gap-1">
+                      <div className="flex items-center justify-end gap-1 [&>button]:whitespace-nowrap [&>a]:whitespace-nowrap">
                         {can(PERMISSION.ServiceDelete) && (
                           <button
                             type="button"

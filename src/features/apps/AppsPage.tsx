@@ -183,7 +183,7 @@ export function AppsPage() {
               <th className="px-4 py-2 font-medium">{appsStr.table.name}</th>
               <th className="px-4 py-2 font-medium">{appsStr.table.appId}</th>
               <th className="px-4 py-2 font-medium whitespace-nowrap">{appsStr.table.group}</th>
-              <th className="w-[64px] min-w-[64px] px-3 py-2 font-medium whitespace-nowrap">
+              <th className="w-[80px] min-w-[80px] px-3 py-2 font-medium whitespace-nowrap">
                 {appsStr.table.status}
               </th>
               <th className="w-[110px] px-4 py-2 font-medium whitespace-nowrap">
@@ -266,12 +266,12 @@ export function AppsPage() {
                     <div className="flex items-center gap-2">
                       <Link
                         to={`/apps/${app.id}/config`}
-                        className="text-foreground hover:text-primary hover:underline"
+                        className="min-w-0 truncate text-foreground hover:text-primary hover:underline"
                       >
                         {app.name}
                       </Link>
                       {app.inheritanced && (
-                        <span className="rounded bg-info/10 px-1.5 py-0.5 text-[10px] text-info">
+                        <span className="shrink-0 rounded bg-info/10 px-1.5 py-0.5 text-[10px] whitespace-nowrap text-info">
                           {appsStr.badges.shared}
                         </span>
                       )}
@@ -279,7 +279,7 @@ export function AppsPage() {
                   </td>
                   <td className="px-4 py-[7px]">
                     <div className="flex items-center gap-1">
-                      <span className="font-mono text-xs">{app.id}</span>
+                      <span className="min-w-0 flex-1 truncate font-mono text-xs">{app.id}</span>
                       <CopyButton value={app.id} label={appsStr.actions.copyAppId} />
                     </div>
                   </td>
@@ -290,8 +290,8 @@ export function AppsPage() {
                     <span
                       className={
                         app.enabled
-                          ? 'rounded bg-success/10 px-1.5 py-0.5 text-[10px] text-success'
-                          : 'rounded bg-danger/10 px-1.5 py-0.5 text-[10px] text-danger'
+                          ? 'rounded bg-success/10 px-1.5 py-0.5 text-[10px] whitespace-nowrap text-success'
+                          : 'rounded bg-danger/10 px-1.5 py-0.5 text-[10px] whitespace-nowrap text-danger'
                       }
                     >
                       {app.enabled ? appsStr.badges.enabled : appsStr.badges.disabled}
@@ -326,7 +326,7 @@ export function AppsPage() {
                     {app.updateTime ? app.updateTime.slice(5, 16).replace('T', ' ') : '—'}
                   </td>
                   <td className="px-4 py-[7px] text-right">
-                    <div className="flex items-center justify-end gap-1">
+                    <div className="flex items-center justify-end gap-1 [&>button]:whitespace-nowrap [&>a]:whitespace-nowrap">
                       <Link
                         to={`/apps/${app.id}/config`}
                         className="rounded px-2 py-0.5 text-xs text-muted-foreground transition-colors hover:bg-hover hover:text-foreground"

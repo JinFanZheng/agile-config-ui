@@ -207,7 +207,7 @@ export function RolesPage() {
                     </td>
                     <td className="px-4 py-[7px] text-right">
                       {editable || deletable ? (
-                        <div className="flex items-center justify-end gap-1">
+                        <div className="flex items-center justify-end gap-1 [&>button]:whitespace-nowrap [&>a]:whitespace-nowrap">
                           {editable && (
                             <button
                               type="button"
