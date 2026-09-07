@@ -1,6 +1,6 @@
 # ITER-10 接入指南（产品内文档页）
 
-> 状态：PLANNED（2026-09-08 与用户约定）。形式已与用户讨论：**网页直出（TSX 组件）**，不用 markdown 运行时。
+> 状态：验收中（EVIDENCE_READY，2026-09-08 实现与自动化门全绿，等待用户验收）
 
 ## 1. 形式决策与理由（网页直出）
 
@@ -41,3 +41,14 @@
 ## 5. Gate 要点
 
 GR-2 L0+L1；GR-6 交互规范（代码块为纯文本 + 复制反馈 toast）；文案量大但同样收敛 `src/strings/guide.ts`；不引入 markdown/html 渲染依赖。
+
+## 6. 验收记录（2026-09-08）
+
+- Baseline：v1.0.0 @1b568f1（lint ✓，vitest 88 通过；typecheck 与并行代理错峰由主会话统一跑）。
+- 实现（子代理 B + 主会话收口）：
+  - T-01 骨架：桌面 sticky 侧栏锚点目录（lg:）+ 移动横向目录；滚动高亮当前分节；`CodeBlock`（`pre>code` 纯文本 + 复制按钮内联反馈 ✓已复制 1.2s，含非安全上下文降级）；文档原语（GuideSection/Step/Note/Bullets/DefTable 等）全部令牌色。
+  - T-02 五节内容：快速开始（6 步 + 客户端按节点聚合排障提示）/ C# SDK（Options/生命周期/ConfigChanged/ReLoaded 防御式写法）/ 服务注册（三心跳模式表 + DiscoveryService）/ 格式坑位（冒号嵌套/数组索引键/归一化/空分组裸键/EditStatus）/ FAQ（补丁 vs 全量/多环境/继承）。素材逐段对照 handoff §5 与 `tools/verify-client/Program.cs`。
+  - 主会话收口：修 5 处类型错误（SectionId 收窄、ByRole `exact` 移除）；`onScroll` 补"滚到底高亮末节"（末节锚点滚动钳制）；e2e 断言改为"滚入视区+目录高亮"。
+- 门禁：vitest **103**（含 GuidePage 3 例）；e2e **29**（guide 1 例：路由/五节/锚点/剪贴板内容）；typecheck/lint/build ✓；无新增依赖（无 markdown 运行时）。
+- 证据：docs/evidence/ITER-10/（五节截图 + 复制反馈截图 + 来源对照）。
+- 待用户验收。
