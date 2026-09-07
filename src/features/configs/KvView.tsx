@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { DiffEditor } from '@monaco-editor/react'
 import { getKvList, saveKvList } from '../../api/configs'
 import { Info } from 'lucide-react'
 import { Button } from '../../components/ui/button'
@@ -7,9 +8,11 @@ import { Tooltip } from '../../components/ui/tooltip'
 import { Spinner } from '../../components/ui/spinner'
 import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
-import { diffKv, diffKvVsMap, type KvDiff, type KvDiffRow } from '../../lib/kvDiff'
+import { diffKv, diffKvVsMap, parseKv, type KvDiff, type KvDiffRow } from '../../lib/kvDiff'
+import { applyMonacoTheme } from '../../lib/monaco'
 import { cn } from '../../lib/utils'
 import { PERMISSION } from '../../lib/permissions'
+import { useThemeStore } from '../../stores/theme'
 import { toast } from '../../stores/toast'
 import { configsStr } from '../../strings/configs'
 
@@ -53,6 +56,28 @@ export function KvView({
     onDirtyChange(text !== null && text !== savedText)
   }, [text, savedText, onDirtyChange])
 
+  const theme = useThemeStore((s) => s.theme)
+  useEffect(() => {
+    applyMonacoTheme(theme === 'navy-console')
+  }, [theme])
+
+  // DiffEditor 两侧都用 parseKv 归一化并按 key 排序（与摘要计数同源），避免行序差异产生噪音
+  const onlineKvText = useMemo(() => {
+    if (!onlineValues) return ''
+    return [...onlineValues.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([k, v]) => `${k}=${v}`)
+      .join('\n')
+  }, [onlineValues])
+  const editorKvText = useMemo(
+    () =>
+      [...parseKv(text ?? '')]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([k, v]) => `${k}=${v}`)
+        .join('\n'),
+    [text]
+  )
+
   const save = async () => {
     if (text === null) return
     setSaving(true)
@@ -92,6 +117,8 @@ export function KvView({
   const unsavedDiff: KvDiff | null =
     dirty && text !== null ? diffKv(text, savedText, !patch) : null
   const activeDiff = diffTab === 'online' ? onlineDiff : unsavedDiff
+  // "与线上差异" tab 有差异时用 monaco DiffEditor 呈现（左=线上快照，右=编辑器，同步滚动）
+  const showDiffEditor = diffTab === 'online' && (onlineDiff?.rows.length ?? 0) > 0
 
   return (
     <div className="flex min-h-0 flex-1 flex-col rounded-lg border border-border bg-panel shadow-card">
@@ -180,12 +207,41 @@ export function KvView({
                 {configsStr.diffBar.summary(activeDiff.counts.added, activeDiff.counts.changed, activeDiff.counts.removed)}
               </span>
             )}
+            {showDiffEditor && (
+              <span className="text-[10px] text-muted-foreground">{configsStr.diffBar.sortedNote}</span>
+            )}
             {diffTab === 'unsaved' && !patch && unsavedDiff && unsavedDiff.counts.removed > 0 && (
               <span className="rounded bg-danger/10 px-2 py-0.5 text-[10px] font-medium text-danger">
                 {configsStr.diffBar.fullWarning(unsavedDiff.counts.removed)}
               </span>
             )}
           </div>
+          {showDiffEditor ? (
+            <div className="min-h-0 flex-1" data-testid="kv-diff-editor">
+              <DiffEditor
+                height="100%"
+                language="plaintext"
+                theme="agile"
+                original={onlineKvText}
+                modified={editorKvText}
+                options={{
+                  readOnly: true,
+                  renderSideBySide: true,
+                  fontSize: 12,
+                  minimap: { enabled: false },
+                  scrollBeyondLastLine: false,
+                  automaticLayout: true,
+                  hideUnchangedRegions: {
+                    enabled: true,
+                    contextLineCount: 3,
+                    minimumLineCount: 4,
+                    revealLineCount: 20,
+                  },
+                  fontFamily: "'JetBrains Mono Variable', ui-monospace, Menlo, monospace",
+                }}
+              />
+            </div>
+          ) : (
           <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-2">
             {activeDiff && activeDiff.rows.length > 0 ? (
               activeDiff.rows.map((r: KvDiffRow) => (
@@ -218,6 +274,7 @@ export function KvView({
               <p className="py-3 text-center text-xs text-muted-foreground">{configsStr.diffBar.empty}</p>
             )}
           </div>
+          )}
         </div>
       )}
     </div>

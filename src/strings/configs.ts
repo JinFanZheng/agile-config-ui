@@ -94,6 +94,7 @@ export const configsStr = {
   diffBar: {
     tabs: { online: '与线上差异', unsaved: '未保存修改' },
     summary: (a: number, c: number, r: number) => `+${a} ~${c} -${r}`,
+    sortedNote: '已按 key 排序对比',
     title: '与已保存版本的差异',
     fullWarning: (n: number) => `全量模式：保存后这 ${n} 个键将被标记"待发布删除"`,
     empty: '与已保存版本一致，没有未保存的修改',
@@ -119,7 +120,6 @@ export const configsStr = {
     patch: '补丁模式（只提交差异）',
     reload: '重新加载',
     editing: '编辑 JSON（含注释，保存后按 key 同步到配置）',
-    diffToggle: '对比已保存',
     foldAll: '折叠全部',
     unfoldAll: '展开全部',
   },

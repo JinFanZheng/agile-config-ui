@@ -499,6 +499,7 @@ export function ConfigPage() {
             onDirtyChange={setViewDirty}
             onSaved={refresh}
             reloadKey={reloadKey}
+            onlineValues={onlineKvMap}
           />
         </Suspense>
       ) : (
