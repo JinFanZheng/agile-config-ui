@@ -29,6 +29,44 @@ describe('parseJsoncToEntries', () => {
     expect(parseJsoncToEntries('{"url":"http://x/*y*/"}')).toEqual([['url', 'http://x/*y*/']])
   })
 
+  it('多级冒号逐级嵌套扁平化（hotel-supplier 实测格式）', () => {
+    const text = JSON.stringify(
+      {
+        ActiveCacheRefresh: {
+          DefaultMaxHotelsPerRequest: '10',
+          Suppliers: { '1200': { AllowPricePresenceProbe: 'False' } },
+        },
+      },
+      null,
+      2
+    )
+    expect(parseJsoncToEntries(text)).toEqual([
+      ['ActiveCacheRefresh:DefaultMaxHotelsPerRequest', '10'],
+      ['ActiveCacheRefresh:Suppliers:1200:AllowPricePresenceProbe', 'False'],
+    ])
+  })
+
+  it('数组按服务端语义展开为索引键', () => {
+    expect(parseJsoncToEntries('{"hosts":["a","b"]}')).toEqual([
+      ['hosts:0', 'a'],
+      ['hosts:1', 'b'],
+    ])
+    expect(
+      parseJsoncToEntries('{"r":[{"Action":"P"},{"Action":"Q"}]}')
+    ).toEqual([
+      ['r:0:Action', 'P'],
+      ['r:1:Action', 'Q'],
+    ])
+  })
+
+  it('整数键保持文档顺序（JSON.parse 会把 1200/198 重排，这里必须保序）', () => {
+    const text = '{"g":{"1200":{"k":"a"},"198":{"k":"b"}}}'
+    expect(parseJsoncToEntries(text)).toEqual([
+      ['g:1200:k', 'a'],
+      ['g:198:k', 'b'],
+    ])
+  })
+
   it('字面量按服务端规则归一化：true→True、null→""、数字→文本', () => {
     expect(parseJsoncToEntries('{"a":true,"b":false,"c":null,"d":42}')).toEqual([
       ['a', 'True'],
@@ -78,6 +116,43 @@ describe('buildOnlineJsonText', () => {
     expect(Object.keys(parsed)).toEqual(['db', 'app'])
     expect(Object.keys(parsed.db)).toEqual(['conn'])
     expect(Object.keys(parsed.app)).toEqual(['z', 'a'])
+  })
+
+  it('按冒号逐级嵌套重建（多级键不再平铺成字面量键名）', () => {
+    const online = new Map([
+      ['ActiveCacheRefresh:DefaultMaxHotelsPerRequest', '10'],
+      ['ActiveCacheRefresh:Suppliers:1200:AllowPricePresenceProbe', 'False'],
+    ])
+    const text = buildOnlineJsonText(online, [])
+    expect(JSON.parse(text)).toEqual({
+      ActiveCacheRefresh: {
+        DefaultMaxHotelsPerRequest: '10',
+        Suppliers: { '1200': { AllowPricePresenceProbe: 'False' } },
+      },
+    })
+  })
+
+  it('连续 0 起始整数键还原为数组（数字升序）', () => {
+    const online = new Map([
+      ['r:1:Action', 'Q'],
+      ['r:0:Action', 'P'],
+      ['r:2:Action', 'R'],
+    ])
+    const text = buildOnlineJsonText(online, [])
+    expect(JSON.parse(text)).toEqual({ r: [{ Action: 'P' }, { Action: 'Q' }, { Action: 'R' }] })
+    expect(text).toContain('"r": [')
+  })
+
+  it('非 0 起始的整数键保持对象形式（如供应商 ID 1200/198）', () => {
+    const online = new Map([
+      ['g:Suppliers:1200:k', 'a'],
+      ['g:Suppliers:198:k', 'b'],
+    ])
+    const text = buildOnlineJsonText(online, ['g:Suppliers:1200:k', 'g:Suppliers:198:k'])
+    expect(JSON.parse(text)).toEqual({
+      g: { Suppliers: { '1200': { k: 'a' }, '198': { k: 'b' } } },
+    })
+    expect(text.indexOf('1200')).toBeLessThan(text.indexOf('198'))
   })
 
   it('空分组键放顶层', () => {

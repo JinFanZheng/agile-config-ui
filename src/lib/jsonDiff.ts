@@ -64,29 +64,119 @@ function normalizeValue(v: unknown): string {
 }
 
 /**
- * jsonc → 有序扁平条目 [group:key, value]。
- * 结构约定与 GetJson 一致：顶层属性=分组对象，其内属性=配置键；顶层原始值=空分组键。
+ * 保序扫描器：直接在文本上按文档顺序产出 [flatKey, value]。
+ * 不用 JSON.parse——JS 对象的整数键（如 "1200"/"198"）会被强制数字升序，
+ * 而服务端 GetJson 按配置顺序输出（1200 可在 198 前），丢序会让线上侧重建错位、diff 出噪音。
+ * 数组按服务端语义展开为数字索引段（["a","b"] → arr:0 / arr:1）。非法 JSON 抛错。
+ */
+function scanEntries(src: string): [string, string][] {
+  const out: [string, string][] = []
+  let i = 0
+  const n = src.length
+  const ws = () => {
+    while (i < n && /\s/.test(src[i])) i++
+  }
+  const scanString = (): string => {
+    // src[i] === '"'
+    const start = i
+    i++
+    while (i < n) {
+      if (src[i] === '\\') {
+        i += 2
+        continue
+      }
+      if (src[i] === '"') {
+        i++
+        return JSON.parse(src.slice(start, i))
+      }
+      i++
+    }
+    throw new Error('unterminated string')
+  }
+  const scanValue = (path: string[]) => {
+    ws()
+    if (i >= n) throw new Error('unexpected end')
+    const c = src[i]
+    if (c === '"') {
+      out.push([path.join(':'), scanString()])
+      return
+    }
+    if (c === '{') {
+      i++
+      ws()
+      if (src[i] === '}') {
+        i++
+        return
+      }
+      for (;;) {
+        ws()
+        if (src[i] !== '"') throw new Error('expect property name')
+        const key = scanString()
+        ws()
+        if (src[i] !== ':') throw new Error('expect colon')
+        i++
+        scanValue([...path, key])
+        ws()
+        if (src[i] === ',') {
+          i++
+          continue
+        }
+        if (src[i] === '}') {
+          i++
+          return
+        }
+        throw new Error('expect , or }')
+      }
+    }
+    if (c === '[') {
+      i++
+      ws()
+      if (src[i] === ']') {
+        i++
+        return
+      }
+      let idx = 0
+      for (;;) {
+        scanValue([...path, String(idx++)])
+        ws()
+        if (src[i] === ',') {
+          i++
+          continue
+        }
+        if (src[i] === ']') {
+          i++
+          return
+        }
+        throw new Error('expect , or ]')
+      }
+    }
+    // 字面量：true / false / null / number
+    const m = /^(?:true|false|null|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/.exec(src.slice(i))
+    if (!m) throw new Error('unexpected token')
+    i += m[0].length
+    const v = m[0] === 'true' || m[0] === 'false' ? m[0] === 'true' : m[0] === 'null' ? null : Number(m[0])
+    if (typeof v === 'number' && !Number.isFinite(v)) throw new Error('bad number')
+    out.push([path.join(':'), normalizeValue(v)])
+  }
+  scanValue([])
+  ws()
+  if (i !== n) throw new Error('trailing content')
+  return out
+}
+
+/**
+ * jsonc → 有序扁平条目 [flatKey, value]。
+ * 结构约定与 GetJson 一致：按冒号逐级嵌套（如 a:b:c → {a:{b:{c:v}}}），数组=数字索引段，顶层原始值=无冒号键。
  * 解析失败（非法 JSON）返回 null。
  */
 export function parseJsoncToEntries(text: string): [string, string][] | null {
-  let parsed: unknown
   try {
-    parsed = JSON.parse(stripJsoncComments(text))
+    const stripped = stripJsoncComments(text)
+    if (!/^\s*\{/.test(stripped)) return null // 根必须是对象（分组结构）
+    return scanEntries(stripped)
   } catch {
     return null
   }
-  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return null
-  const entries: [string, string][] = []
-  for (const [group, inner] of Object.entries(parsed)) {
-    if (typeof inner === 'object' && inner !== null && !Array.isArray(inner)) {
-      for (const [key, v] of Object.entries(inner)) {
-        entries.push([`${group}:${key}`, normalizeValue(v)])
-      }
-    } else {
-      entries.push([group, normalizeValue(inner)])
-    }
-  }
-  return entries
 }
 
 /** 有序条目 vs 参照 Map 的计数；fullMode=true 时把"参照有、当前没有"的键计为 removed */
@@ -111,8 +201,47 @@ export function diffJsonCounts(
   return { added, changed, removed }
 }
 
+type JsonTreeNode = Map<string, string | JsonTreeNode>
+
+/** 全部键为整数且从 0 连续 → 视为数组（与服务端 SaveJson 的索引展开语义互逆；根节点除外） */
+function isIndexArray(node: JsonTreeNode): boolean {
+  if (node.size === 0) return false
+  const idxs: number[] = []
+  for (const k of node.keys()) {
+    if (!/^\d+$/.test(k)) return false
+    idxs.push(Number(k))
+  }
+  idxs.sort((a, b) => a - b)
+  return idxs.every((v, i) => v === i)
+}
+
 /**
- * 按编辑器键序重建线上 JSON 文本（2 空格缩进，分组嵌套结构与 GetJson 一致）。
+ * 手工序列化（2 空格缩进，格式对齐 JSON.stringify(root, null, 2)）：
+ * 不能用 JSON.stringify——JS 对象的整数键（如供应商 ID "1200"）会被强制数字升序，
+ * 而服务端按配置顺序输出（1200 可在 198 前），重排会造成 diff 噪音。
+ */
+function serializeTree(node: JsonTreeNode, depth: number, isRoot = false): string {
+  const pad = '  '.repeat(depth)
+  const inner = '  '.repeat(depth + 1)
+  if (!isRoot && isIndexArray(node)) {
+    const els = [...node.entries()]
+      .sort(([a], [b]) => Number(a) - Number(b))
+      .map(
+        ([, v]) =>
+          `${inner}${typeof v === 'string' ? JSON.stringify(v) : serializeTree(v, depth + 1)}`
+      )
+    return `[\n${els.join(',\n')}\n${pad}]`
+  }
+  const lines = [...node.entries()].map(([k, v]) =>
+    typeof v === 'string'
+      ? `${inner}${JSON.stringify(k)}: ${JSON.stringify(v)}`
+      : `${inner}${JSON.stringify(k)}: ${serializeTree(v, depth + 1)}`
+  )
+  return `{\n${lines.join(',\n')}\n${pad}}`
+}
+
+/**
+ * 按编辑器键序重建线上 JSON 文本（2 空格缩进，按冒号逐级嵌套，与 GetJson 一致）。
  * 编辑器里不存在的线上键（将删除）追加在对应分组末尾；分组顺序按首次出现排列。
  */
 export function buildOnlineJsonText(onlineMap: Map<string, string>, editorOrder: string[]): string {
@@ -125,23 +254,19 @@ export function buildOnlineJsonText(onlineMap: Map<string, string>, editorOrder:
     if (ib !== undefined) return 1
     return a.localeCompare(b)
   })
-  const root: Record<string, unknown> = {}
-  const groups = new Map<string, Record<string, string>>()
+  const root: JsonTreeNode = new Map()
   for (const flat of keys) {
-    const colon = flat.indexOf(':')
-    const group = colon < 0 ? '' : flat.slice(0, colon)
-    const key = colon < 0 ? flat : flat.slice(colon + 1)
-    if (!group) {
-      root[key] = onlineMap.get(flat) ?? ''
-    } else {
-      let g = groups.get(group)
-      if (!g) {
-        g = {}
-        groups.set(group, g)
-        root[group] = g
+    const segs = flat.split(':')
+    let node = root
+    for (let i = 0; i < segs.length - 1; i++) {
+      let next = node.get(segs[i])
+      if (!(next instanceof Map)) {
+        next = new Map()
+        node.set(segs[i], next)
       }
-      g[key] = onlineMap.get(flat) ?? ''
+      node = next
     }
+    node.set(segs[segs.length - 1], onlineMap.get(flat) ?? '')
   }
-  return JSON.stringify(root, null, 2)
+  return serializeTree(root, 0, true)
 }

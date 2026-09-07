@@ -103,10 +103,16 @@ export function ConfigPage() {
     staleTime: 0,
   })
 
-  // KV 视图用的线上快照：key 从 group\0key 转为 group:key
+  // KV/JSON 视图用的线上快照：key 从 group\0key 转为 group:key
+  // 空分组不加前导冒号（与 GetKvList 约定一致：空分组键就是裸 key，否则线上对比会错位）
   const onlineKvMap = useMemo(() => {
     const m = new Map<string, string>()
-    latestSnapshot.data?.forEach((v, k) => m.set(k.replace('\u0000', ':'), v))
+    latestSnapshot.data?.forEach((v, k) => {
+      const sep = k.indexOf('\u0000')
+      const group = k.slice(0, sep)
+      const key = k.slice(sep + 1)
+      m.set(group ? `${group}:${key}` : key, v)
+    })
     return m
   }, [latestSnapshot.data])
   const inheritIds = useMemo(() => appInfo.data?.inheritancedApps ?? [], [appInfo.data])
