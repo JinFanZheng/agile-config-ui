@@ -41,6 +41,25 @@ export const publishStr = {
     emptyAction: '去发布第一个版本',
     currentEnv: '当前环境',
   },
+  historyIndex: {
+    subtitle: '全部应用的发布状态总览；点击应用进入时间线',
+    envHint: (env: string) => `按当前环境 ${env} 展示`,
+    searchPlaceholder: '搜索应用名 / AppId…',
+    table: {
+      app: '应用',
+      latest: '最新版本',
+      lastPublish: '最近发布',
+      publisher: '发布人',
+      pending: '待发布',
+      actions: '操作',
+    },
+    noVersion: '从未发布',
+    empty: '还没有应用',
+    noMatch: '没有匹配的应用',
+    viewHistory: '查看历史',
+    pendingBadge: (a: number, e: number, d: number) => `+${a} ~${e} -${d}`,
+  },
+
   confirm: {
     rollbackTitle: (v: number | string) => `回滚到 v${v}`,
     rollbackBody: (v: number | string, log: string) =>

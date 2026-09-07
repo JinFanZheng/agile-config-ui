@@ -66,3 +66,4 @@ RG-1 baseline；RG-2 GREEN；RG-5 L-Real（真实发布/回滚，自建应用）
 - 修复实现期引入的首渲染崩溃（diffRows 在判空前计算，groups=[] 时 detail.node=undefined 传入 prevOf）——E2E 抓获后修正守卫顺序
 - E2E 同步改造为点击式交互；证据：history-master-detail / history-diff-view / history-375 三张截图
 - 门禁：59 unit + 18 e2e 全绿
+- **/history 全局入口升级为发布总览**（用户指出遗漏）：应用 ×（最新版本徽标 / 最近发布时间 / 发布人 / 待发布三色计数徽标 / 查看历史），**随顶栏环境切换**（DEV 有 v1、TEST 显示"从未发布"实测通过）；搜索防抖 + 空态区分 + 每应用并行拉取（staleTime 抑制）。E2E +1（19/19）；证据 history-index-overview / history-index-test-env

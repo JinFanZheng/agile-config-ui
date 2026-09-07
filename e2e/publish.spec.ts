@@ -39,6 +39,17 @@ test.beforeAll(async ({ request }) => {
   })
 })
 
+test('发布总览（/history）：最新版本 + 待发布徽标 + 环境跟随', async ({ page }) => {
+  await login(page)
+  await page.goto('/history')
+  await expect(page.getByRole('heading', { name: '发布历史' })).toBeVisible()
+  await expect(page.getByText(/按当前环境 DEV 展示/)).toBeVisible()
+  // demo_app 行：最新版本徽标与查看历史入口
+  const row = page.locator('tr', { hasText: 'demo_app' })
+  await expect(row.getByText('v1', { exact: true })).toBeVisible({ timeout: 15_000 })
+  await expect(row.getByRole('link', { name: '查看历史' })).toBeVisible()
+})
+
 test.afterAll(async ({ request }) => {
   const { token } = await (
     await request.post('/admin/jwt/login', {
