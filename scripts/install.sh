@@ -74,11 +74,9 @@ ENV_FILE="$DIR/.env"; COMPOSE_FILE="$DIR/docker-compose.yml"
 # MySqlConnector 连接串转义：值用单引号包裹、内部 ' 翻倍（密码含 ; ' @ $ 均安全）
 esc_sq() { printf "%s" "$1" | sed "s/'/''/g"; }
 
-# 可用的 mysql 客户端命令前缀（本机有 mysql 用之，否则借 mysql:8.4 镜像跑）
-mysql_cmd() {
-  if command -v mysql >/dev/null 2>&1; then echo "mysql"
-  else echo "docker run --rm $MYSQL_IMAGE mysql"; fi
-}
+# 预检一律容器视角（借 mysql:8.4 镜像跑客户端）：与 backend 同网络视角，
+# 避免"宿主能连而容器连不上/反之"的错位——尤其 host.docker.internal 在 Linux 宿主上不存在（CI 实测抓到）
+mysql_cmd() { echo "docker run --rm $MYSQL_IMAGE mysql"; }
 
 check_external_mysql() {
   [ -n "$MYSQL_HOST" ] || die "外部库模式需要 --mysql-host"
