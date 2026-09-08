@@ -1,0 +1,73 @@
+# 安装矩阵（ITER-29）：install.sh 三种数据库形态在 Linux（ubuntu runner）上的装→验→升级→卸载零残留。
+# 价值：host-gateway 行为、外部库视角、生成器产物形态（容器/卷数量）在真实 Linux 环境每推送自动验证。
+name: Install Matrix
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [sqlite, mysql-bundled, mysql-external]
+    env:
+      DIR: ~/agc-ci
+      PORT: '18080'
+      ADMIN_PASS: Ci-Test-2026
+    steps:
+      - uses: actions/checkout@v4
+      - name: 工具就绪（jq/lsof）
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq lsof
+      - name: 预起外部 MySQL（仅 external 模式）
+        if: matrix.mode == 'mysql-external'
+        run: |
+          docker run -d --name ext-mysql -p 3307:3306 -e MYSQL_ROOT_PASSWORD=Ext-Pass-2026 mysql:8.4
+          for i in $(seq 1 60); do
+            docker exec ext-mysql mysqladmin ping -h127.0.0.1 -uroot -pExt-Pass-2026 >/dev/null 2>&1 && exit 0
+            sleep 2
+          done
+          echo 'ext-mysql 未就绪'; exit 1
+      - name: 安装（${{ matrix.mode }}）
+        run: |
+          ARGS="--db sqlite"
+          [ "${{ matrix.mode }}" = mysql-bundled ] && ARGS="--db mysql"
+          [ "${{ matrix.mode }}" = mysql-external ] && ARGS="--db mysql --mysql-host host.docker.internal --mysql-port 3307 --mysql-user root --mysql-pass Ext-Pass-2026 --mysql-db agile_ci"
+          scripts/install.sh install --port "$PORT" $ARGS --admin-pass "$ADMIN_PASS" --dir "$DIR" < /dev/null
+      - name: 生成器产物形态断言（容器/卷数量）
+        run: |
+          N=$(docker ps --format '{{.Names}}' | grep -c agc-ci)
+          V=$(docker volume ls -q | grep -c agc-ci)
+          case "${{ matrix.mode }}" in
+            sqlite)        [ "$N" = 2 ] && [ "$V" = 1 ] ;;
+            mysql-bundled) [ "$N" = 3 ] && [ "$V" = 2 ] ;;
+            mysql-external)
+              [ "$N" = 2 ] && [ "$V" = 1 ]
+              docker exec ext-mysql mysql -uroot -pExt-Pass-2026 agile_ci -N \
+                -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='agile_ci';" | grep -qx 16
+              ;;
+          esac
+          echo "mode=${{ matrix.mode }} containers=$N volumes=$V ✓"
+      - name: 功能验证（健康/登录/llms.txt charset）
+        run: |
+          curl -sf "http://127.0.0.1:$PORT/Home/Sys" | jq -e '.appVer' >/dev/null
+          [ "$(curl -s -X POST "http://127.0.0.1:$PORT/admin/jwt/login" -H 'Content-Type: application/json' \
+            -d "{\"userName\":\"admin\",\"password\":\"$ADMIN_PASS\"}" | jq -r .status)" = ok ]
+          curl -sI "http://127.0.0.1:$PORT/llms.txt" | grep -i 'charset=utf-8'
+      - name: 升级路径（含 nginx DNS 刷新顺序）
+        run: |
+          scripts/install.sh upgrade --dir "$DIR" < /dev/null
+          curl -sf "http://127.0.0.1:$PORT/Home/Sys" >/dev/null
+      - name: 卸载零残留
+        run: |
+          echo yes | scripts/install.sh uninstall --dir "$DIR"
+          [ -z "$(docker ps -aq --filter name=agc-ci)" ] && echo '容器零残留 ✓'
+          [ -z "$(docker volume ls -q --filter name=agc-ci)" ] && echo '卷零残留 ✓'
+          [ ! -e "$DIR" ] && echo '目录零残留 ✓'
+      - name: 拆外部 MySQL
+        if: always() && matrix.mode == 'mysql-external'
+        run: docker rm -f ext-mysql || true

@@ -27,8 +27,10 @@
 | [ITER-26](ITER-26-docs.md) | 公开仓库文档补全（指南×3+导航） | 验收中（EVIDENCE_READY） | 用户验收（三份新文档） |
 | [ITER-27](ITER-27-install.md) | 一键安装脚本（引导配置） | 验收中（EVIDENCE_READY） | 用户验收（本机跑一遍 install.sh） |
 | [ITER-28](ITER-28-external-db.md) | install.sh 外部 MySQL+鲁棒性 | 验收中（EVIDENCE_READY） | 用户验收（外部库装一遍） |
+| [ITER-29](ITER-29-install-ci.md) | install.sh Linux CI 矩阵+模板语义定案 | 验收中（EVIDENCE_READY） | 用户验收（Actions 首轮三绿） |
 | [ITER-27](ITER-27-install.md) | 一键安装脚本（引导配置） | 验收中（EVIDENCE_READY） | 用户验收（本机跑一遍 install.sh） |
 | [ITER-28](ITER-28-external-db.md) | install.sh 外部 MySQL+鲁棒性 | 验收中（EVIDENCE_READY） | 用户验收（外部库装一遍） |
+| [ITER-29](ITER-29-install-ci.md) | install.sh Linux CI 矩阵+模板语义定案 | 验收中（EVIDENCE_READY） | 用户验收（Actions 首轮三绿） |
 
 ## 迭代路线图（2026-09-04 与用户约定：逐迭代交付，验收一个再继续；跨模块独立页用子代理并行）
 
@@ -62,8 +64,10 @@
 | ITER-26 | 公开仓库文档补全：用户指南/贡献指南/文档地图                    | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-26-docs.md](ITER-26-docs.md) | — |
 | ITER-27 | 一键安装脚本 install.sh（引导配置 + status/upgrade/uninstall）| —          | 0        | 验收中（EVIDENCE_READY） | [ITER-27-install.md](ITER-27-install.md) | — |
 | ITER-28 | install.sh 外部 MySQL 与鲁棒性（预检/建库/转义/诊断）    | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-28-external-db.md](ITER-28-external-db.md) | — |
+| ITER-29 | install.sh Linux CI 矩阵 + 模板升级语义定案                | —          | —        | 验收中（EVIDENCE_READY） | [ITER-29-install-ci.md](ITER-29-install-ci.md) | — |
 | ITER-27 | 一键安装脚本 install.sh（引导配置 + status/upgrade/uninstall）| —          | 0        | 验收中（EVIDENCE_READY） | [ITER-27-install.md](ITER-27-install.md) | — |
 | ITER-28 | install.sh 外部 MySQL 与鲁棒性（预检/建库/转义/诊断）    | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-28-external-db.md](ITER-28-external-db.md) | — |
+| ITER-29 | install.sh Linux CI 矩阵 + 模板升级语义定案                | —          | —        | 验收中（EVIDENCE_READY） | [ITER-29-install-ci.md](ITER-29-install-ci.md) | — |
 
 > 覆盖核对：M0 已适配 3 + ITER-03..08 共 78（含 Search 归 03、WaitPublishStatus 归 04、发布共用）+ 显式豁免 4（`Admin/Logoff`、`Home/IndexAsync`、`Home/Echo`、`Home/GetIP`；另有 `RemoteOP/RegisterNode` 待 ITER-06 定案）= 86 ✓。豁免需用户确认，见 API_INVENTORY 文末。
 

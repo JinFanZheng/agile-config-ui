@@ -16,6 +16,8 @@
 #   --mysql-port/db/user/pass   外部库连接项（默认 3306 / agile_config / root）
 #   --no-create-db     不自动建库（默认预检时 CREATE DATABASE IF NOT EXISTS utf8mb4）
 #   --sso-*            见 --help（九项 OIDC，通常装好后改 <dir>/.env 后 upgrade）
+# 注意：upgrade 只更新镜像并使 .env 改动生效，不会重写 docker-compose.yml 模板——
+#       install.sh 模板自身有更新时，需备份 .env 后重新 install（或手动对齐模板）。
 set -euo pipefail
 
 FRONT_IMAGE_DEFAULT="ghcr.io/jinfanzheng/agile-config-ui:latest"

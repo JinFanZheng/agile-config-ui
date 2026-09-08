@@ -43,6 +43,7 @@
 | [ITER-26](iterations/ITER-26-docs.md) | 公开仓库文档补全：用户指南/贡献指南/文档地图 | — |
 | [ITER-27](iterations/ITER-27-install.md) | 一键安装脚本 install.sh（引导配置，全生命周期实测） | — |
 | [ITER-28](iterations/ITER-28-external-db.md) | install.sh 外部 MySQL 与鲁棒性（三组矩阵实测） | — |
+| [ITER-29](iterations/ITER-29-install-ci.md) | install.sh Linux CI 矩阵（三形态产物断言）+ 模板升级语义定案 | — |
 
 质量门现态：`tsc` ✓ / `eslint` ✓ / vitest **125** ✓ / Playwright **42/42**（含 4 条移动端与 llms.txt 用例，workers=2 防并行假失败）✓ / `vite build` ✓。
 
