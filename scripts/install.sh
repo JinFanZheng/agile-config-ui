@@ -33,7 +33,7 @@ usage() { sed -n '2,16p' "$0"; exit 0; }
 
 # ---------- 参数 ----------
 PORT=8080; DB=sqlite; ADMIN_PASS=""; DIR=""; FRONT_IMAGE="$FRONT_IMAGE_DEFAULT"
-PORT_SET=0; DB_SET=0  # 显式 flag 提供的项不再交互提问
+PORT_SET=0; DB_SET=0; ASSUME_YES=0  # 显式 flag 提供的项不再交互提问
 MYSQL_EXTERNAL=0; MYSQL_HOST=""; MYSQL_PORT=3306; MYSQL_DB=agile_config; MYSQL_USER=root; MYSQL_PASS=""; MYSQL_CREATE_DB=1
 SSO_ARGS=0; SSO_CLIENT_ID=""; SSO_CLIENT_SECRET=""; SSO_AUTH_EP=""; SSO_TOKEN_EP=""
 SSO_USER_CLAIM=sub; SSO_USER_NAME_CLAIM=preferred_username; SSO_SCOPE="openid profile"
@@ -55,6 +55,7 @@ while [ $# -gt 0 ]; do
     --mysql-user) MYSQL_USER="$2"; shift 2 ;;
     --mysql-pass) MYSQL_PASS="$2"; shift 2 ;;
     --no-create-db) MYSQL_CREATE_DB=0; shift ;;
+    --yes) ASSUME_YES=1; shift ;;
     --sso-client-id) SSO_CLIENT_ID="$2"; SSO_ARGS=1; shift 2 ;;
     --sso-client-secret) SSO_CLIENT_SECRET="$2"; SSO_ARGS=1; shift 2 ;;
     --sso-auth-endpoint) SSO_AUTH_EP="$2"; SSO_ARGS=1; shift 2 ;;
@@ -333,7 +334,11 @@ summary() {
   echo "  ┌──────────────────────────────────────────────"
   echo "  │ 安装完成"
   echo "  │ 访问        http://localhost:$PORT"
-  echo "  │ 管理员      admin / $ADMIN_PASS"
+  if [ -n "$ADMIN_PASS" ]; then
+    echo "  │ 管理员      admin / ${ADMIN_PASS}"
+  else
+    echo "  │ 管理员      打开页面完成首启：设置 admin 密码后登录"
+  fi
   echo "  │ 数据库      ${DB}（数据卷持久化）"
   [ "$SSO_ENABLED" = true ] && echo "  │ SSO         已配置（按钮文案：${SSO_BUTTON}）"
   echo "  │ 日常操作    cd $DIR 后："
@@ -344,6 +349,9 @@ summary() {
 }
 
 do_install() {
+  if [ ! -t 0 ]; then
+    log "管道模式：使用默认配置（端口 $PORT / sqlite / 浏览器首启设密码）；自定义请加参数（--help）或两步下载后交互运行"
+  fi
   guide
   preflight
   render
@@ -373,8 +381,10 @@ do_uninstall() {
   else
     echo "将停止并删除容器与数据卷（数据将丢失）：$DIR"
   fi
-  local ok; read -r -p "确认？输入 yes: " ok || true
-  [ "${ok:-}" = yes ] || die "已取消"
+  if [ "${ASSUME_YES:-0}" != 1 ]; then
+    local ok; read -r -p "确认？输入 yes: " ok || true
+    [ "${ok:-}" = yes ] || die "已取消"
+  fi
   dc down -v --remove-orphans
   rm -rf "$DIR"
   log "已卸载并清理 $DIR"
