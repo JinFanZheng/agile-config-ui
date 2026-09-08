@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   BookOpen,
+  ChevronsLeft,
+  ChevronsRight,
   Boxes,
   CircleCheck,
   Clock,
@@ -21,6 +23,7 @@ import { S } from '../../strings/common'
 import { layoutStr } from '../../strings/layout'
 import { EnvSwitcher } from '../EnvSwitcher'
 import { usePermission } from '../../hooks/usePermission'
+import { useSettingsStore } from '../../stores/settings'
 import { PERMISSION } from '../../lib/permissions'
 import { ThemeSwitcher } from '../ThemeSwitcher'
 import { UserMenu } from '../UserMenu'
@@ -79,6 +82,10 @@ const NAV_GROUPS: NavGroup[] = [
  */
 export function AppLayout() {
   const [navOpen, setNavOpen] = useState(false)
+  const sidebarCollapsed = useSettingsStore((s) => s.sidebarCollapsed)
+  const setSidebarCollapsed = useSettingsStore((s) => s.setSidebarCollapsed)
+  // 折叠只作用于桌面停靠态；移动端抽屉（navOpen）恒为完整宽度
+  const collapsed = sidebarCollapsed && !navOpen
   const { can } = usePermission()
   // 侧栏版本号由匿名接口 /Home/Sys 驱动；加载/失败/缺 appVer 时仅显示产品名
   const sys = useQuery({ queryKey: ['ops', 'sys'], queryFn: getSys, staleTime: 300_000 })
@@ -131,7 +138,10 @@ export function AppLayout() {
           className={
             navOpen
               ? 'anim-drawer fixed top-12 bottom-0 left-0 z-50 flex w-48 flex-col border-r border-border bg-panel p-2'
-              : 'hidden w-48 shrink-0 flex-col border-r border-border bg-panel p-2 md:flex'
+              : cn(
+                  'hidden shrink-0 flex-col border-r border-border bg-panel p-2 md:flex',
+                  collapsed ? 'w-14' : 'w-48'
+                )
           }
         >
           <nav className="flex flex-col gap-0.5">
@@ -140,7 +150,7 @@ export function AppLayout() {
               if (visible.length === 0) return null
               return (
                 <div key={group.label ?? `nav-section-${gi}`} className="pt-2 first:pt-0">
-                  {group.label && (
+                  {group.label && !collapsed && (
                     <p className="px-2.5 pb-1 text-[10px] text-muted-foreground/60">{group.label}</p>
                   )}
                   {visible.map(({ to, label, icon: Icon }) => (
@@ -148,18 +158,20 @@ export function AppLayout() {
                       key={to}
                       to={to}
                       end={to === '/'}
+                      title={label}
                       onClick={() => setNavOpen(false)}
                       className={({ isActive }) =>
                         cn(
-                          'flex items-center gap-2 rounded-md px-2.5 py-1.5 text-xs transition-colors duration-150 ease-out',
+                          'flex items-center rounded-md py-1.5 text-xs transition-colors duration-150 ease-out',
+                          collapsed ? 'justify-center px-1.5' : 'gap-2 px-2.5',
                           isActive
                             ? 'bg-selected font-medium text-selected-foreground'
                             : 'text-muted-foreground hover:bg-hover hover:text-foreground'
                         )
                       }
                     >
-                      <Icon className="h-3.5 w-3.5" />
-                      {label}
+                      <Icon className="h-3.5 w-3.5 shrink-0" />
+                      <span className={collapsed ? 'sr-only' : undefined}>{label}</span>
                     </NavLink>
                   ))}
                 </div>
@@ -167,9 +179,33 @@ export function AppLayout() {
             })}
           </nav>
           <div className="flex-1" />
-          <p className="px-2.5 pb-1 font-mono text-[10px] text-muted-foreground/50">
-            {sys.data?.appVer ? `${S.appName} ${sys.data.appVer}` : S.appName}
-          </p>
+          {/* 折叠开关：仅桌面停靠态可见（移动端抽屉恒为完整宽度） */}
+          {!navOpen && (
+            <button
+              type="button"
+              aria-label={collapsed ? layoutStr.nav.expandSidebar : layoutStr.nav.collapseSidebar}
+              title={collapsed ? layoutStr.nav.expandSidebar : layoutStr.nav.collapseSidebar}
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className={cn(
+                'flex items-center rounded-md py-1.5 text-muted-foreground transition-colors duration-150 ease-out hover:bg-hover hover:text-foreground',
+                collapsed ? 'justify-center px-1.5' : 'px-2.5'
+              )}
+            >
+              {collapsed ? (
+                <ChevronsRight className="h-3.5 w-3.5" />
+              ) : (
+                <ChevronsLeft className="h-3.5 w-3.5" />
+              )}
+              <span className={collapsed ? 'sr-only' : undefined}>
+                {collapsed ? layoutStr.nav.expandSidebar : layoutStr.nav.collapseSidebar}
+              </span>
+            </button>
+          )}
+          {!collapsed && (
+            <p className="px-2.5 pb-1 pt-1 font-mono text-[10px] text-muted-foreground/50">
+              {sys.data?.appVer ? `${S.appName} ${sys.data.appVer}` : S.appName}
+            </p>
+          )}
         </aside>
 
         <main className="min-w-0 flex-1 overflow-y-auto p-4 md:p-6">

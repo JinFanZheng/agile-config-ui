@@ -12,6 +12,8 @@ export const layoutStr = {
     guide: '接入指南',
     settings: '设置',
     openMenu: '打开导航菜单',
+    collapseSidebar: '收起侧栏',
+    expandSidebar: '展开侧栏',
   },
   /** 侧栏分组标签（权限过滤后组内无可见项时整组隐藏） */
   navGroups: {

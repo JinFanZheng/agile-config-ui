@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Link, useNavigate, useSearchParams } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { checkPasswordInited, login } from '../../api/auth'
 import { getSsoLoginUrl } from '../../api/importExport'
 import { Button } from '../../components/ui/button'
@@ -17,8 +17,7 @@ import { loginSchema, type LoginValues } from './schemas'
 
 export function LoginPage() {
   const navigate = useNavigate()
-  const [searchParams] = useSearchParams()
-  const setSession = useAuthStore((s) => s.setSession)
+    const setSession = useAuthStore((s) => s.setSession)
   const [error, setError] = useState<string | null>(null)
 
   // 首启检测：实例未初始化密码时引导去初始化页（公开接口）
@@ -47,9 +46,8 @@ export function LoginPage() {
     setError(null)
     try {
       const session = await login(values.userName, values.password)
+      // 登录后跳转收口在 RedirectIfAuthed（guards.tsx）：from 回跳 > 落地偏好；此处只写入会话
       setSession(session)
-      const from = searchParams.get('from')
-      navigate(from && from.startsWith('/') ? from : '/', { replace: true })
     } catch (e) {
       setError(e instanceof ApiError ? e.message : authStr.login.failed)
     }

@@ -21,6 +21,8 @@
 | [ITER-20](ITER-20-real-stack.md) | 真实栈实测（MySQL）+生产崩溃修复 | ✅ VERIFIED | 已验收（5173 栈过一遍） |
 | [ITER-21](ITER-21-route-error.md) | 路由错误页+过期 chunk 自愈 | ✅ VERIFIED | 已验收（硬刷新后过一遍） |
 | [ITER-22](ITER-22-settings-batch3.md) | 设置第三批：默认视图+自动换行 | 验收中（EVIDENCE_READY） | 用户验收（/settings 两行新设置） |
+| [ITER-23](ITER-23-e2e-flake.md) | e2e 抗抖 | ✅ VERIFIED | — |
+| [ITER-24](ITER-24-ux-batch.md) | 体验小项（折叠/落地页/分页/指南全宽） | 验收中（EVIDENCE_READY） | 用户验收（折叠/设置三行/指南） |
 
 ## 迭代路线图（2026-09-04 与用户约定：逐迭代交付，验收一个再继续；跨模块独立页用子代理并行）
 
@@ -48,6 +50,8 @@
 | ITER-20 | MySQL 真实栈实测；lightningcss #fff→monaco 生产崩溃修复+哨兵 | —          | 0        | ✅ VERIFIED | [ITER-20-real-stack.md](ITER-20-real-stack.md) | `docs/evidence/ITER-20/` |
 | ITER-21 | 路由错误页（中文）+ 过期 chunk 自动刷新自愈                  | —          | 0        | ✅ VERIFIED | [ITER-21-route-error.md](ITER-21-route-error.md) | `docs/evidence/ITER-21/` |
 | ITER-22 | 设置第三批：配置页默认视图 + 编辑器自动换行                    | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-22-settings-batch3.md](ITER-22-settings-batch3.md) | `docs/evidence/ITER-22/` |
+| ITER-23 | e2e 抗抖（retries 全环境统一，双轮+三轮全绿零 flaky）            | —          | —        | ✅ VERIFIED | [ITER-23-e2e-flake.md](ITER-23-e2e-flake.md) | — |
+| ITER-24 | 体验小项：侧栏折叠/登录落地页/分页大小/指南全宽                    | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-24-ux-batch.md](ITER-24-ux-batch.md) | `docs/evidence/ITER-24/` |
 
 > 覆盖核对：M0 已适配 3 + ITER-03..08 共 78（含 Search 归 03、WaitPublishStatus 归 04、发布共用）+ 显式豁免 4（`Admin/Logoff`、`Home/IndexAsync`、`Home/Echo`、`Home/GetIP`；另有 `RemoteOP/RegisterNode` 待 ITER-06 定案）= 86 ✓。豁免需用户确认，见 API_INVENTORY 文末。
 

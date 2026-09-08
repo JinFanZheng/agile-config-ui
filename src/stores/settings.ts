@@ -45,6 +45,28 @@ export function isDefaultConfigView(v: unknown): v is DefaultConfigView {
 }
 
 // ---------------------------------------------------------------------------
+// 登录后落地页（仅无 from 回跳参数时生效）
+// ---------------------------------------------------------------------------
+export const LANDING_PAGES = ['overview', 'apps'] as const
+export type LandingPage = (typeof LANDING_PAGES)[number]
+export const DEFAULT_LANDING_PAGE: LandingPage = 'overview'
+
+export function isLandingPage(v: unknown): v is LandingPage {
+  return typeof v === 'string' && (LANDING_PAGES as readonly string[]).includes(v)
+}
+
+// ---------------------------------------------------------------------------
+// 列表默认每页条数（打开列表时的初始分页大小；客户端页固定 50 不随此设置）
+// ---------------------------------------------------------------------------
+export const PAGE_SIZES = [20, 50, 100] as const
+export type PageSize = (typeof PAGE_SIZES)[number]
+export const DEFAULT_PAGE_SIZE: PageSize = 20
+
+export function isPageSize(v: unknown): v is PageSize {
+  return typeof v === 'number' && (PAGE_SIZES as readonly number[]).includes(v)
+}
+
+// ---------------------------------------------------------------------------
 // 编辑器字号（monaco Editor/DiffEditor options.fontSize；KV 文本视图同源）
 // ---------------------------------------------------------------------------
 export const EDITOR_FONT_SIZES = [12, 13, 14, 15] as const
@@ -106,6 +128,15 @@ export interface SettingsState {
   /** monaco 编辑器自动换行（默认关，保持现状） */
   editorWordWrap: boolean
   setEditorWordWrap: (on: boolean) => void
+  /** 登录后落地页（无 from 回跳时生效；就地切换在侧栏，不入设置页） */
+  defaultLandingPage: LandingPage
+  setDefaultLandingPage: (page: LandingPage) => void
+  /** 列表默认每页条数（初始分页大小） */
+  defaultPageSize: PageSize
+  setDefaultPageSize: (size: PageSize) => void
+  /** 桌面侧栏折叠为图标栏 */
+  sidebarCollapsed: boolean
+  setSidebarCollapsed: (collapsed: boolean) => void
   motion: boolean
   setTheme: (theme: ThemeSetting) => void
   setSystemDark: (theme: ThemeId) => void
@@ -173,6 +204,9 @@ export const useSettingsStore = create<SettingsState>()(
       editorFontSize: DEFAULT_EDITOR_FONT_SIZE,
       defaultConfigView: DEFAULT_CONFIG_VIEW,
       editorWordWrap: false,
+      defaultLandingPage: DEFAULT_LANDING_PAGE,
+      defaultPageSize: DEFAULT_PAGE_SIZE,
+      sidebarCollapsed: false,
       motion: !systemPrefersReducedMotion(),
       setTheme: (theme) =>
         set((s) => {
@@ -192,6 +226,9 @@ export const useSettingsStore = create<SettingsState>()(
       setEditorFontSize: (editorFontSize) => set({ editorFontSize }),
       setDefaultConfigView: (defaultConfigView) => set({ defaultConfigView }),
       setEditorWordWrap: (editorWordWrap) => set({ editorWordWrap }),
+      setDefaultLandingPage: (defaultLandingPage) => set({ defaultLandingPage }),
+      setDefaultPageSize: (defaultPageSize) => set({ defaultPageSize }),
+      setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
       setMotion: (motion) =>
         set((s) => {
           applyToDocument({ ...s, motion })
@@ -214,6 +251,11 @@ export const useSettingsStore = create<SettingsState>()(
             ? p.defaultConfigView
             : DEFAULT_CONFIG_VIEW,
           editorWordWrap: typeof p?.editorWordWrap === 'boolean' ? p.editorWordWrap : false,
+          defaultLandingPage: isLandingPage(p?.defaultLandingPage)
+            ? p.defaultLandingPage
+            : DEFAULT_LANDING_PAGE,
+          defaultPageSize: isPageSize(p?.defaultPageSize) ? p.defaultPageSize : DEFAULT_PAGE_SIZE,
+          sidebarCollapsed: typeof p?.sidebarCollapsed === 'boolean' ? p.sidebarCollapsed : false,
           motion: typeof p?.motion === 'boolean' ? p.motion : !systemPrefersReducedMotion(),
         }
         const resolvedTheme = applyToDocument(next)

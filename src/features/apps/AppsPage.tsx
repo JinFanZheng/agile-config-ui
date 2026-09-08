@@ -22,13 +22,13 @@ import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
 import { PERMISSION } from '../../lib/permissions'
 import { useEnvStore } from '../../stores/env'
+import { useSettingsStore } from '../../stores/settings'
 import { toast } from '../../stores/toast'
 import { appsStr } from '../../strings/apps'
 import { AppAuthDialog } from './AppAuthDialog'
 import { AppImportDialog } from './AppImportDialog'
 import { AppDialog } from './AppDialog'
 
-const PAGE_SIZE = 20
 
 type ConfirmState =
   | { kind: 'delete'; app: AppItem }
@@ -37,6 +37,8 @@ type ConfirmState =
   | null
 
 export function AppsPage() {
+  // 列表初始分页大小：设置中心可配（ITER-24），reactive 进 queryKey
+  const pageSize = useSettingsStore((s) => s.defaultPageSize)
   const queryClient = useQueryClient()
   const [keyword, setKeyword] = useState('')
   const [debounced, setDebounced] = useState('')
@@ -60,13 +62,13 @@ export function AppsPage() {
   }, [keyword])
 
   const search = useQuery({
-    queryKey: ['apps', 'search', { name: debounced, group, current: page, pageSize: PAGE_SIZE }],
+    queryKey: ['apps', 'search', { name: debounced, group, current: page, pageSize: pageSize }],
     queryFn: () =>
       searchApps({
         name: debounced || undefined,
         group: group || undefined,
         current: page,
-        pageSize: PAGE_SIZE,
+        pageSize: pageSize,
       }),
   })
 
@@ -121,7 +123,7 @@ export function AppsPage() {
   })
 
   const total = search.data?.total ?? 0
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
 
   return (
     <div>
@@ -405,7 +407,7 @@ export function AppsPage() {
           </tbody>
         </table>
 
-        {total > PAGE_SIZE && (
+        {total > pageSize && (
           <div className="flex items-center justify-end gap-3 border-t border-border px-4 py-2 text-xs text-muted-foreground">
             <span>
               {page} / {totalPages}

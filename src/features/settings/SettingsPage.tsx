@@ -6,10 +6,14 @@ import { cn } from '../../lib/utils'
 import {
   DEFAULT_CONFIG_VIEWS,
   EDITOR_FONT_SIZES,
+  LANDING_PAGES,
+  PAGE_SIZES,
   UI_FONT_SIZES,
   useSettingsStore,
   type DefaultConfigView,
   type EditorFontSize,
+  type LandingPage,
+  type PageSize,
   type UiFontSize,
 } from '../../stores/settings'
 import { settingsStr } from '../../strings/settings'
@@ -268,6 +272,10 @@ export function SettingsPage() {
   const defaultConfigView = useSettingsStore((s) => s.defaultConfigView)
   const setDefaultConfigView = useSettingsStore((s) => s.setDefaultConfigView)
   const editorWordWrap = useSettingsStore((s) => s.editorWordWrap)
+  const defaultLandingPage = useSettingsStore((s) => s.defaultLandingPage)
+  const setDefaultLandingPage = useSettingsStore((s) => s.setDefaultLandingPage)
+  const defaultPageSize = useSettingsStore((s) => s.defaultPageSize)
+  const setDefaultPageSize = useSettingsStore((s) => s.setDefaultPageSize)
   const setEditorWordWrap = useSettingsStore((s) => s.setEditorWordWrap)
   const setMotion = useSettingsStore((s) => s.setMotion)
 
@@ -347,6 +355,24 @@ export function SettingsPage() {
               label: settingsStr.defaultConfigViewOptions[v],
             }))}
             onChange={setDefaultConfigView}
+          />
+        </SettingRow>
+        <SettingRow title={settingsStr.landingPage} desc={settingsStr.landingPageDesc}>
+          <SegmentedRadio<LandingPage>
+            name="settings-landing"
+            ariaLabel={settingsStr.landingPage}
+            value={defaultLandingPage}
+            options={LANDING_PAGES.map((v) => ({ value: v, label: settingsStr.landingPageOptions[v] }))}
+            onChange={setDefaultLandingPage}
+          />
+        </SettingRow>
+        <SettingRow title={settingsStr.pageSize} desc={settingsStr.pageSizeDesc}>
+          <SegmentedRadio<PageSize>
+            name="settings-page-size"
+            ariaLabel={settingsStr.pageSize}
+            value={defaultPageSize}
+            options={PAGE_SIZES.map((v) => ({ value: v, label: String(v) }))}
+            onChange={setDefaultPageSize}
           />
         </SettingRow>
       </Card>

@@ -157,6 +157,28 @@ describe('useSettingsStore', () => {
     expect([...EDITOR_FONT_SIZES]).toEqual([12, 13, 14, 15])
   })
 
+  it('落地页/分页大小/侧栏折叠：setter 生效并持久化；非法持久化值回退默认（ITER-24）', () => {
+    useSettingsStore.getState().setDefaultLandingPage('apps')
+    useSettingsStore.getState().setDefaultPageSize(100)
+    useSettingsStore.getState().setSidebarCollapsed(true)
+    const st = useSettingsStore.getState()
+    expect(st.defaultLandingPage).toBe('apps')
+    expect(st.defaultPageSize).toBe(100)
+    expect(st.sidebarCollapsed).toBe(true)
+    const raw = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY)!)
+    expect(raw.state.defaultLandingPage).toBe('apps')
+
+    localStorage.setItem(
+      SETTINGS_STORAGE_KEY,
+      persisted({ defaultLandingPage: 'home', defaultPageSize: 33, sidebarCollapsed: 'yes' })
+    )
+    useSettingsStore.persist.rehydrate()
+    const st2 = useSettingsStore.getState()
+    expect(st2.defaultLandingPage).toBe('overview')
+    expect(st2.defaultPageSize).toBe(20)
+    expect(st2.sidebarCollapsed).toBe(false)
+  })
+
   it('配置页默认视图与自动换行：setter 生效并持久化；非法持久化值回退默认', () => {
     useSettingsStore.getState().setDefaultConfigView('json')
     useSettingsStore.getState().setEditorWordWrap(true)

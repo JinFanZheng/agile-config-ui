@@ -17,12 +17,12 @@ import { Skeleton, Spinner } from '../../components/ui/spinner'
 import { useDirtyGuard } from '../../hooks/useDirtyGuard'
 import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
+import { useSettingsStore } from '../../stores/settings'
 import { PERMISSION } from '../../lib/permissions'
 import { toast } from '../../stores/toast'
 import { S } from '../../strings/common'
 import { servicesStr } from '../../strings/services'
 
-const PAGE_SIZE = 20
 
 /** 时间 → YYYY-MM-DD HH:mm（完整时间悬浮 title） */
 function formatMinute(t?: string | null) {
@@ -40,6 +40,9 @@ function heartBeatLabel(mode?: string) {
 
 /** 服务注册中心：搜索过滤 + 手动注册 + 移除（危险动作二次确认） */
 export function ServicesPage() {
+  // 列表初始分页大小：设置中心可配（ITER-24），reactive 进 queryKey
+  const pageSize = useSettingsStore((s) => s.defaultPageSize)
+
   const queryClient = useQueryClient()
   const { can } = usePermission()
   const [nameInput, setNameInput] = useState('')
@@ -65,7 +68,7 @@ export function ServicesPage() {
     queryKey: [
       'services',
       'search',
-      { serviceName: name, serviceId, status, current: page, pageSize: PAGE_SIZE },
+      { serviceName: name, serviceId, status, current: page, pageSize: pageSize },
     ],
     queryFn: () =>
       searchServices({
@@ -73,14 +76,14 @@ export function ServicesPage() {
         serviceId: serviceId || undefined,
         status: status === '' ? undefined : Number(status),
         current: page,
-        pageSize: PAGE_SIZE,
+        pageSize: pageSize,
       }),
     refetchInterval: 10_000,
   })
 
   const rows = search.data?.data ?? []
   const total = search.data?.total ?? 0
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
   const hasFilter = name !== '' || serviceId !== '' || status !== ''
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['services'] })
@@ -320,7 +323,7 @@ export function ServicesPage() {
           </tbody>
         </table>
 
-        {total > PAGE_SIZE && (
+        {total > pageSize && (
           <div className="flex items-center justify-end gap-3 border-t border-border px-4 py-2 text-xs text-muted-foreground">
             <span>
               {page} / {totalPages}

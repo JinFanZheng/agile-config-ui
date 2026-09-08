@@ -6,10 +6,10 @@ import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
 import { Skeleton } from '../../components/ui/spinner'
 import { ApiError } from '../../lib/http'
+import { useSettingsStore } from '../../stores/settings'
 import { S } from '../../strings/common'
 import { logsStr } from '../../strings/logs'
 
-const PAGE_SIZE = 20
 
 /** logTime → YYYY-MM-DD HH:mm:ss */
 function formatLogTime(t?: string | null) {
@@ -20,6 +20,9 @@ function formatLogTime(t?: string | null) {
 
 /** 系统日志：AppId + 类型过滤（防抖 300ms / 回车立即触发），分页浏览 */
 export function LogsPage() {
+  // 列表初始分页大小：设置中心可配（ITER-24），reactive 进 queryKey
+  const pageSize = useSettingsStore((s) => s.defaultPageSize)
+
   const [appIdInput, setAppIdInput] = useState('')
   const [appId, setAppId] = useState('')
   const [logType, setLogType] = useState('')
@@ -35,19 +38,19 @@ export function LogsPage() {
   }, [appIdInput])
 
   const search = useQuery({
-    queryKey: ['syslogs', 'search', { appId, logType, current: page, pageSize: PAGE_SIZE }],
+    queryKey: ['syslogs', 'search', { appId, logType, current: page, pageSize: pageSize }],
     queryFn: () =>
       searchSysLogs({
         appId: appId || undefined,
         logType: logType === '' ? undefined : Number(logType),
         current: page,
-        pageSize: PAGE_SIZE,
+        pageSize: pageSize,
       }),
   })
 
   const rows = search.data?.data ?? []
   const total = search.data?.total ?? 0
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
   const hasFilter = appId !== '' || logType !== ''
 
   const clearFilter = () => {
@@ -191,7 +194,7 @@ export function LogsPage() {
           </tbody>
         </table>
 
-        {total > PAGE_SIZE && (
+        {total > pageSize && (
           <div className="flex items-center justify-end gap-3 border-t border-border px-4 py-2 text-xs text-muted-foreground">
             <span>
               {page} / {totalPages}

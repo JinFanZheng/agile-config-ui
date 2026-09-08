@@ -22,11 +22,11 @@ import { Skeleton, Spinner } from '../../components/ui/spinner'
 import { useDirtyGuard } from '../../hooks/useDirtyGuard'
 import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
+import { useSettingsStore } from '../../stores/settings'
 import { PERMISSION } from '../../lib/permissions'
 import { toast } from '../../stores/toast'
 import { usersStr } from '../../strings/users'
 
-const PAGE_SIZE = 20
 
 type ConfirmState = { kind: 'reset'; user: UserItem } | { kind: 'delete'; user: UserItem } | null
 
@@ -252,6 +252,9 @@ function UserDialog({
 }
 
 export function UsersPage() {
+  // 列表初始分页大小：设置中心可配（ITER-24），reactive 进 queryKey
+  const pageSize = useSettingsStore((s) => s.defaultPageSize)
+
   const queryClient = useQueryClient()
   const { can } = usePermission()
   const [keyword, setKeyword] = useState('')
@@ -271,12 +274,12 @@ export function UsersPage() {
   }, [keyword])
 
   const search = useQuery({
-    queryKey: ['users', 'search', { userName: debounced, current: page, pageSize: PAGE_SIZE }],
+    queryKey: ['users', 'search', { userName: debounced, current: page, pageSize: pageSize }],
     queryFn: () =>
       searchUsers({
         userName: debounced || undefined,
         current: page,
-        pageSize: PAGE_SIZE,
+        pageSize: pageSize,
       }),
   })
 
@@ -304,7 +307,7 @@ export function UsersPage() {
 
   const rows = search.data?.data ?? []
   const total = search.data?.total ?? 0
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
 
   return (
     <div>
@@ -497,7 +500,7 @@ export function UsersPage() {
           </tbody>
         </table>
 
-        {total > PAGE_SIZE && (
+        {total > pageSize && (
           <div className="flex items-center justify-end gap-3 border-t border-border px-4 py-2 text-xs text-muted-foreground">
             <span>
               {page} / {totalPages}

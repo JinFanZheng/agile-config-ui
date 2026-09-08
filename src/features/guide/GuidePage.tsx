@@ -67,7 +67,7 @@ export function GuidePage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div>
       <header className="mb-6">
         <h1 className="text-base font-semibold">{guideStr.title}</h1>
         <p className="mt-1 max-w-3xl text-xs leading-relaxed text-muted-foreground">
