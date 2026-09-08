@@ -17,7 +17,7 @@ async function login(page: import('@playwright/test').Page) {
   await expect(page).toHaveURL(/\/$/)
 }
 
-test('接入指南：五节内容 + 锚点导航 + 代码一键复制', async ({ page }) => {
+test('接入指南：六节内容 + 锚点导航 + 代码一键复制', async ({ page }) => {
   await login(page)
   await page.goto('/guide')
 

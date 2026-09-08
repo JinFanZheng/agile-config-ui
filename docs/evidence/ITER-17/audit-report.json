@@ -1,0 +1,579 @@
+{
+  "login": {
+    "vw": 390,
+    "pageOverflow": 0,
+    "offenderCount": 0,
+    "top": []
+  },
+  "home": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 0,
+    "top": []
+  },
+  "apps": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 50,
+    "top": [
+      {
+        "tag": "table",
+        "cls": "w-full min-w-[640px] border-collapse text-[13px] md:min-w-[8",
+        "w": 930,
+        "left": 17,
+        "right": 947
+      },
+      {
+        "tag": "thead",
+        "cls": "",
+        "w": 930,
+        "left": 17,
+        "right": 947
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border bg-elevated text-left text-xs text-mu",
+        "w": 930,
+        "left": 17,
+        "right": 947
+      },
+      {
+        "tag": "tbody",
+        "cls": "",
+        "w": 930,
+        "left": 17,
+        "right": 947
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border transition-colors last:border-b-0 hov",
+        "w": 930,
+        "left": 17,
+        "right": 947
+      }
+    ]
+  },
+  "apps-newapp-modal": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 50,
+    "top": [
+      {
+        "tag": "table",
+        "cls": "w-full min-w-[640px] border-collapse text-[13px] md:min-w-[8",
+        "w": 930,
+        "left": 17,
+        "right": 947
+      },
+      {
+        "tag": "thead",
+        "cls": "",
+        "w": 930,
+        "left": 17,
+        "right": 947
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border bg-elevated text-left text-xs text-mu",
+        "w": 930,
+        "left": 17,
+        "right": 947
+      },
+      {
+        "tag": "tbody",
+        "cls": "",
+        "w": 930,
+        "left": 17,
+        "right": 947
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border transition-colors last:border-b-0 hov",
+        "w": 930,
+        "left": 17,
+        "right": 947
+      }
+    ]
+  },
+  "config-table": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 36,
+    "top": [
+      {
+        "tag": "span",
+        "cls": "col-span-8 flex items-center gap-1.5",
+        "w": 966,
+        "left": 29,
+        "right": 995
+      },
+      {
+        "tag": "span",
+        "cls": "col-span-8 flex items-center gap-1.5",
+        "w": 966,
+        "left": 29,
+        "right": 995
+      },
+      {
+        "tag": "div",
+        "cls": "min-w-[880px]",
+        "w": 880,
+        "left": 17,
+        "right": 897
+      },
+      {
+        "tag": "div",
+        "cls": "grid grid-cols-[28px_96px_210px_minmax(160px,1fr)_84px_84px_",
+        "w": 880,
+        "left": 17,
+        "right": 897
+      },
+      {
+        "tag": "div",
+        "cls": "",
+        "w": 880,
+        "left": 17,
+        "right": 897
+      }
+    ]
+  },
+  "config-kv": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 0,
+    "top": []
+  },
+  "config-json": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 30,
+    "top": [
+      {
+        "tag": "div",
+        "cls": "lines-content monaco-editor-background",
+        "w": 16777215,
+        "left": 65,
+        "right": 16777280
+      },
+      {
+        "tag": "div",
+        "cls": "view-rulers",
+        "w": 16777215,
+        "left": 65,
+        "right": 16777280
+      }
+    ]
+  },
+  "config-history": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 34,
+    "top": [
+      {
+        "tag": "div",
+        "cls": "flex min-h-0 flex-col rounded-lg border border-border bg-pan",
+        "w": 596,
+        "left": 16,
+        "right": 612
+      },
+      {
+        "tag": "div",
+        "cls": "flex min-h-0 flex-col rounded-lg border border-border bg-pan",
+        "w": 596,
+        "left": 16,
+        "right": 612
+      },
+      {
+        "tag": "p",
+        "cls": "border-b border-border px-4 py-2.5 text-xs text-muted-foregr",
+        "w": 594,
+        "left": 17,
+        "right": 611
+      },
+      {
+        "tag": "div",
+        "cls": "min-h-0 flex-1 overflow-y-auto p-2",
+        "w": 594,
+        "left": 17,
+        "right": 611
+      },
+      {
+        "tag": "div",
+        "cls": "border-b border-border px-4 py-3",
+        "w": 594,
+        "left": 17,
+        "right": 611
+      }
+    ]
+  },
+  "app-history": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 34,
+    "top": [
+      {
+        "tag": "div",
+        "cls": "flex min-h-0 flex-col rounded-lg border border-border bg-pan",
+        "w": 596,
+        "left": 16,
+        "right": 612
+      },
+      {
+        "tag": "div",
+        "cls": "flex min-h-0 flex-col rounded-lg border border-border bg-pan",
+        "w": 596,
+        "left": 16,
+        "right": 612
+      },
+      {
+        "tag": "p",
+        "cls": "border-b border-border px-4 py-2.5 text-xs text-muted-foregr",
+        "w": 594,
+        "left": 17,
+        "right": 611
+      },
+      {
+        "tag": "div",
+        "cls": "min-h-0 flex-1 overflow-y-auto p-2",
+        "w": 594,
+        "left": 17,
+        "right": 611
+      },
+      {
+        "tag": "div",
+        "cls": "border-b border-border px-4 py-3",
+        "w": 594,
+        "left": 17,
+        "right": 611
+      }
+    ]
+  },
+  "history-index": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 29,
+    "top": [
+      {
+        "tag": "table",
+        "cls": "w-full min-w-[760px] border-collapse text-[13px]",
+        "w": 760,
+        "left": 17,
+        "right": 777
+      },
+      {
+        "tag": "thead",
+        "cls": "",
+        "w": 760,
+        "left": 17,
+        "right": 777
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border bg-elevated text-left text-xs text-mu",
+        "w": 760,
+        "left": 17,
+        "right": 777
+      },
+      {
+        "tag": "tbody",
+        "cls": "",
+        "w": 760,
+        "left": 17,
+        "right": 777
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border transition-colors last:border-b-0 hov",
+        "w": 760,
+        "left": 17,
+        "right": 777
+      }
+    ]
+  },
+  "clients": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 11,
+    "top": [
+      {
+        "tag": "table",
+        "cls": "w-full min-w-[620px] border-collapse text-[13px] md:min-w-[8",
+        "w": 620,
+        "left": 17,
+        "right": 637
+      },
+      {
+        "tag": "thead",
+        "cls": "",
+        "w": 620,
+        "left": 17,
+        "right": 637
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border bg-elevated text-left text-xs text-mu",
+        "w": 620,
+        "left": 17,
+        "right": 637
+      },
+      {
+        "tag": "tbody",
+        "cls": "",
+        "w": 620,
+        "left": 17,
+        "right": 637
+      },
+      {
+        "tag": "tr",
+        "cls": "",
+        "w": 620,
+        "left": 17,
+        "right": 637
+      }
+    ]
+  },
+  "nodes": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 16,
+    "top": [
+      {
+        "tag": "table",
+        "cls": "w-full min-w-[720px] border-collapse text-[13px]",
+        "w": 720,
+        "left": 17,
+        "right": 737
+      },
+      {
+        "tag": "thead",
+        "cls": "",
+        "w": 720,
+        "left": 17,
+        "right": 737
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border bg-elevated text-left text-xs text-mu",
+        "w": 720,
+        "left": 17,
+        "right": 737
+      },
+      {
+        "tag": "tbody",
+        "cls": "",
+        "w": 720,
+        "left": 17,
+        "right": 737
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border transition-colors last:border-b-0 hov",
+        "w": 720,
+        "left": 17,
+        "right": 737
+      }
+    ]
+  },
+  "logs": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 65,
+    "top": [
+      {
+        "tag": "table",
+        "cls": "w-full min-w-[720px] border-collapse text-[13px]",
+        "w": 720,
+        "left": 17,
+        "right": 737
+      },
+      {
+        "tag": "thead",
+        "cls": "",
+        "w": 720,
+        "left": 17,
+        "right": 737
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border bg-elevated text-left text-xs text-mu",
+        "w": 720,
+        "left": 17,
+        "right": 737
+      },
+      {
+        "tag": "tbody",
+        "cls": "",
+        "w": 720,
+        "left": 17,
+        "right": 737
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border transition-colors last:border-b-0 hov",
+        "w": 720,
+        "left": 17,
+        "right": 737
+      }
+    ]
+  },
+  "users": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 15,
+    "top": [
+      {
+        "tag": "table",
+        "cls": "w-full min-w-[640px] border-collapse text-[13px]",
+        "w": 640,
+        "left": 17,
+        "right": 657
+      },
+      {
+        "tag": "thead",
+        "cls": "",
+        "w": 640,
+        "left": 17,
+        "right": 657
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border bg-elevated text-left text-xs text-mu",
+        "w": 640,
+        "left": 17,
+        "right": 657
+      },
+      {
+        "tag": "tbody",
+        "cls": "",
+        "w": 640,
+        "left": 17,
+        "right": 657
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border transition-colors last:border-b-0 hov",
+        "w": 640,
+        "left": 17,
+        "right": 657
+      }
+    ]
+  },
+  "roles": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 24,
+    "top": [
+      {
+        "tag": "table",
+        "cls": "w-full min-w-[640px] border-collapse text-[13px]",
+        "w": 640,
+        "left": 17,
+        "right": 657
+      },
+      {
+        "tag": "thead",
+        "cls": "",
+        "w": 640,
+        "left": 17,
+        "right": 657
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border bg-elevated text-left text-xs text-mu",
+        "w": 640,
+        "left": 17,
+        "right": 657
+      },
+      {
+        "tag": "tbody",
+        "cls": "",
+        "w": 640,
+        "left": 17,
+        "right": 657
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border transition-colors last:border-b-0 hov",
+        "w": 640,
+        "left": 17,
+        "right": 657
+      }
+    ]
+  },
+  "services": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 26,
+    "top": [
+      {
+        "tag": "table",
+        "cls": "w-full min-w-[640px] border-collapse text-[13px] md:min-w-[8",
+        "w": 686,
+        "left": 17,
+        "right": 703
+      },
+      {
+        "tag": "thead",
+        "cls": "",
+        "w": 686,
+        "left": 17,
+        "right": 703
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border bg-elevated text-left text-xs text-mu",
+        "w": 686,
+        "left": 17,
+        "right": 703
+      },
+      {
+        "tag": "tbody",
+        "cls": "",
+        "w": 686,
+        "left": 17,
+        "right": 703
+      },
+      {
+        "tag": "tr",
+        "cls": "border-b border-border transition-colors last:border-b-0 hov",
+        "w": 686,
+        "left": 17,
+        "right": 703
+      }
+    ]
+  },
+  "guide": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 13,
+    "top": [
+      {
+        "tag": "code",
+        "cls": "",
+        "w": 648,
+        "left": 29,
+        "right": 677
+      },
+      {
+        "tag": "code",
+        "cls": "",
+        "w": 586,
+        "left": 61,
+        "right": 647
+      },
+      {
+        "tag": "code",
+        "cls": "",
+        "w": 586,
+        "left": 29,
+        "right": 615
+      }
+    ]
+  },
+  "settings": {
+    "vw": 401,
+    "pageOverflow": 0,
+    "offenderCount": 0,
+    "top": []
+  }
+}

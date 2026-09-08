@@ -108,7 +108,7 @@ export function AppLayout() {
           <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
             A
           </span>
-          <span className="text-sm font-semibold">{S.appName}</span>
+          <span className="hidden text-sm font-semibold sm:inline">{S.appName}</span>
         </Link>
         <div className="flex-1" />
         <EnvSwitcher />

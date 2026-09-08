@@ -9,6 +9,7 @@ import { Spinner } from '../../components/ui/spinner'
 import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
 import { diffKv, diffKvVsMap, parseKv, type KvDiff } from '../../lib/kvDiff'
+import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { applyMonacoTheme, DIFF_EDITOR_OPTIONS } from '../../lib/monaco'
 import { PERMISSION } from '../../lib/permissions'
 import { isDarkTheme } from '../../lib/themes'
@@ -42,6 +43,8 @@ export function KvView({
 
   const theme = useSettingsStore((s) => s.resolvedTheme)
   const editorFontSize = useSettingsStore((s) => s.editorFontSize)
+  // 窄屏（<768px）Diff 切 inline 单栏：并排两栏在手机宽度不可读（ITER-17）
+  const isNarrow = useMediaQuery('(max-width: 767px)')
   useEffect(() => {
     applyMonacoTheme(isDarkTheme(theme))
   }, [theme])
@@ -209,12 +212,13 @@ export function KvView({
       {diffTarget ? (
         <div className="min-h-0 flex-1" data-testid="kv-diff-editor">
           <DiffEditor
+            key={isNarrow ? 'inline' : 'split'}
             height="100%"
             language="plaintext"
             theme="agile"
             original={diffTarget === 'online' ? onlineKvText : savedKvText}
             modified={editorKvText}
-            options={{ ...DIFF_EDITOR_OPTIONS, fontSize: editorFontSize }}
+            options={{ ...DIFF_EDITOR_OPTIONS, fontSize: editorFontSize, renderSideBySide: !isNarrow }}
           />
         </div>
       ) : (

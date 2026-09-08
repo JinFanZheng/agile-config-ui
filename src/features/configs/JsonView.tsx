@@ -10,6 +10,7 @@ import { usePermission } from '../../hooks/usePermission'
 import { ApiError } from '../../lib/http'
 import { PERMISSION } from '../../lib/permissions'
 import { buildOnlineJsonText, diffJsonCounts, parseJsoncToEntries } from '../../lib/jsonDiff'
+import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { applyMonacoTheme, DIFF_EDITOR_OPTIONS } from '../../lib/monaco'
 import { isDarkTheme } from '../../lib/themes'
 import { useSettingsStore } from '../../stores/settings'
@@ -44,6 +45,8 @@ export function JsonView({
   const { can } = usePermission()
 
   const isDark = isDarkTheme(theme)
+  // 窄屏（<768px）Diff 切 inline 单栏：并排两栏在手机宽度不可读（ITER-17）
+  const isNarrow = useMediaQuery('(max-width: 767px)')
   useEffect(() => {
     applyMonacoTheme(isDark)
   }, [isDark, text])
@@ -244,12 +247,13 @@ export function JsonView({
       {diffTarget ? (
         <div className="min-h-0 flex-1" data-testid="json-diff-editor">
           <DiffEditor
+            key={isNarrow ? 'inline' : 'split'}
             height="100%"
             language="json"
             theme="agile"
             original={diffTarget === 'online' ? onlineJsonText : savedText}
             modified={text ?? ''}
-            options={{ ...DIFF_EDITOR_OPTIONS, fontSize: editorFontSize }}
+            options={{ ...DIFF_EDITOR_OPTIONS, fontSize: editorFontSize, renderSideBySide: !isNarrow }}
           />
         </div>
       ) : (

@@ -27,7 +27,7 @@ export function EnvSwitcher() {
 
   return (
     <div
-      className="inline-flex h-7 items-stretch overflow-hidden rounded-md border border-border bg-panel"
+      className="inline-flex h-7 shrink-0 items-stretch overflow-hidden rounded-md border border-border bg-panel"
       role="radiogroup"
       aria-label="环境切换"
     >
