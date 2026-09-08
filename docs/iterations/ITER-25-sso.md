@@ -34,3 +34,4 @@ GR-1 baseline @2c750ba；Keycloak/后端 SSO 配置均为一次性测试资源�
 - **Keycloak 端到端 PASS**（真实 IdP，realm/client/user 全 REST 自动搭建）：登录页按钮（自定义文案）→ IdP 登录（sso_tester）→ backend `/SSO/Index` → `/ui#/oidc/login?code` → 本前端兑换 → 登录态落首页；导航链与会话用户名证据见 `evidence/ITER-25/`（e2e-sso.mjs 可复现，落地截图）。
 - 实测修正两个理解：① `SSO:enabled` 是显式总开关（非配置齐全自动开）；② **redirectUri 必须指向前端同源**的 `/SSO/Index`（backend 回调重定向 PathBase+/ui#…，直指 backend 端口会被其自带官方 adminConsole 消费）；authorizationEndpoint 配浏览器可达、tokenEndpoint 配容器可达。已回写 handoff §7.0。
 - Teardown：keycloak 容器与 backend SSO override 已拆除还原（ssoEnabled=false），常规全量 e2e **47/47**（无 IdP 下登录页无按钮，兼容）。
+- **一键测试工具**（用户问"SSO 怎么测试"后固化为仓库工具）：`scripts/sso-test.sh`（up/test/down/all）+ `docker-compose.sso-test.yml`；`all` 全闭环当场复验 PASS。过程中实录并固化一个坑：backend 容器重建换 IP 会使 frontend nginx 的 DNS 缓存反代 502（ITER-08 已知坑在 SSO 场景复现）→ up/down 均自动 `restart frontend`。

@@ -1,0 +1,31 @@
+# SSO 一键测试叠加层（ITER-25）：Keycloak 一次性测试 IdP + backend SSO 注入。
+# 请勿直接单独使用——由 scripts/sso-test.sh 驱动（会自动建 realm/client/user 并做全链路验证）。
+# 全部为本机一次性测试值，非任何真实环境凭证。
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    command: start-dev
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=kadmin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=kpass-2026
+    ports:
+      - "8081:8080"
+
+  backend:
+    environment:
+      - TZ=Asia/Shanghai
+      - adminConsole=true
+      - db__provider=mysql
+      - db__conn=Data Source=mysql;Port=3306;Database=agile_config;User ID=root;Password=agile-demo-mysql;Charset=utf8mb4
+      # SSO 实测要点（handoff §7.0）：enabled 显式开；授权端点=浏览器可达；token 端点=容器可达；redirectUri=前端同源
+      - SSO__enabled=true
+      - SSO__loginButtonText=统一身份登录
+      - SSO__OIDC__clientId=agileconfig
+      - SSO__OIDC__clientSecret=sso-secret
+      - SSO__OIDC__authorizationEndpoint=http://localhost:8081/realms/agile/protocol/openid-connect/auth
+      - SSO__OIDC__tokenEndpoint=http://host.docker.internal:8081/realms/agile/protocol/openid-connect/token
+      - SSO__OIDC__redirectUri=http://localhost:5173/SSO/Index
+      - SSO__OIDC__userIdClaim=sub
+      - SSO__OIDC__userNameClaim=preferred_username
+      - SSO__OIDC__scope=openid profile
+      - SSO__OIDC__tokenEndpointAuthMethod=client_secret_post
