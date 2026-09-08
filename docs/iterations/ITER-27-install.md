@@ -22,3 +22,7 @@
 - sqlite 用 `/data` 绝对路径 + 具名卷持久化；mysql 模式容器自带 + healthcheck；**只发布前端一个端口**（backend 同源反代，SSO 回调语义天然成立）；SSO 可装时配或后补（.env + upgrade），redirectUri 按端口自动拼。
 - 实测修掉的三个脚本坑（供后人抄底）：① 动词分支漏 shift → 参数循环死转；② bash 中 `$VAR` 紧邻全角字符会把多字节并进变量名（set -u 报 unbound）→ 一律 `${VAR}`；③ status/upgrade 必须从生成的 .env 回读端口而非依赖 flag；④ upgrade 先刷 frontend DNS 再健康检查（backend 重建换 IP 的反代 502 坑）。
 - README 增"方式零"、docs/README 登记。
+
+## 5. 验收后增强（2026-09-08）
+
+一行命令体验：`curl -fsSL .../scripts/install.sh | bash` 即装即用（管道模式全默认 + 明示提示；空密码摘要改"浏览器首启"引导，正式采纳"脚本管容器、页面管应用"的分层）；`--yes` 让 uninstall 也能一行（管道无法交互确认）。装卸一行均实测通过（默认装→健康 200/passwordInited:false→一行卸载零残留）。README 方式零改为一行为主。
