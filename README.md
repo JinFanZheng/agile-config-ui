@@ -22,7 +22,7 @@ curl -fsSL https://raw.githubusercontent.com/JinFanZheng/agile-config-ui/main/sc
 chmod +x install.sh && ./install.sh
 ```
 
-交互引导（端口 / 数据库 sqlite 或 mysql / 管理员密码 / 可选 SSO），自动生成自包含部署目录、起栈、健康检查并**初始化好管理员密码**；数据卷持久化，backend 不对外只走同源反代。配套 `./install.sh status | upgrade | uninstall`，改配置编辑 `<dir>/.env` 后 `upgrade` 生效。非交互安装与参数见 `--help`。
+交互引导（端口 / 数据库 sqlite 或 mysql / 管理员密码 / 可选 SSO），自动生成自包含部署目录、起栈、健康检查并**初始化好管理员密码**；数据卷持久化，backend 不对外只走同源反代。配套 `./install.sh status | upgrade | uninstall`，改配置编辑 `<dir>/.env` 后 `upgrade` 生效。非交互安装与参数见 `--help`。MySQL 可用自带容器或**外部实例**（`--mysql-host host.docker.internal ...`，装前自动做连通/认证预检与建库，特殊字符密码已做连接串转义）。
 
 ### 方式一：Docker Compose 一条命令（推荐体验完整栈）
 

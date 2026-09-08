@@ -12,7 +12,10 @@
 #   --admin-pass P     管理员密码（缺省交互询问或自动生成）
 #   --dir PATH         安装目录（默认 ./agile-config）
 #   --image TAG        前端镜像（默认 ghcr.io/jinfanzheng/agile-config-ui:latest）
-#   --sso-*            见 --help（九项 OIDC，通常装好后改 <dir>/.env 再 upgrade）
+#   --mysql-host H     外部 MySQL 主机（给出即外部库模式；容器视角，本机=host.docker.internal）
+#   --mysql-port/db/user/pass   外部库连接项（默认 3306 / agile_config / root）
+#   --no-create-db     不自动建库（默认预检时 CREATE DATABASE IF NOT EXISTS utf8mb4）
+#   --sso-*            见 --help（九项 OIDC，通常装好后改 <dir>/.env 后 upgrade）
 set -euo pipefail
 
 FRONT_IMAGE_DEFAULT="ghcr.io/jinfanzheng/agile-config-ui:latest"
@@ -29,6 +32,7 @@ usage() { sed -n '2,16p' "$0"; exit 0; }
 # ---------- 参数 ----------
 PORT=8080; DB=sqlite; ADMIN_PASS=""; DIR=""; FRONT_IMAGE="$FRONT_IMAGE_DEFAULT"
 PORT_SET=0; DB_SET=0  # 显式 flag 提供的项不再交互提问
+MYSQL_EXTERNAL=0; MYSQL_HOST=""; MYSQL_PORT=3306; MYSQL_DB=agile_config; MYSQL_USER=root; MYSQL_PASS=""; MYSQL_CREATE_DB=1
 SSO_ARGS=0; SSO_CLIENT_ID=""; SSO_CLIENT_SECRET=""; SSO_AUTH_EP=""; SSO_TOKEN_EP=""
 SSO_USER_CLAIM=sub; SSO_USER_NAME_CLAIM=preferred_username; SSO_SCOPE="openid profile"
 SSO_AUTH_METHOD=client_secret_post; SSO_BUTTON="SSO 登录"; SSO_ENABLED=false
@@ -43,6 +47,12 @@ while [ $# -gt 0 ]; do
     --admin-pass) ADMIN_PASS="$2"; shift 2 ;;
     --dir) DIR="$2"; shift 2 ;;
     --image) FRONT_IMAGE="$2"; shift 2 ;;
+    --mysql-host) MYSQL_HOST="$2"; MYSQL_EXTERNAL=1; shift 2 ;;
+    --mysql-port) MYSQL_PORT="$2"; shift 2 ;;
+    --mysql-db) MYSQL_DB="$2"; shift 2 ;;
+    --mysql-user) MYSQL_USER="$2"; shift 2 ;;
+    --mysql-pass) MYSQL_PASS="$2"; shift 2 ;;
+    --no-create-db) MYSQL_CREATE_DB=0; shift ;;
     --sso-client-id) SSO_CLIENT_ID="$2"; SSO_ARGS=1; shift 2 ;;
     --sso-client-secret) SSO_CLIENT_SECRET="$2"; SSO_ARGS=1; shift 2 ;;
     --sso-auth-endpoint) SSO_AUTH_EP="$2"; SSO_ARGS=1; shift 2 ;;
@@ -58,6 +68,47 @@ done
 DIR="${DIR:-$PWD/agile-config}"
 ENV_FILE="$DIR/.env"; COMPOSE_FILE="$DIR/docker-compose.yml"
 
+# ---------- 外部 MySQL 工具 ----------
+# MySqlConnector 连接串转义：值用单引号包裹、内部 ' 翻倍（密码含 ; ' @ $ 均安全）
+esc_sq() { printf "%s" "$1" | sed "s/'/''/g"; }
+
+# 可用的 mysql 客户端命令前缀（本机有 mysql 用之，否则借 mysql:8.4 镜像跑）
+mysql_cmd() {
+  if command -v mysql >/dev/null 2>&1; then echo "mysql"
+  else echo "docker run --rm $MYSQL_IMAGE mysql"; fi
+}
+
+check_external_mysql() {
+  [ -n "$MYSQL_HOST" ] || die "外部库模式需要 --mysql-host"
+  [ -n "$MYSQL_PASS" ] || die "外部库模式需要 --mysql-pass（交互模式会询问）"
+  local CLI; CLI=$(mysql_cmd)
+  log "预检外部 MySQL：$MYSQL_HOST:${MYSQL_PORT}（客户端：${CLI%% *}）"
+  local err
+  if ! err=$($CLI -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASS" -e 'SELECT 1' 2>&1); then
+    case "$err" in
+      *"Access denied"*|*1045*) die "认证失败：用户/密码不对（$MYSQL_USER@${MYSQL_HOST}:${MYSQL_PORT}）" ;;
+      *"Can't connect"*|*"Connection refused"*|*2003*|*10061*) die "连不上 $MYSQL_HOST:${MYSQL_PORT}——检查地址/端口/防火墙（容器访问宿主库用 host.docker.internal）" ;;
+      *) die "MySQL 预检失败：$err" ;;
+    esac
+  fi
+  log "连接与认证 ✓"
+  if ! $CLI -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASS" \
+        -e "USE \`$MYSQL_DB\`" >/dev/null 2>&1; then
+    if [ "$MYSQL_CREATE_DB" = 1 ]; then
+      if $CLI -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" -p"$MYSQL_PASS" \
+           -e "CREATE DATABASE IF NOT EXISTS \`$MYSQL_DB\` CHARACTER SET utf8mb4" >/dev/null 2>&1; then
+        log "数据库 $MYSQL_DB 不存在，已自动创建（utf8mb4）✓"
+      else
+        die "数据库 $MYSQL_DB 不存在且无权创建——请先建库（utf8mb4）或换有权限账号"
+      fi
+    else
+      warn "数据库 $MYSQL_DB 不存在且 --no-create-db：backend 启动将失败，请自行建库"
+    fi
+  else
+    log "数据库 $MYSQL_DB ✓"
+  fi
+}
+
 # ---------- 前置检查 ----------
 preflight() {
   command -v docker >/dev/null || die "未找到 docker（本脚本基于 Docker 部署）"
@@ -65,6 +116,7 @@ preflight() {
   command -v jq >/dev/null || die "未找到 jq（brew install jq / apt install jq）"
   if [ "$VERB" = install ]; then
     lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1 && die "端口 $PORT 已被占用"
+    [ "$MYSQL_EXTERNAL" = 1 ] && check_external_mysql
     if [ "$SSO_ARGS" = 1 ]; then
       [ -n "$SSO_CLIENT_ID" ] && [ -n "$SSO_CLIENT_SECRET" ] && [ -n "$SSO_AUTH_EP" ] && [ -n "$SSO_TOKEN_EP" ] \
         || die "SSO 需要至少 --sso-client-id/-secret/-auth-endpoint/-token-endpoint"
@@ -81,8 +133,23 @@ guide() {
   [ -t 0 ] || return 0  # 非终端（CI/管道）：全部走默认
   echo "—— 引导配置（回车取默认值）——"
   [ "$PORT_SET" = 1 ] || PORT=$(ask "  对外访问端口" "$PORT")
-  [ "$DB_SET" = 1 ] || DB=$(ask "  数据库 sqlite=零配置 / mysql=容器自带" "$DB")
-  [ "$DB" = mysql ] || [ "$DB" = sqlite ] || die "数据库只能是 sqlite 或 mysql"
+  [ "$DB_SET" = 1 ] || DB=$(ask "  数据库 sqlite=零配置 / mysql=容器自带 / mysql-external=外部实例" "$DB")
+  case "$DB" in
+    sqlite|mysql) ;;
+    mysql-external) DB=mysql; MYSQL_EXTERNAL=1 ;;
+    *) die "数据库只能是 sqlite / mysql / mysql-external" ;;
+  esac
+  if [ "$DB" = mysql ] && [ "$DB_SET" = 0 ] && [ "$MYSQL_EXTERNAL" != 1 ]; then
+    local ext; ext=$(ask "  MySQL 自带容器还是外部实例？ bundled=自带 / external=外部" bundled)
+    [ "$ext" = external ] && MYSQL_EXTERNAL=1
+  fi
+  if [ "$MYSQL_EXTERNAL" = 1 ] && [ "$DB_SET" = 0 ]; then
+    MYSQL_HOST=$(ask "  外部库主机（容器视角；库在本机则填 host.docker.internal）" "${MYSQL_HOST:-host.docker.internal}")
+    MYSQL_PORT=$(ask "  端口" "$MYSQL_PORT")
+    MYSQL_DB=$(ask "  库名" "$MYSQL_DB")
+    MYSQL_USER=$(ask "  用户" "$MYSQL_USER")
+    [ -n "$MYSQL_PASS" ] || { read -r -p "  密码: " MYSQL_PASS || true; }
+  fi
   if [ -z "$ADMIN_PASS" ]; then
     read -r -p "  管理员密码（回车=自动生成）: " ADMIN_PASS || true
     [ -n "$ADMIN_PASS" ] || ADMIN_PASS="agc-$(openssl rand -hex 6 2>/dev/null || echo $RANDOM$RANDOM)"
@@ -116,8 +183,19 @@ FRONT_IMAGE=$FRONT_IMAGE
 HOST_PORT=$PORT
 ADMIN_USER=admin
 DB=$DB
+DB_EXTERNAL=$MYSQL_EXTERNAL
 MYSQL_ROOT_PASS=$MYSQL_ROOT_PASS
 ENV
+  if [ "$MYSQL_EXTERNAL" = 1 ]; then
+    # 连接串里的值须做 MySqlConnector 转义（单引号包裹 + '' 翻倍），特殊字符密码端到端安全
+    cat >> "$ENV_FILE" <<ENV
+MYSQL_HOST=$MYSQL_HOST
+MYSQL_PORT=$MYSQL_PORT
+MYSQL_DB=$MYSQL_DB
+MYSQL_USER_ESC=$(esc_sq "$MYSQL_USER")
+MYSQL_PASS_ESC=$(esc_sq "$MYSQL_PASS")
+ENV
+  fi
   if [ "$SSO_ENABLED" = true ]; then
     cat >> "$ENV_FILE" <<ENV
 SSO_ENABLED=true
@@ -160,6 +238,10 @@ YML
         condition: service_healthy"
     BACKEND_ENV='      - db__provider=mysql
       - db__conn=Data Source=db;Port=3306;Database=agile_config;User ID=root;Password=${MYSQL_ROOT_PASS};Charset=utf8mb4'
+  if [ "$MYSQL_EXTERNAL" = 1 ]; then
+    BACKEND_ENV='      - db__provider=mysql
+      - db__conn=Data Source=${MYSQL_HOST};Port=${MYSQL_PORT};Database=${MYSQL_DB};User ID='"'"'${MYSQL_USER_ESC}'"'"';Password='"'"'${MYSQL_PASS_ESC}'"'"';Charset=utf8mb4'
+  fi
   fi
   SSO_ENV=""
   if [ "$SSO_ENABLED" = true ]; then
@@ -192,6 +274,9 @@ services:
   backend:
     image: $BACKEND_IMAGE
     platform: linux/amd64
+    # Linux 上让容器解析 host.docker.internal（访问宿主上的外部库）；Docker Desktop/OrbStack 自带、此行无害
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - TZ=Asia/Shanghai
       - adminConsole=true
@@ -237,7 +322,7 @@ init_admin() {
     -d "{\"password\":\"$ADMIN_PASS\",\"confirmPassword\":\"$ADMIN_PASS\"}")
   echo "$body" | jq -e '.success == true or .message == "password already inited" or (.message // "" | test("已初始化|already|初始化"))' >/dev/null \
     && return 0
-  warn "管理员密码初始化返回异常：$body（可稍后在页面完成首启初始化）"
+  warn "管理员密码初始化返回异常：${body}（可稍后在页面完成首启初始化）"
 }
 
 summary() {
@@ -262,7 +347,18 @@ do_install() {
   log "拉取镜像并启动（backend 较大约 354MB，首次稍等）…"
   dc up -d --quiet-pull
   log "等待服务就绪…"
-  wait_healthy || { dc logs --tail 40 backend; die "服务未就绪，见上方日志"; }
+  wait_healthy || {
+    dc logs --tail 30 backend | tail -30
+    if [ "$MYSQL_EXTERNAL" = 1 ]; then
+      cat <<'HINT'
+[诊断提示·外部 MySQL]
+  1) 地址视角：backend 在容器内，库在本机请用 host.docker.internal（Linux 已自动加 host-gateway 映射）
+  2) 账号权限：确认该用户可从任意主机连接（GRANT ... TO 'user'@'%'），且对库有建表权限
+  3) 凭证/端口：重跑 ./install.sh install --db mysql --mysql-host ... 核对（装前预检会先验证连通与认证）
+HINT
+    fi
+    die "服务未就绪，见上方日志与提示"
+  }
   [ -n "$ADMIN_PASS" ] && init_admin
   summary
 }
