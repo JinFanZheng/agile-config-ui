@@ -91,6 +91,13 @@ AgileConfig 服务端 API **没有统一前缀**且未开 CORS，前端按控制
 
 `.env` 为可提交的非敏感默认值；真实凭证只放 gitignore 的 `.env.e2e` / `.env.development`，不入库、不进镜像（`.dockerignore` 已排除）。
 
+## 文档
+
+- [使用指南（管理员向）](docs/USER_GUIDE.md)
+- [贡献指南（协作与迭代流程）](CONTRIBUTING.md) · [文档地图](docs/README.md)
+- 客户端接入：管理台内「接入指南」页，或 [llms-full.txt](https://raw.githubusercontent.com/JinFanZheng/agile-config-ui/main/public/llms-full.txt)（喂给 AI 编码助手即可）
+- [CHANGELOG](CHANGELOG.md)
+
 ## 开发指南
 
 | 命令             | 说明                                            |
