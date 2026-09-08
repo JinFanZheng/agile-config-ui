@@ -32,8 +32,9 @@
 | [ITER-15](iterations/ITER-15-guide-di.md) | 接入指南「依赖注入与 IConfiguration」节（IOptionsMonitor 热更新实机验证） | `evidence/ITER-15/` |
 | [ITER-16](iterations/ITER-16-nav-groups.md) | 侧栏导航分组（配置管理/运维监控/权限管理，空组隐藏） | `evidence/ITER-16/` |
 | [ITER-17](iterations/ITER-17-mobile.md) | H5 移动端适配（顶栏裁切修复/inline diff/mobile e2e） | `evidence/ITER-17/` |
+| [ITER-18](iterations/ITER-18-llms.md) | llms.txt / llms-full.txt（AI 助手接入入口，同源生成+一致性锁定+charset 修复） | `evidence/ITER-18/` |
 
-质量门现态：`tsc` ✓ / `eslint` ✓ / vitest **121** ✓ / Playwright **41/41**（含 4 条移动端用例，workers=2 防并行假失败）✓ / `vite build` ✓。
+质量门现态：`tsc` ✓ / `eslint` ✓ / vitest **125** ✓ / Playwright **42/42**（含 4 条移动端与 llms.txt 用例，workers=2 防并行假失败）✓ / `vite build` ✓。
 
 ## 验收后增强（ITER-08 收官后，用户批准/反馈驱动）
 

@@ -25,7 +25,8 @@ export const guideStr = {
     copied: '已复制',
   },
 
-  footnote: '本页「实测坑位」与 FAQ 结论基于 AgileConfig 1.13.2 实测验证；服务端升级后请以官方文档为准。',
+  footnote:
+    '本页「实测坑位」与 FAQ 结论基于 AgileConfig 1.13.2 实测验证；服务端升级后请以官方文档为准。想让 AI 编码助手帮你接入？把站点根的 /llms.txt（或全量 /llms-full.txt）交给它即可，与本页同源。',
 
   quickStart: {
     intro:

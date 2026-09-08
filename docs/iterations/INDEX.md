@@ -16,6 +16,7 @@
 | [ITER-15](ITER-15-guide-di.md) | 接入指南：依赖注入与 IConfiguration 节 | 验收中（EVIDENCE_READY） | 用户验收（/guide 新节） |
 | [ITER-16](ITER-16-nav-groups.md) | 侧栏导航分组 | 验收中（EVIDENCE_READY） | 用户验收（分组观感与命名） |
 | [ITER-17](ITER-17-mobile.md) | H5 移动端适配 | 验收中（EVIDENCE_READY） | 用户验收（手机宽度过一遍） |
+| [ITER-18](ITER-18-llms.md) | llms.txt AI 接入入口 | 验收中（EVIDENCE_READY） | 用户验收（浏览器/Agent 各取一次） |
 
 ## 迭代路线图（2026-09-04 与用户约定：逐迭代交付，验收一个再继续；跨模块独立页用子代理并行）
 
@@ -38,6 +39,7 @@
 | ITER-15 | 接入指南：依赖注入与 IConfiguration 集成节（实测驱动）          | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-15-guide-di.md](ITER-15-guide-di.md) | `docs/evidence/ITER-15/` |
 | ITER-16 | 侧栏导航分组（配置管理/运维监控/权限管理，空组隐藏）          | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-16-nav-groups.md](ITER-16-nav-groups.md) | `docs/evidence/ITER-16/` |
 | ITER-17 | H5 移动端适配（顶栏裁切修复/inline diff/mobile e2e）         | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-17-mobile.md](ITER-17-mobile.md) | `docs/evidence/ITER-17/` |
+| ITER-18 | llms.txt / llms-full.txt（AI 助手接入入口，与指南同源生成） | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-18-llms.md](ITER-18-llms.md) | `docs/evidence/ITER-18/` |
 
 > 覆盖核对：M0 已适配 3 + ITER-03..08 共 78（含 Search 归 03、WaitPublishStatus 归 04、发布共用）+ 显式豁免 4（`Admin/Logoff`、`Home/IndexAsync`、`Home/Echo`、`Home/GetIP`；另有 `RemoteOP/RegisterNode` 待 ITER-06 定案）= 86 ✓。豁免需用户确认，见 API_INVENTORY 文末。
 

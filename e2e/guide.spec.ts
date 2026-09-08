@@ -62,3 +62,24 @@ test('接入指南：六节内容 + 锚点导航 + 代码一键复制', async ({
   const clip = await page.evaluate(() => navigator.clipboard.readText())
   expect(clip).toContain('dotnet add package AgileConfig.Client')
 })
+
+test('llms.txt / llms-full.txt 可公开获取（AI 助手接入入口，与指南同源）', async ({ request }) => {
+  const idx = await request.get('/llms.txt')
+  expect(idx.status()).toBe(200)
+  // 显式 UTF-8：不带 charset 时中文在部分浏览器按本地编码猜解会乱码（实测反馈）
+  expect(idx.headers()['content-type']).toContain('charset=utf-8')
+  const idxText = await idx.text()
+  expect(idxText).toContain('llms-full.txt')
+  expect(idxText).toContain('a:b:c')
+
+  const full = await request.get('/llms-full.txt')
+  expect(full.status()).toBe(200)
+  expect(full.headers()['content-type']).toContain('charset=utf-8')
+  const fullText = await full.text()
+  expect(fullText).toContain('## 快速开始')
+  expect(fullText).toContain('AddAgileConfig')
+  expect(fullText).toContain('IOptionsMonitor')
+  // 与指南同源占位符纪律：不含实例地址/演示应用
+  expect(fullText).not.toContain('localhost:5017')
+  expect(fullText).not.toContain('demo_app')
+})
