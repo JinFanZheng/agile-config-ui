@@ -368,7 +368,11 @@ HINT
 
 do_uninstall() {
   [ -f "$COMPOSE_FILE" ] || die "$DIR 下没有安装（找不到 docker-compose.yml）"
-  echo "将停止并删除容器与数据卷（数据将丢失）：$DIR"
+  if grep -q '^DB_EXTERNAL=1' "$ENV_FILE" 2>/dev/null; then
+    echo "将停止并删除容器与本机卷（外部数据库的数据不受影响）：$DIR"
+  else
+    echo "将停止并删除容器与数据卷（数据将丢失）：$DIR"
+  fi
   local ok; read -r -p "确认？输入 yes: " ok || true
   [ "${ok:-}" = yes ] || die "已取消"
   dc down -v --remove-orphans

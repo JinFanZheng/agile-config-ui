@@ -25,4 +25,6 @@
 - **C 诊断 ✓**：`--no-create-db` + 库缺失 → 预检警告 → backend 健康超时 → 日志尾 + 外部库三项诊断提示（地址视角/账号权限/凭证核对）
 - 实测发现的坑与修法（记录供抄底）：① bash `$VAR` 紧邻任意非 ASCII 字节（含破折号——）都会并进变量名 → 全文件正则兜底 `${VAR}`；② mysql 镜像 entrypoint 拼接 SQL，root 密码含 `'` 时初始化即挂 → 测试环境用两段式（简单密码 init + `ALTER USER` 换密）；③ 客户端预检本机无 mysql 时自动借 mysql:8.4 镜像
 - Linux 兼容：backend 恒加 `extra_hosts: host.docker.internal:host-gateway`（外部库在宿主时必需；mac 无害）
+- **遗漏补查（用户追问"还有没有遗漏"触发）**：① bundled mysql 模式 elif 重构后回归实测（三容器/16 表/登录 ok）；② uninstall 文案区分外部库模式（外部数据不受影响）；③ install.sh 的 --sso-* 拼装路径实测（keycloak 直装：ssoEnabled=true、按钮文案、LoginUrl 指向 IdP 均正确）。
+- **已知待办（升级路径）**：已存在安装目录的 compose 模板不会随 upgrade 更新（render 拒绝覆盖）——模板变更需人工重建或后续做 --refresh-template；CI 尚未覆盖 install.sh 的 Linux 矩阵。
 - **复验补丁（用户追问"外部模式 compose 带不带 mysql"触发复查）**：初版有两处生成缺陷——①外部模式漏排除 bundled 段，compose 残留无人使用的 mysql 容器与 db-data 卷；②修正①时外部连接串赋值嵌在被跳过的分支内，backend 收到"mysql provider + sqlite 连接串"错配（MySqlConnector 按 Unix Socket 解析 /data/agile_config.db，启动即挂）。重构为 sqlite/bundled/external 三态 elif 后全绿：外部=仅 frontend+backend 两容器、仅 backend-data 卷、健康 200、外部库 16 表、卸载零残留；sqlite 路径回归通过（bundled 分支字节未变）。教训：生成器类代码的验收必须检查**产物**（compose 服务/卷清单），仅看运行结果会漏掉"多余但无害"的缺陷。
