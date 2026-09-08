@@ -19,6 +19,22 @@
 - [ITER-08 打磨与交付](iterations/ITER-08-delivery.md)：✅ VERIFIED —— 导入导出/环境同步/服务注册/SSO + Docker + compose 一键演示实测；86 端点收口
 - 附：发布域整合（历史合并进配置页第四视图 + /apps 待发布徽标，北极星对齐，@2bd11c1）
 
+## v1.0.x 后续迭代（2026-09-08 起，用户驱动；全部 EVIDENCE_READY 待用户逐项验收）
+
+| 迭代 | 内容 | 证据 |
+| --- | --- | --- |
+| [ITER-09](iterations/ITER-09-settings.md) | 设置中心（统一 settings store + 老主题键迁移 + 字号/动效/monaco 联动）+ FOUC 修复（逐帧零白帧） | `evidence/ITER-09/` |
+| [ITER-10](iterations/ITER-10-integration-guide.md) | 接入指南产品内文档页（网页直出 TSX，五节→后续扩展为六节） | `evidence/ITER-10/` |
+| [ITER-11](iterations/ITER-11-agent-skill.md) | agileconfig-ops 运维 skill（冷启动巡检六步全绿 + handoff 信封修正） | `evidence/ITER-11/` |
+| [ITER-12](iterations/ITER-12-themes.md) | 盲盒皮肤×5（曜石/紫夜/樱粉/摩卡/森夜，共十主题）+ 对比度/色相/防混淆断言体系 | `evidence/ITER-12/` |
+| [ITER-13](iterations/ITER-13-themes-polish.md) | 基线对比度 16 项清零 + 浅/深分组 + 跟随系统档 | `evidence/ITER-13/` |
+| [ITER-14](iterations/ITER-14-theme-settings.md) | 设置页主题区重排（色卡网格）+ 跟随系统深浅映射可配置 | `evidence/ITER-14/` |
+| [ITER-15](iterations/ITER-15-guide-di.md) | 接入指南「依赖注入与 IConfiguration」节（IOptionsMonitor 热更新实机验证） | `evidence/ITER-15/` |
+| [ITER-16](iterations/ITER-16-nav-groups.md) | 侧栏导航分组（配置管理/运维监控/权限管理，空组隐藏） | `evidence/ITER-16/` |
+| [ITER-17](iterations/ITER-17-mobile.md) | H5 移动端适配（顶栏裁切修复/inline diff/mobile e2e） | `evidence/ITER-17/` |
+
+质量门现态：`tsc` ✓ / `eslint` ✓ / vitest **121** ✓ / Playwright **41/41**（含 4 条移动端用例，workers=2 防并行假失败）✓ / `vite build` ✓。
+
 ## 验收后增强（ITER-08 收官后，用户批准/反馈驱动）
 
 - KV/JSON diff 视图四次演进：双 tab 差异面板 → monaco 同步滚动 → 全屏对比 + 工具栏双按钮（对比已保存/对比线上）→ 多级冒号嵌套/数组索引键/整数键保序/空分组键四错位修复（hotel-supplier 759 键实测零差异）；evidence 见 `evidence/ITER-08/`
