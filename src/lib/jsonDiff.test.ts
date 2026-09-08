@@ -29,20 +29,20 @@ describe('parseJsoncToEntries', () => {
     expect(parseJsoncToEntries('{"url":"http://x/*y*/"}')).toEqual([['url', 'http://x/*y*/']])
   })
 
-  it('多级冒号逐级嵌套扁平化（hotel-supplier 实测格式）', () => {
+  it('多级冒号逐级嵌套扁平化（含整数供应商 ID 键保序，实测格式通用化）', () => {
     const text = JSON.stringify(
       {
-        ActiveCacheRefresh: {
-          DefaultMaxHotelsPerRequest: '10',
-          Suppliers: { '1200': { AllowPricePresenceProbe: 'False' } },
+        CachePolicy: {
+          MaxItemsPerBatch: '10',
+          Vendors: { '1200': { AllowProbe: 'False' } },
         },
       },
       null,
       2
     )
     expect(parseJsoncToEntries(text)).toEqual([
-      ['ActiveCacheRefresh:DefaultMaxHotelsPerRequest', '10'],
-      ['ActiveCacheRefresh:Suppliers:1200:AllowPricePresenceProbe', 'False'],
+      ['CachePolicy:MaxItemsPerBatch', '10'],
+      ['CachePolicy:Vendors:1200:AllowProbe', 'False'],
     ])
   })
 
@@ -120,14 +120,14 @@ describe('buildOnlineJsonText', () => {
 
   it('按冒号逐级嵌套重建（多级键不再平铺成字面量键名）', () => {
     const online = new Map([
-      ['ActiveCacheRefresh:DefaultMaxHotelsPerRequest', '10'],
-      ['ActiveCacheRefresh:Suppliers:1200:AllowPricePresenceProbe', 'False'],
+      ['CachePolicy:MaxItemsPerBatch', '10'],
+      ['CachePolicy:Vendors:1200:AllowProbe', 'False'],
     ])
     const text = buildOnlineJsonText(online, [])
     expect(JSON.parse(text)).toEqual({
-      ActiveCacheRefresh: {
-        DefaultMaxHotelsPerRequest: '10',
-        Suppliers: { '1200': { AllowPricePresenceProbe: 'False' } },
+      CachePolicy: {
+        MaxItemsPerBatch: '10',
+        Vendors: { '1200': { AllowProbe: 'False' } },
       },
     })
   })
@@ -145,12 +145,12 @@ describe('buildOnlineJsonText', () => {
 
   it('非 0 起始的整数键保持对象形式（如供应商 ID 1200/198）', () => {
     const online = new Map([
-      ['g:Suppliers:1200:k', 'a'],
-      ['g:Suppliers:198:k', 'b'],
+      ['g:Vendors:1200:k', 'a'],
+      ['g:Vendors:198:k', 'b'],
     ])
-    const text = buildOnlineJsonText(online, ['g:Suppliers:1200:k', 'g:Suppliers:198:k'])
+    const text = buildOnlineJsonText(online, ['g:Vendors:1200:k', 'g:Vendors:198:k'])
     expect(JSON.parse(text)).toEqual({
-      g: { Suppliers: { '1200': { k: 'a' }, '198': { k: 'b' } } },
+      g: { Vendors: { '1200': { k: 'a' }, '198': { k: 'b' } } },
     })
     expect(text.indexOf('1200')).toBeLessThan(text.indexOf('198'))
   })

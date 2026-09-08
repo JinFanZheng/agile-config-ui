@@ -45,7 +45,7 @@
 
 ## 验收后增强（ITER-08 收官后，用户批准/反馈驱动）
 
-- KV/JSON diff 视图四次演进：双 tab 差异面板 → monaco 同步滚动 → 全屏对比 + 工具栏双按钮（对比已保存/对比线上）→ 多级冒号嵌套/数组索引键/整数键保序/空分组键四错位修复（hotel-supplier 759 键实测零差异）；evidence 见 `evidence/ITER-08/`
+- KV/JSON diff 视图四次演进：双 tab 差异面板 → monaco 同步滚动 → 全屏对比 + 工具栏双按钮（对比已保存/对比线上）→ 多级冒号嵌套/数组索引键/整数键保序/空分组键四错位修复（某线上应用 759 键实测零差异）；evidence 见 `evidence/ITER-08/`
 - C# 验证客户端（tools/verify-client）：配置中心 + 服务注册双演示，三种心跳模式，服务发现 NullReference 修复
 - v1.0.0 标记于本完成点
 
