@@ -1,0 +1,30 @@
+# MySQL 版完整栈（在 docker-compose.yml 基础上叠加）：
+#   docker compose -f docker-compose.yml -f docker-compose.mysql.yml up -d --build
+# 前端本地构建（同基础文件）；后端 db 切 MySQL（容器内 mysql:8.4，库由 MYSQL_DATABASE 自动创建，
+# 表由 AgileConfig 启动时 CodeFirst EnsureTables 自动建）。数据仍不持久（演示栈纪律）。
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      - MYSQL_ROOT_PASSWORD=agile-demo-mysql
+      - MYSQL_DATABASE=agile_config
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-pagile-demo-mysql']
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  backend:
+    environment:
+      - TZ=Asia/Shanghai
+      - adminConsole=true
+      - db__provider=mysql
+      - db__conn=Data Source=mysql;Port=3306;Database=agile_config;User ID=root;Password=agile-demo-mysql;Charset=utf8mb4
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    depends_on:
+      - backend
+      - mysql

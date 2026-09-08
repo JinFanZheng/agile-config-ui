@@ -60,6 +60,14 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm e2e
 
+      - name: 生产产物冒烟（vite preview + 哨兵用例；覆盖 dev 不暴露的压缩类缺陷，如 lightningcss #fff→monaco 崩溃）
+        run: |
+          pnpm build
+          (pnpm exec vite preview --port 4173 --strictPort &)
+          for i in $(seq 1 20); do curl -sf http://localhost:4173/ >/dev/null && break; sleep 1; done
+          curl -sf http://localhost:4173/ >/dev/null || { echo 'vite preview 未就绪'; exit 1; }
+          PREVIEW_BASE_URL=http://localhost:4173 pnpm exec playwright test e2e/preview.spec.ts
+
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

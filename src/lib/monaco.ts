@@ -1,3 +1,4 @@
+import { expandHex6 } from './color'
 import { loader } from '@monaco-editor/react'
 import * as monaco from 'monaco-editor'
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker'
@@ -20,10 +21,12 @@ monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
   schemaValidation: 'error',
 })
 
-/** 从当前主题令牌生成 monaco 主题（亮/暗两套，随 html[data-theme] 变化重新定义） */
+/** 从当前主题令牌生成 monaco 主题（亮/暗两套，随 html[data-theme] 变化重新定义）；
+ * 颜色一律经 expandHex6 展开：生产 CSS 压缩出的 3 位 hex 会让 monaco 主题定义抛错（见 color.ts） */
 export function applyMonacoTheme(dark: boolean) {
   const cs = getComputedStyle(document.documentElement)
-  const v = (name: string, fallback: string) => cs.getPropertyValue(name).trim() || fallback
+  const v = (name: string, fallback: string) =>
+    expandHex6(cs.getPropertyValue(name).trim() || fallback)
   monaco.editor.defineTheme('agile', {
     base: dark ? 'vs-dark' : 'vs',
     inherit: true,

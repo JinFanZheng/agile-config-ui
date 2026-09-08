@@ -18,6 +18,7 @@
 | [ITER-17](ITER-17-mobile.md) | H5 移动端适配 | 验收中（EVIDENCE_READY） | 用户验收（手机宽度过一遍） |
 | [ITER-18](ITER-18-llms.md) | llms.txt AI 接入入口 | 验收中（EVIDENCE_READY） | 用户验收（浏览器/Agent 各取一次） |
 | [ITER-19](ITER-19-github-ci.md) | GitHub 仓库+fork+打包流水线 | 验收中（EVIDENCE_READY） | 用户验收（仓库/工作流/镜像） |
+| [ITER-20](ITER-20-real-stack.md) | 真实栈实测（MySQL）+生产崩溃修复 | 验收中（EVIDENCE_READY） | 用户验收（5173 栈过一遍） |
 
 ## 迭代路线图（2026-09-04 与用户约定：逐迭代交付，验收一个再继续；跨模块独立页用子代理并行）
 
@@ -42,6 +43,7 @@
 | ITER-17 | H5 移动端适配（顶栏裁切修复/inline diff/mobile e2e）         | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-17-mobile.md](ITER-17-mobile.md) | `docs/evidence/ITER-17/` |
 | ITER-18 | llms.txt / llms-full.txt（AI 助手接入入口，与指南同源生成） | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-18-llms.md](ITER-18-llms.md) | `docs/evidence/ITER-18/` |
 | ITER-19 | GitHub 仓库 + fork 后端 + CI/E2E/GHCR 流水线                    | —          | —        | 验收中（EVIDENCE_READY） | [ITER-19-github-ci.md](ITER-19-github-ci.md) | `docs/evidence/ITER-19/` |
+| ITER-20 | MySQL 真实栈实测；lightningcss #fff→monaco 生产崩溃修复+哨兵 | —          | 0        | 验收中（EVIDENCE_READY） | [ITER-20-real-stack.md](ITER-20-real-stack.md) | `docs/evidence/ITER-20/` |
 
 > 覆盖核对：M0 已适配 3 + ITER-03..08 共 78（含 Search 归 03、WaitPublishStatus 归 04、发布共用）+ 显式豁免 4（`Admin/Logoff`、`Home/IndexAsync`、`Home/Echo`、`Home/GetIP`；另有 `RemoteOP/RegisterNode` 待 ITER-06 定案）= 86 ✓。豁免需用户确认，见 API_INVENTORY 文末。
 

@@ -18,8 +18,9 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - adminConsole=true
-      - db__provider=sqlite
-      - db__conn=Data Source=agile_config.db
+      # 数据库可参数化：DB_PROVIDER 支持 sqlite/mysql/sqlserver/npgsql|postgresql|oracle（后端源码 ProviderToFreesqlDbType）
+      - db__provider=${DB_PROVIDER:-sqlite}
+      - db__conn=${DB_CONN:-Data Source=agile_config.db}
     ports:
       - "5017:5000"
 
