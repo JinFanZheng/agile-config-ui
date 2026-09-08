@@ -4,9 +4,11 @@ import { Card, CardHeader, CardTitle } from '../../components/ui/card'
 import { isDarkTheme, SYSTEM_THEME, THEMES, type ThemeId } from '../../lib/themes'
 import { cn } from '../../lib/utils'
 import {
+  DEFAULT_CONFIG_VIEWS,
   EDITOR_FONT_SIZES,
   UI_FONT_SIZES,
   useSettingsStore,
+  type DefaultConfigView,
   type EditorFontSize,
   type UiFontSize,
 } from '../../stores/settings'
@@ -263,6 +265,10 @@ export function SettingsPage() {
   const editorFontSize = useSettingsStore((s) => s.editorFontSize)
   const setEditorFontSize = useSettingsStore((s) => s.setEditorFontSize)
   const motion = useSettingsStore((s) => s.motion)
+  const defaultConfigView = useSettingsStore((s) => s.defaultConfigView)
+  const setDefaultConfigView = useSettingsStore((s) => s.setDefaultConfigView)
+  const editorWordWrap = useSettingsStore((s) => s.editorWordWrap)
+  const setEditorWordWrap = useSettingsStore((s) => s.setEditorWordWrap)
   const setMotion = useSettingsStore((s) => s.setMotion)
 
   return (
@@ -331,6 +337,18 @@ export function SettingsPage() {
         <SettingRow title={settingsStr.motion} desc={settingsStr.motionDesc}>
           <Switch checked={motion} ariaLabel={settingsStr.motion} onToggle={setMotion} />
         </SettingRow>
+        <SettingRow title={settingsStr.defaultConfigView} desc={settingsStr.defaultConfigViewDesc}>
+          <SegmentedRadio<DefaultConfigView>
+            name="settings-default-view"
+            ariaLabel={settingsStr.defaultConfigView}
+            value={defaultConfigView}
+            options={DEFAULT_CONFIG_VIEWS.map((v) => ({
+              value: v,
+              label: settingsStr.defaultConfigViewOptions[v],
+            }))}
+            onChange={setDefaultConfigView}
+          />
+        </SettingRow>
       </Card>
 
       <Card>
@@ -345,6 +363,9 @@ export function SettingsPage() {
             options={EDITOR_FONT_SIZES.map((v) => ({ value: v, label: String(v) }))}
             onChange={setEditorFontSize}
           />
+        </SettingRow>
+        <SettingRow title={settingsStr.editorWordWrap} desc={settingsStr.editorWordWrapDesc}>
+          <Switch checked={editorWordWrap} ariaLabel={settingsStr.editorWordWrap} onToggle={setEditorWordWrap} />
         </SettingRow>
         <div className="px-4 pb-4">
           <div

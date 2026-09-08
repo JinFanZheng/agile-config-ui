@@ -36,6 +36,7 @@ export function JsonView({
 }) {
   const theme = useSettingsStore((s) => s.resolvedTheme)
   const editorFontSize = useSettingsStore((s) => s.editorFontSize)
+  const editorWordWrap = useSettingsStore((s) => s.editorWordWrap)
   const [text, setText] = useState<string | null>(null)
   const [savedText, setSavedText] = useState('')
   const [patch, setPatch] = useState(true)
@@ -253,7 +254,7 @@ export function JsonView({
             theme="agile"
             original={diffTarget === 'online' ? onlineJsonText : savedText}
             modified={text ?? ''}
-            options={{ ...DIFF_EDITOR_OPTIONS, fontSize: editorFontSize, renderSideBySide: !isNarrow }}
+            options={{ ...DIFF_EDITOR_OPTIONS, fontSize: editorFontSize, renderSideBySide: !isNarrow, wordWrap: editorWordWrap ? 'on' : 'off' }}
           />
         </div>
       ) : (
@@ -268,6 +269,7 @@ export function JsonView({
             options={{
               minimap: { enabled: false },
               fontSize: editorFontSize,
+              wordWrap: editorWordWrap ? 'on' : 'off',
               lineNumbersMinChars: 3,
               scrollBeyondLastLine: false,
               tabSize: 2,

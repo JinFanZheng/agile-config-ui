@@ -19,6 +19,7 @@ import { Skeleton } from '../../components/ui/spinner'
 import { usePermission } from '../../hooks/usePermission'
 import { PERMISSION } from '../../lib/permissions'
 import { useEnvStore } from '../../stores/env'
+import { useSettingsStore } from '../../stores/settings'
 import { toast } from '../../stores/toast'
 import { configsStr } from '../../strings/configs'
 import { publishStr } from '../../strings/publish'
@@ -66,9 +67,11 @@ export function ConfigPage() {
 
   const [searchParams] = useSearchParams()
   const initialViewParam = searchParams.get('view') as View | null
+  // 初始视图优先级：URL ?view= > 设置中心默认视图（ITER-22）> table
+  const defaultConfigView = useSettingsStore((s) => s.defaultConfigView)
   const initialView: View = ['table', 'kv', 'json', 'history'].includes(initialViewParam ?? '')
     ? (initialViewParam as View)
-    : 'table'
+    : defaultConfigView
   const [view, setView] = useState<View>(initialView)
   const [viewDirty, setViewDirty] = useState(false)
   const [keyword, setKeyword] = useState('')

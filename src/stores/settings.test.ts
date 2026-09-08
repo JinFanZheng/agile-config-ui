@@ -157,6 +157,24 @@ describe('useSettingsStore', () => {
     expect([...EDITOR_FONT_SIZES]).toEqual([12, 13, 14, 15])
   })
 
+  it('配置页默认视图与自动换行：setter 生效并持久化；非法持久化值回退默认', () => {
+    useSettingsStore.getState().setDefaultConfigView('json')
+    useSettingsStore.getState().setEditorWordWrap(true)
+    expect(useSettingsStore.getState().defaultConfigView).toBe('json')
+    expect(useSettingsStore.getState().editorWordWrap).toBe(true)
+    const raw = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY)!)
+    expect(raw.state.defaultConfigView).toBe('json')
+    expect(raw.state.editorWordWrap).toBe(true)
+
+    localStorage.setItem(
+      SETTINGS_STORAGE_KEY,
+      persisted({ defaultConfigView: 'history', editorWordWrap: 'yes' })
+    )
+    useSettingsStore.persist.rehydrate()
+    expect(useSettingsStore.getState().defaultConfigView).toBe('table')
+    expect(useSettingsStore.getState().editorWordWrap).toBe(false)
+  })
+
   it('setTheme(system)：resolvedTheme 按系统配色解析并写 data-theme（深→深蓝中控 / 浅→石墨）', () => {
     vi.stubGlobal('matchMedia', vi.fn().mockReturnValue({ matches: true }))
     useSettingsStore.getState().setTheme('system')

@@ -43,6 +43,7 @@ export function KvView({
 
   const theme = useSettingsStore((s) => s.resolvedTheme)
   const editorFontSize = useSettingsStore((s) => s.editorFontSize)
+  const editorWordWrap = useSettingsStore((s) => s.editorWordWrap)
   // 窄屏（<768px）Diff 切 inline 单栏：并排两栏在手机宽度不可读（ITER-17）
   const isNarrow = useMediaQuery('(max-width: 767px)')
   useEffect(() => {
@@ -218,7 +219,7 @@ export function KvView({
             theme="agile"
             original={diffTarget === 'online' ? onlineKvText : savedKvText}
             modified={editorKvText}
-            options={{ ...DIFF_EDITOR_OPTIONS, fontSize: editorFontSize, renderSideBySide: !isNarrow }}
+            options={{ ...DIFF_EDITOR_OPTIONS, fontSize: editorFontSize, renderSideBySide: !isNarrow, wordWrap: editorWordWrap ? 'on' : 'off' }}
           />
         </div>
       ) : (

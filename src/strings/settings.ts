@@ -17,8 +17,17 @@ export const settingsStr = {
   motionDesc: '关闭后弹窗、菜单等进入动画与微过渡瞬时完成；默认跟随系统"减少动态"偏好',
   motionOn: '开启动效',
   motionOff: '关闭动效',
+  defaultConfigView: '配置页默认视图',
+  defaultConfigViewDesc: '进入应用配置页时的初始视图；链接里带 view 参数时以链接为准',
+  defaultConfigViewOptions: {
+    table: '表格',
+    kv: 'KV',
+    json: 'JSON',
+  },
   editor: '编辑器',
   editorFont: '编辑器字号',
   editorFontDesc: 'JSON / KV 编辑与对比视图的等宽字体字号',
+  editorWordWrap: '编辑器自动换行',
+  editorWordWrapDesc: '超长行在编辑与对比视图内自动换行（默认关闭，保持横向滚动）',
   editorFontPreview: '"server": "http://localhost:5000"',
 } as const

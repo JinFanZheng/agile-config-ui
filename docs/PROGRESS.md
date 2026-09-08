@@ -36,6 +36,7 @@
 | [ITER-19](iterations/ITER-19-github-ci.md) | GitHub 仓库（私有）+ fork dotnetcore/AgileConfig + CI/E2E/GHCR 工作流 | — |
 | [ITER-20](iterations/ITER-20-real-stack.md) | MySQL 真实栈实测；lightningcss #fff→monaco 生产崩溃修复 + preview 哨兵 | `evidence/ITER-20/` |
 | [ITER-21](iterations/ITER-21-route-error.md) | 路由错误页（中文）+ 过期 chunk 自动刷新自愈 | `evidence/ITER-21/` |
+| [ITER-22](iterations/ITER-22-settings-batch3.md) | 设置第三批：配置页默认视图 + 编辑器自动换行 | `evidence/ITER-22/` |
 
 质量门现态：`tsc` ✓ / `eslint` ✓ / vitest **125** ✓ / Playwright **42/42**（含 4 条移动端与 llms.txt 用例，workers=2 防并行假失败）✓ / `vite build` ✓。
 

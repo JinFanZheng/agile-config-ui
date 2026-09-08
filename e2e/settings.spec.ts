@@ -131,3 +131,27 @@ test('老主题键无感迁移：新键缺失时回退读取 agile-config-ui.the
   await expect(page.locator('html')).toHaveAttribute('data-ui-font', 'standard')
   await expect(page.locator('html')).toHaveAttribute('data-motion', 'on')
 })
+
+test('配置页默认视图：设为 JSON 后无参进入配置页直接落 JSON 视图，还原后回表格', async ({ page }) => {
+  await login(page)
+
+  // 设置默认视图 = JSON
+  await page.goto('/settings')
+  await page.getByRole('radio', { name: 'JSON' }).check()
+  const raw = await page.evaluate((k) => localStorage.getItem(k), SETTINGS_KEY)
+  expect(JSON.parse(raw!).state.defaultConfigView).toBe('json')
+
+  // 无 view 参数进入 demo_app 配置页 → 应直接渲染 monaco（JSON 视图）
+  await page.goto('/apps/demo_app/config')
+  await page.waitForSelector('.monaco-editor', { timeout: 15_000 })
+  await expect(page.locator('.monaco-editor').first()).toBeVisible()
+
+  // URL 显式参数仍最高优先：?view=kv 应落 KV（textarea）
+  await page.goto('/apps/demo_app/config?view=kv')
+  await page.waitForSelector('textarea', { timeout: 15_000 })
+
+  // 还原默认
+  await page.goto('/settings')
+  await page.getByRole('radio', { name: '表格' }).check()
+  await page.evaluate((k) => localStorage.setItem(k, JSON.stringify({ state: { theme: 'graphite', uiFontSize: 'standard', editorFontSize: 12, motion: true }, version: 0 })), SETTINGS_KEY)
+})

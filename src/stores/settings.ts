@@ -34,6 +34,17 @@ export function isUiFontSize(v: unknown): v is UiFontSize {
 }
 
 // ---------------------------------------------------------------------------
+// 配置页默认视图（ConfigPage 初始视图；URL ?view= 参数优先级更高，history 仅显式进入）
+// ---------------------------------------------------------------------------
+export const DEFAULT_CONFIG_VIEWS = ['table', 'kv', 'json'] as const
+export type DefaultConfigView = (typeof DEFAULT_CONFIG_VIEWS)[number]
+export const DEFAULT_CONFIG_VIEW: DefaultConfigView = 'table'
+
+export function isDefaultConfigView(v: unknown): v is DefaultConfigView {
+  return typeof v === 'string' && (DEFAULT_CONFIG_VIEWS as readonly string[]).includes(v)
+}
+
+// ---------------------------------------------------------------------------
 // 编辑器字号（monaco Editor/DiffEditor options.fontSize；KV 文本视图同源）
 // ---------------------------------------------------------------------------
 export const EDITOR_FONT_SIZES = [12, 13, 14, 15] as const
@@ -89,6 +100,12 @@ export interface SettingsState {
   systemLight: ThemeId
   uiFontSize: UiFontSize
   editorFontSize: EditorFontSize
+  /** 配置页初始视图（URL ?view= 优先） */
+  defaultConfigView: DefaultConfigView
+  setDefaultConfigView: (view: DefaultConfigView) => void
+  /** monaco 编辑器自动换行（默认关，保持现状） */
+  editorWordWrap: boolean
+  setEditorWordWrap: (on: boolean) => void
   motion: boolean
   setTheme: (theme: ThemeSetting) => void
   setSystemDark: (theme: ThemeId) => void
@@ -154,6 +171,8 @@ export const useSettingsStore = create<SettingsState>()(
       systemLight: SYSTEM_LIGHT_THEME,
       uiFontSize: DEFAULT_UI_FONT_SIZE,
       editorFontSize: DEFAULT_EDITOR_FONT_SIZE,
+      defaultConfigView: DEFAULT_CONFIG_VIEW,
+      editorWordWrap: false,
       motion: !systemPrefersReducedMotion(),
       setTheme: (theme) =>
         set((s) => {
@@ -171,6 +190,8 @@ export const useSettingsStore = create<SettingsState>()(
           return { uiFontSize }
         }),
       setEditorFontSize: (editorFontSize) => set({ editorFontSize }),
+      setDefaultConfigView: (defaultConfigView) => set({ defaultConfigView }),
+      setEditorWordWrap: (editorWordWrap) => set({ editorWordWrap }),
       setMotion: (motion) =>
         set((s) => {
           applyToDocument({ ...s, motion })
@@ -189,6 +210,10 @@ export const useSettingsStore = create<SettingsState>()(
           editorFontSize: isEditorFontSize(p?.editorFontSize)
             ? p.editorFontSize
             : DEFAULT_EDITOR_FONT_SIZE,
+          defaultConfigView: isDefaultConfigView(p?.defaultConfigView)
+            ? p.defaultConfigView
+            : DEFAULT_CONFIG_VIEW,
+          editorWordWrap: typeof p?.editorWordWrap === 'boolean' ? p.editorWordWrap : false,
           motion: typeof p?.motion === 'boolean' ? p.motion : !systemPrefersReducedMotion(),
         }
         const resolvedTheme = applyToDocument(next)
