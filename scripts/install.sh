@@ -20,6 +20,11 @@
 #       install.sh 模板自身有更新时，需备份 .env 后重新 install（或手动对齐模板）。
 set -euo pipefail
 
+# 管道安装（curl | bash）也保留交互引导：把 stdin 接回终端（有终端才做，CI/重定向环境不受影响）
+if [ ! -t 0 ] && [ -t 1 ]; then
+  exec 0</dev/tty || true
+fi
+
 FRONT_IMAGE_DEFAULT="ghcr.io/jinfanzheng/agile-config-ui:latest"
 BACKEND_IMAGE="kklldog/agile_config:latest"
 MYSQL_IMAGE="mysql:8.4"
@@ -350,7 +355,7 @@ summary() {
 
 do_install() {
   if [ ! -t 0 ]; then
-    log "管道模式：使用默认配置（端口 $PORT / sqlite / 浏览器首启设密码）；自定义请加参数（--help）或两步下载后交互运行"
+    log "无终端模式：使用默认配置（端口 $PORT / sqlite / 浏览器首启设密码）；自定义请加参数（--help）"
   fi
   guide
   preflight
