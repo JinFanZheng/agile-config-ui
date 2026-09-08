@@ -22,7 +22,7 @@
 ## 3. 验收记录（2026-09-08）
 
 - YAML 三文件语法校验 ✓；pnpm 钉版与 Dockerfile corepack 一致（9.12.0）
-- 仓库 https://github.com/JinFanZheng/agile-config-ui（私有）+ fork https://github.com/JinFanZheng/AgileConfig
+- 仓库 https://github.com/JinFanZheng/agile-config-ui（**2026-09-08 已转公开**，公开前完成业务指纹脱敏 @75068c4：jsonDiff 测试与 C-SHARP-VERIFY 报告中的应用名/键结构通用化）+ fork https://github.com/JinFanZheng/AgileConfig
 - 工作流首轮**三条全绿**（CI 34177041853 / E2E 34177041858 / Docker 34177041809），E2E 播种方案一次通过
 - 收口调整：Docker 触发改为仅 v* tag + 手动（多架构较重）；进程清理纪律固化进 AGENTS.md（用户要求：测试完关进程）
 - 待用户验收：仓库/工作流/GHCR 镜像各看一眼
