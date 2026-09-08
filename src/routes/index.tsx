@@ -15,6 +15,7 @@ import { HomePage } from '../features/home/HomePage'
 import { SettingsPage } from '../features/settings/SettingsPage'
 import { GuidePage } from '../features/guide/GuidePage'
 import { RedirectIfAuthed, RequireAuth } from './guards'
+import { RouterErrorPage } from './RouterErrorPage'
 
 export const router = createBrowserRouter([
   {
@@ -24,11 +25,13 @@ export const router = createBrowserRouter([
         <LoginPage />
       </RedirectIfAuthed>
     ),
+    errorElement: <RouterErrorPage />,
   },
-  { path: '/init-password', element: <InitPasswordPage /> },
+  { path: '/init-password', element: <InitPasswordPage />, errorElement: <RouterErrorPage /> },
   {
     path: '/',
     element: <RequireAuth />,
+    errorElement: <RouterErrorPage />,
     children: [
       {
         element: <AppLayout />,
