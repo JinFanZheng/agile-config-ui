@@ -1,6 +1,6 @@
 # ITER-18 llms.txt：AI 助手快速接入入口
 
-> 状态：验收中（EVIDENCE_READY，2026-09-08 同源生成 + 一致性锁定 + 伺服 charset 修复 + e2e 全绿，等待用户验收）。
+> 状态：✅ VERIFIED（原 EVIDENCE_READY，2026-09-08 同源生成 + 一致性锁定 + 伺服 charset 修复 + e2e 全绿，等待用户验收）。
 > 需求出处：用户提出"想让 Agent 基于文档快速把 AgileConfig 接入其他系统，加章节还是 llms.txt？"
 > 决策：**不加章节**（指南内容已全、章节给人看，重复写必漂移），做 **llms.txt（索引）+ llms-full.txt（全量）**，与 /guide 同源生成。
 

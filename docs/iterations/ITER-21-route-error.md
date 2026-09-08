@@ -1,6 +1,6 @@
 # ITER-21 路由错误页与过期 chunk 自动恢复
 
-> 状态：验收中（EVIDENCE_READY，2026-09-08 用户实测反馈驱动，nginx 真实产物 43/43）。
+> 状态：✅ VERIFIED（原 EVIDENCE_READY，2026-09-08 用户实测反馈驱动，nginx 真实产物 43/43）。
 > 需求出处：用户截图反馈"有问题"——实为 ITER-20 镜像重建后旧标签页 chunk 失效露出 React Router 英文默认错误页。
 
 ## 1. 问题与方案

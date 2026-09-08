@@ -1,6 +1,6 @@
 # ITER-11 Agent 运维 Skill（agileconfig-ops）
 
-> 状态：验收中（EVIDENCE_READY，2026-09-08 编写+安装+冷启动巡检通过，等待用户验收）
+> 状态：✅ VERIFIED（原 EVIDENCE_READY，2026-09-08 编写+安装+冷启动巡检通过，等待用户验收）
 
 ## 1. 目标
 

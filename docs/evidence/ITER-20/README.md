@@ -12,8 +12,9 @@
 ## MySQL 栈实测
 
 - `docker compose -f docker-compose.yml -f docker-compose.mysql.yml up -d --build`
-- `SHOW TABLES`：agc_app/agc_config/agc_config_published/agc_publish_timeline/agc_role 等 12 表（CodeFirst）
-- 播种后 agc_app=1 / agc_config=2（SQL 计数）；nginx 首页 200；/llms.txt `text/plain; charset=utf-8`（生产实证）
+- `SHOW TABLES`：**16 张 agc_* 表**（上游 EnsureTables.Ensure 一次 SyncStructure 16 实体；初记 12 系取证命令 head 截断误记，子代理验收对照 fork 源码修正）
+- 播种后 agc_app=1 / agc_config=2（当时 SQL 计数快照）；nginx 首页 200；/llms.txt `text/plain; charset=utf-8`（生产实证）
+- 验收时点（2026-09-08 子代理复核）计数已漂移至 app=2/config=115：活栈随后承载了 43 例 e2e 的 e2e_* 自建数据（上游删应用对 config 为软删保留，AppService.DeleteAsync 注释明示可恢复设计）+ 用户手动验收测试应用 koda-claw（保留未清理，用户数据）
 - 修复后全量 e2e 42/42（修复前 36/1fail/3skip）+ preview 哨兵 3/3
 
 ## 数据库支持（源码 ProviderToFreesqlDbType 实证）

@@ -19,7 +19,7 @@
 - [ITER-08 打磨与交付](iterations/ITER-08-delivery.md)：✅ VERIFIED —— 导入导出/环境同步/服务注册/SSO + Docker + compose 一键演示实测；86 端点收口
 - 附：发布域整合（历史合并进配置页第四视图 + /apps 待发布徽标，北极星对齐，@2bd11c1）
 
-## v1.0.x 后续迭代（2026-09-08 起，用户驱动；全部 EVIDENCE_READY 待用户逐项验收）
+## v1.0.x 后续迭代（2026-09-08 起，用户驱动；全部 VERIFIED——用户确认 + 子代理三路验收，报告见 evidence/ACCEPT-2026-09-08/）
 
 | 迭代 | 内容 | 证据 |
 | --- | --- | --- |
@@ -34,6 +34,8 @@
 | [ITER-17](iterations/ITER-17-mobile.md) | H5 移动端适配（顶栏裁切修复/inline diff/mobile e2e） | `evidence/ITER-17/` |
 | [ITER-18](iterations/ITER-18-llms.md) | llms.txt / llms-full.txt（AI 助手接入入口，同源生成+一致性锁定+charset 修复） | `evidence/ITER-18/` |
 | [ITER-19](iterations/ITER-19-github-ci.md) | GitHub 仓库（私有）+ fork dotnetcore/AgileConfig + CI/E2E/GHCR 工作流 | — |
+| [ITER-20](iterations/ITER-20-real-stack.md) | MySQL 真实栈实测；lightningcss #fff→monaco 生产崩溃修复 + preview 哨兵 | `evidence/ITER-20/` |
+| [ITER-21](iterations/ITER-21-route-error.md) | 路由错误页（中文）+ 过期 chunk 自动刷新自愈 | `evidence/ITER-21/` |
 
 质量门现态：`tsc` ✓ / `eslint` ✓ / vitest **125** ✓ / Playwright **42/42**（含 4 条移动端与 llms.txt 用例，workers=2 防并行假失败）✓ / `vite build` ✓。
 

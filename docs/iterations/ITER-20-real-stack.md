@@ -1,6 +1,6 @@
 # ITER-20 真实栈实测（MySQL）与生产崩溃修复
 
-> 状态：验收中（EVIDENCE_READY，2026-09-08 本地 MySQL 真实栈全量 e2e 42/42 + 生产哨兵 3/3，等待用户验收）。
+> 状态：✅ VERIFIED（原 EVIDENCE_READY，2026-09-08 本地 MySQL 真实栈全量 e2e 42/42 + 生产哨兵 3/3，等待用户验收）。
 > 需求出处：用户指示"本地启动服务做真实测试，原来的清理掉，本地有 mysql（可用 docker 的）"。
 
 ## 1. 数据库支持（后端源码实证：ProviderToFreesqlDbType）
