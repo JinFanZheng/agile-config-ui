@@ -40,6 +40,8 @@
 | [ITER-23](iterations/ITER-23-e2e-flake.md) | e2e 抗抖（retries 统一，零 flaky） | — |
 | [ITER-24](iterations/ITER-24-ux-batch.md) | 体验小项：侧栏折叠/登录落地页（含跳转竞速修复）/分页大小/指南全宽 | `evidence/ITER-24/` |
 | [ITER-25](iterations/ITER-25-sso.md) | SSO 补全：OIDC 回调落地 + ssoButtonText + Keycloak 端到端实测 | `evidence/ITER-25/` |
+| [ITER-26](iterations/ITER-26-docs.md) | 公开仓库文档补全：用户指南/贡献指南/文档地图 | — |
+| [ITER-27](iterations/ITER-27-install.md) | 一键安装脚本 install.sh（引导配置，全生命周期实测） | — |
 
 质量门现态：`tsc` ✓ / `eslint` ✓ / vitest **125** ✓ / Playwright **42/42**（含 4 条移动端与 llms.txt 用例，workers=2 防并行假失败）✓ / `vite build` ✓。
 

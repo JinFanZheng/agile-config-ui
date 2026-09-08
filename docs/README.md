@@ -45,3 +45,4 @@
 | [../docker-compose.image.yml](../docker-compose.image.yml) | 镜像版演示栈（免克隆，数据库可参数化） |
 | [../docker-compose.mysql.yml](../docker-compose.mysql.yml) | MySQL 叠加层 |
 | [../scripts/sso-test.sh](../scripts/sso-test.sh) | SSO 一键测试（Keycloak，up/test/down） |
+| [../scripts/install.sh](../scripts/install.sh) | 一键安装（引导配置：端口/数据库/管理员密码/SSO；status/upgrade/uninstall） |
