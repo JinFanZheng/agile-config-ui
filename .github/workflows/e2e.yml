@@ -1,0 +1,70 @@
+# L-Real：起真实 AgileConfig 后端（官方镜像 + SQLite）→ 初始化密码 + 种子 demo_app → Playwright 全量
+name: E2E
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    env:
+      VITE_BACKEND_URL: http://localhost:5017
+      E2E_BASE_URL: http://localhost:5173
+      E2E_ADMIN_USER: admin
+      # CI 一次性实例的专属密码（随建随毁，非任何真实环境凭证）
+      E2E_ADMIN_PASSWORD: ci-e2e-admin-2026
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.12.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: 启动 AgileConfig 后端（官方镜像，环境同 docker-compose 演示栈）
+        run: |
+          docker run -d --name agileconfig -p 5017:5000 \
+            -e TZ=Asia/Shanghai -e adminConsole=true \
+            -e db__provider=sqlite -e 'db__conn=Data Source=agile_config.db' \
+            kklldog/agile_config:latest
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:5017/Home/Sys && echo " backend ready" && exit 0
+            sleep 2
+          done
+          echo "backend 未就绪"; docker logs agileconfig | tail -50; exit 1
+
+      - name: 初始化密码并播种 demo_app（含一次发布，供发布总览/历史/移动端用例）
+        run: |
+          set -e
+          B=http://localhost:5017
+          curl -sf -X POST $B/Admin/InitPassword -H 'Content-Type: application/json' \
+            -d "{\"password\":\"$E2E_ADMIN_PASSWORD\",\"confirmPassword\":\"$E2E_ADMIN_PASSWORD\"}"
+          TOKEN=$(curl -s -X POST $B/admin/jwt/login -H 'Content-Type: application/json' \
+            -d "{\"userName\":\"$E2E_ADMIN_USER\",\"password\":\"$E2E_ADMIN_PASSWORD\"}" | jq -r .token)
+          AUTH="Authorization: Bearer $TOKEN"
+          curl -sf -X POST $B/App/Add -H "$AUTH" -H 'Content-Type: application/json' \
+            -d '{"id":"demo_app","name":"演示应用","group":"","enabled":true,"inheritanced":false,"inheritancedApps":[]}'
+          curl -sf -X POST "$B/Config/Add?env=DEV" -H "$AUTH" -H 'Content-Type: application/json' \
+            -d '{"appId":"demo_app","group":"Db","key":"Host","value":"demo-db","description":"seed"}'
+          curl -sf -X POST "$B/Config/Add?env=DEV" -H "$AUTH" -H 'Content-Type: application/json' \
+            -d '{"appId":"demo_app","group":"","key":"Mode","value":"demo","description":"seed"}'
+          curl -sf -X POST "$B/Config/Publish?env=DEV" -H "$AUTH" -H 'Content-Type: application/json' \
+            -d '{"appId":"demo_app","log":"CI seed v1"}'
+          echo " seed done"
+
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-artifacts
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7

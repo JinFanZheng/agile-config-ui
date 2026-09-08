@@ -33,6 +33,7 @@
 | [ITER-16](iterations/ITER-16-nav-groups.md) | 侧栏导航分组（配置管理/运维监控/权限管理，空组隐藏） | `evidence/ITER-16/` |
 | [ITER-17](iterations/ITER-17-mobile.md) | H5 移动端适配（顶栏裁切修复/inline diff/mobile e2e） | `evidence/ITER-17/` |
 | [ITER-18](iterations/ITER-18-llms.md) | llms.txt / llms-full.txt（AI 助手接入入口，同源生成+一致性锁定+charset 修复） | `evidence/ITER-18/` |
+| [ITER-19](iterations/ITER-19-github-ci.md) | GitHub 仓库（私有）+ fork dotnetcore/AgileConfig + CI/E2E/GHCR 工作流 | — |
 
 质量门现态：`tsc` ✓ / `eslint` ✓ / vitest **125** ✓ / Playwright **42/42**（含 4 条移动端与 llms.txt 用例，workers=2 防并行假失败）✓ / `vite build` ✓。
 
