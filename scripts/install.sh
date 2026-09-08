@@ -34,7 +34,24 @@ log()  { printf '\033[1;32m[install]\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m[warn]\033[0m %s\n' "$*" >&2; }
 die()  { printf '\033[1;31m[error]\033[0m %s\n' "$*" >&2; exit 1; }
 
-usage() { sed -n '2,16p' "$0"; exit 0; }
+usage() {
+  cat <<'USAGE'
+用法：
+  ./install.sh                       # 交互引导安装
+  ./install.sh install [选项]        # 非交互安装（选项见下）
+  ./install.sh uninstall [--yes]     # 停止并删除（含数据卷；--yes 跳过确认）
+  ./install.sh upgrade               # 拉新镜像滚动更新（保留数据）
+  ./install.sh status                # 查看运行状态与访问信息
+选项：
+  --port N           对外端口（默认 8080；backend 不对外，全部同源反代）
+  --db sqlite|mysql  数据库（默认 sqlite 零配置；mysql=容器自带，数据持久化）
+  --mysql-host H     外部 MySQL 主机（给出即外部库模式；容器视角，本机=host.docker.internal）
+  --mysql-port/db/user/pass   外部库连接项（默认 3306 / agile_config / root）
+  --no-create-db     不自动建库（默认预检时 CREATE DATABASE IF NOT EXISTS utf8mb4）
+  --sso-*            九项 OIDC，通常装好后改 <dir>/.env 后 upgrade
+USAGE
+  exit 0
+}
 
 # ---------- 参数 ----------
 PORT=8080; DB=sqlite; ADMIN_PASS=""; DIR=""; FRONT_IMAGE="$FRONT_IMAGE_DEFAULT"

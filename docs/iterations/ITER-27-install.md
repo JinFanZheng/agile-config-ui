@@ -25,4 +25,5 @@
 
 ## 5. 验收后增强（2026-09-08）
 
-一行命令体验：`curl -fsSL .../scripts/install.sh | bash` 即装即用（管道模式全默认 + 明示提示；空密码摘要改"浏览器首启"引导，正式采纳"脚本管容器、页面管应用"的分层）；`--yes` 让 uninstall 也能一行（管道无法交互确认）。装卸一行均实测通过（默认装→健康 200/passwordInited:false→一行卸载零残留）。README 方式零改为一行为主。
+一行命令体验：`curl -fsSL .../scripts/install.sh | bash` **即装即用且保留交互引导**——管道执行时 stdin 自动接回终端（`exec 0</dev/tty`，无终端的 CI/重定向环境自动保持非交互默认，rustup 同款 idiom）；空密码摘要改"浏览器首启"引导（正式采纳"脚本管容器、页面管应用"分层）；`--yes` 让 uninstall 也能一行。
+验证：Python pty 自建伪终端按提示动态应答（4 项全回车默认）——引导逐项出现与应答、安装完成、健康 200/passwordInited:false、一行卸载零残留；顺手修掉管道下 `--help` 失效（$0=bash 导致 sed 无文件，改内置 heredoc）。README 方式零改为一行为主。
