@@ -23,6 +23,7 @@ AgileConfig 管理前端（独立仓库，对接官方服务端，不修改服�
 - L2/L3: 暂无独立层（前端与后端契约经由 L-Real 的 E2E 覆盖；API 事实见 handoff §5）
 - L-Real: `pnpm e2e`（Playwright，对本机 AgileConfig 实例 `http://localhost:5017`；凭证放 `.env.e2e`，gitignore）
 - L-Full: `pnpm typecheck && pnpm lint && pnpm test && pnpm e2e && pnpm build`
+- 自动化测试进程纪律：Playwright 的 webServer 由 Playwright 托管（测完自动退出，reuseExistingServer 复用不接管）；一次性浏览器/脚本必须显式 close/exit；跑完检查不留孤儿 chromium/node/dotnet 进程（用户明确要求：测试完关进程，不卡机器）
 
 ## 架构红线
 

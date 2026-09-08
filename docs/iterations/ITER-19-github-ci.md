@@ -1,6 +1,6 @@
 # ITER-19 GitHub 仓库与打包流水线
 
-> 状态：实施中（2026-09-08 用户指示：创建 GitHub 仓库并提交、fork 后端仓库、定制打包流程）。
+> 状态：验收中（EVIDENCE_READY，2026-09-08 三工作流首轮全绿，等待用户验收）。
 > 变更分类：基础设施（无产品代码变更）。
 
 ## 1. 交付物
@@ -22,4 +22,7 @@
 ## 3. 验收记录（2026-09-08）
 
 - YAML 三文件语法校验 ✓；pnpm 钉版与 Dockerfile corepack 一致（9.12.0）
-- 仓库创建/fork/推送与工作流首轮运行结果见 Evidence
+- 仓库 https://github.com/JinFanZheng/agile-config-ui（私有）+ fork https://github.com/JinFanZheng/AgileConfig
+- 工作流首轮**三条全绿**（CI 34177041853 / E2E 34177041858 / Docker 34177041809），E2E 播种方案一次通过
+- 收口调整：Docker 触发改为仅 v* tag + 手动（多架构较重）；进程清理纪律固化进 AGENTS.md（用户要求：测试完关进程）
+- 待用户验收：仓库/工作流/GHCR 镜像各看一眼

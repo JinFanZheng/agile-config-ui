@@ -2,8 +2,7 @@
 name: Docker
 on:
   push:
-    branches: [main]
-    tags: ['v*']
+    tags: ['v*'] # 镜像只在发版 tag 构建（多架构构建较重，不随每次 push 跑）；日常验证走 CI/E2E；也可手动触发
   workflow_dispatch:
 
 jobs:
