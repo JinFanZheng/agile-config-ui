@@ -217,7 +217,8 @@ ENV
   BACKEND_ENV='      - db__provider=${DB}
       - db__conn=Data Source=/data/agile_config.db'
   MYSQL_SERVICE=""; BACKEND_DEP=""
-  if [ "$DB" = mysql ]; then
+  # 自带容器模式才渲染 db 服务与依赖；外部库模式只有 frontend+backend 两个容器
+  if [ "$DB" = mysql ] && [ "$MYSQL_EXTERNAL" != 1 ]; then
     MYSQL_SERVICE=$(cat <<'YML'
   db:
     image: mysql:8.4
@@ -238,10 +239,10 @@ YML
         condition: service_healthy"
     BACKEND_ENV='      - db__provider=mysql
       - db__conn=Data Source=db;Port=3306;Database=agile_config;User ID=root;Password=${MYSQL_ROOT_PASS};Charset=utf8mb4'
-  if [ "$MYSQL_EXTERNAL" = 1 ]; then
+  elif [ "$MYSQL_EXTERNAL" = 1 ]; then
+    # 外部实例：仅 frontend+backend 两容器，连接串值带单引号转义（.env 存 MYSQL_*_ESC）
     BACKEND_ENV='      - db__provider=mysql
       - db__conn=Data Source=${MYSQL_HOST};Port=${MYSQL_PORT};Database=${MYSQL_DB};User ID='"'"'${MYSQL_USER_ESC}'"'"';Password='"'"'${MYSQL_PASS_ESC}'"'"';Charset=utf8mb4'
-  fi
   fi
   SSO_ENV=""
   if [ "$SSO_ENABLED" = true ]; then
@@ -291,8 +292,10 @@ volumes:
   backend-data:
   db-data:
 YML
-  # 修正：mysql 为空时遗留空 volumes 键
-  [ "$DB" = sqlite ] && sed -i '' '/^  db-data:$/d' "$COMPOSE_FILE" 2>/dev/null || sed -i '/^  db-data:$/d' "$COMPOSE_FILE" || true
+  # 仅"自带容器 mysql"模式才需要 db-data 卷；sqlite 与外部库模式删除该声明
+  if [ "$DB" != mysql ] || [ "$MYSQL_EXTERNAL" = 1 ]; then
+    sed -i '' '/^  db-data:$/d' "$COMPOSE_FILE" 2>/dev/null || sed -i '/^  db-data:$/d' "$COMPOSE_FILE" || true
+  fi
   log "部署目录已生成：$DIR"
 }
 
