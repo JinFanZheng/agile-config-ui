@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router'
 import { checkPasswordInited, login } from '../../api/auth'
+import { getSys } from '../../api/ops'
 import { getSsoLoginUrl } from '../../api/importExport'
 import { Button } from '../../components/ui/button'
 import { Input } from '../../components/ui/input'
@@ -33,6 +34,8 @@ export function LoginPage() {
     staleTime: 5 * 60_000,
     retry: false,
   })
+  // 按钮文案：服务端 SSO:loginButtonText 可配（缺省回退默认）
+  const { data: sys } = useQuery({ queryKey: ['ops', 'sys'], queryFn: getSys, staleTime: 300_000 })
   useEffect(() => {
     if (passwordInited === false) navigate('/init-password', { replace: true })
   }, [passwordInited, navigate])
@@ -131,7 +134,7 @@ export function LoginPage() {
                   href={ssoUrl}
                   className="flex h-9 w-full items-center justify-center rounded-md border border-border text-sm text-foreground transition-colors duration-150 hover:bg-elevated"
                 >
-                  {authStr.login.sso}
+                  {sys?.ssoButtonText || authStr.login.sso}
                 </a>
               </>
             )}

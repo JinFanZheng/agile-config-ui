@@ -240,6 +240,14 @@ Content-Type: application/json
 | 测试       | Vitest（单元）+ **Playwright（E2E，对本机 5017 实例跑）** | E2E 链路 = 登录→建应用→改配置→发布→回滚                                                |
 | HTTP       | ky 或 axios 薄封装                                        | 统一注入 Bearer、401 跳登录、解包 `{success,message,data}`                             |
 
+### 7.0 SSO/OIDC 接入事实（ITER-25 Keycloak 端到端实测回写）
+
+- **服务端配置**（appsettings `SSO:`，Docker env 用 `__`）：总开关 `SSO:enabled`（显式，非配置齐全自动开）+ `SSO:loginButtonText`（按钮文案）+ `SSO:OIDC:*` 九项（clientId/clientSecret/authorizationEndpoint/tokenEndpoint/redirectUri/userIdClaim/userNameClaim/scope/tokenEndpointAuthMethod）
+- **端点视角分离**：authorizationEndpoint 是浏览器访问（配用户可达地址）；tokenEndpoint 是服务端容器发起（配容器可达地址，如 host.docker.internal）
+- **回调链路（关键语义）**：`redirectUri` 必须指向**前端同源**的 `/SSO/Index`（如 `http://<前端>/SSO/Index`，由前端 nginx 反代到 backend）——backend `SSSOController.Index` 会 `Redirect(PathBase + "/ui#/oidc/login?code=")`，同源部署下该地址回落到本前端 SPA，`main.tsx` 挂载前解析 hash 兑换（`GET /admin/oidc/login?code=`，响应与密码登录同构）写会话。若 redirectUri 直指 backend 端口，回调会被 backend 自带的官方 adminConsole（/ui）消费
+- **首登用户**由服务端按 IdToken 的 userNameClaim 自动入库（Source=SSO，默认 Operator 角色）；JWT 含 `username` claim，前端兑换后解码补全会话用户名
+- 前端适配：登录页按钮由 `ssoEnabled`+`/SSO/LoginUrl` 探测驱动（400 隐藏），文案用 `ssoButtonText`（缺省回退）
+
 ### 7.1 设计语言（已锁定，2026-09-04 用户选型）：多主题体系，默认石墨（C）
 
 > **决策（ITER-01 选型结果，用户拍板）**：主布局/信息架构定稿；五种风格**全部保留为可切换主题**；**默认主题 = 石墨（graphite，黑白高对比开发者风）**。实现见 ITER-02（主题引擎 + 令牌契约，`src/index.css` 为唯一事实源）。ITER-12 增补 5 套"盲盒"主题（曜石/紫夜/樱粉/摩卡/森夜），共十套（5 浅 + 5 深），深浅集合见 `src/lib/themes.ts` 的 `isDarkTheme`。

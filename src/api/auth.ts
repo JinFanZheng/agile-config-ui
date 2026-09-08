@@ -37,6 +37,38 @@ export async function login(
   }
 }
 
+/** OIDC 回调兑换：GET /admin/oidc/login?code=（响应与密码登录同构：status/token/currentAuthority/currentFunctions） */
+export async function oidcLoginByCode(
+  code: string
+): Promise<{ token: string; user: AuthUser }> {
+  const res = await http
+    .get('/admin/oidc/login', { searchParams: { code } })
+    .json<LoginResponse>()
+  if (res.status !== 'ok' || !res.token) {
+    throw new ApiError(res.message || 'SSO 登录失败')
+  }
+  return {
+    token: res.token,
+    user: {
+      // 兑换响应不带用户名：从 JWT 的 username claim 解码（服务端 JwtService 固定写入）
+      userName: decodeJwtClaim(res.token, 'username') ?? '',
+      roles: res.currentAuthority ?? [],
+      functions: res.currentFunctions ?? [],
+    },
+  }
+}
+
+/** 解码 JWT payload claim（仅本地展示用，不做签名校验——鉴权在服务端） */
+function decodeJwtClaim(token: string, claim: string): string | null {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+    const v = payload[claim]
+    return typeof v === 'string' ? v : null
+  } catch {
+    return null
+  }
+}
+
 /** 首启初始化超管密码（handoff §5.1） */
 export async function initPassword(password: string, confirmPassword: string): Promise<void> {
   await apiPost<void>('/Admin/InitPassword', { password, confirmPassword })
