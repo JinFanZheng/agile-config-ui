@@ -76,7 +76,7 @@ esc_sq() { printf "%s" "$1" | sed "s/'/''/g"; }
 
 # 预检一律容器视角（借 mysql:8.4 镜像跑客户端）：与 backend 同网络视角，
 # 避免"宿主能连而容器连不上/反之"的错位——尤其 host.docker.internal 在 Linux 宿主上不存在（CI 实测抓到）
-mysql_cmd() { echo "docker run --rm $MYSQL_IMAGE mysql"; }
+mysql_cmd() { echo "docker run --rm --add-host=host.docker.internal:host-gateway $MYSQL_IMAGE mysql"; }
 
 check_external_mysql() {
   [ -n "$MYSQL_HOST" ] || die "外部库模式需要 --mysql-host"
