@@ -1,0 +1,33 @@
+# GHCR 镜像版演示栈：不需要克隆源码，两条命令起完整演示（前端走已发布镜像）。
+# 与 docker-compose.yml（源码本地构建版）的 backend 完全一致；差异仅 frontend.image 替代 frontend.build。
+#
+# 用法（任意目录）：
+#   curl -O https://raw.githubusercontent.com/JinFanZheng/agile-config-ui/main/docker-compose.image.yml
+#   docker compose -f docker-compose.image.yml up -d
+# 钉版本：FRONTEND_TAG=sha-b5b07d9 docker compose -f docker-compose.image.yml up -d
+#
+# 注意：
+# - 仓库/镜像当前为私有：拉取前需 docker login ghcr.io（PAT 需 read:packages），或转公开
+# - 数据不持久（演示用）：backend 未挂数据卷，down -v 后清空；生产请自行持久化
+# - Apple Silicon：backend 必须显式 platform: linux/amd64（默认 arm64 镜像缺 SQLite 原生库）
+
+services:
+  backend:
+    image: kklldog/agile_config:latest
+    platform: linux/amd64
+    environment:
+      - TZ=Asia/Shanghai
+      - adminConsole=true
+      - db__provider=sqlite
+      - db__conn=Data Source=agile_config.db
+    ports:
+      - "5017:5000"
+
+  frontend:
+    image: ghcr.io/jinfanzheng/agile-config-ui:${FRONTEND_TAG:-latest}
+    environment:
+      - BACKEND=http://backend:5000
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
