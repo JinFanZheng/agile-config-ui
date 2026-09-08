@@ -1,6 +1,6 @@
 # ITER-28 install.sh 外部 MySQL 与鲁棒性
 
-> 状态：验收中（EVIDENCE_READY，2026-09-08 三组矩阵实测通过）。
+> 状态：✅ VERIFIED（原 EVIDENCE_READY，2026-09-08 三组矩阵实测通过）。
 
 ## 1. 目标
 

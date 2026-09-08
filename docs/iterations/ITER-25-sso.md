@@ -1,6 +1,6 @@
 # ITER-25 SSO 补全：OIDC 回调落地 + 可配按钮文案 + Keycloak 端到端实测
 
-> 状态：验收中（EVIDENCE_READY，2026-09-08 Keycloak 真实 IdP 全链路 PASS，等待用户过目）。
+> 状态：✅ VERIFIED（原 EVIDENCE_READY，2026-09-08 Keycloak 真实 IdP 全链路 PASS，等待用户过目）。
 > 背景：核对坐实 SSO 只适配一半——入口显隐 ✓、回调落地 ✗（后端硬编码重定向官方 UI 的 `/ui#/oidc/login?code=`，我们的根路径 SPA 会丢弃 hash 中的 code）、可配按钮文案 ssoButtonText 未接。
 
 ## 1. 方案
